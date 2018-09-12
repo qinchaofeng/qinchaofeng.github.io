@@ -233,6 +233,602 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Spark的这些事（四）——Spark-on-yarn-动态资源配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Spark的这些事（四）——Spark-on-yarn-动态资源配置/" itemprop="url">Spark的这些事（四）——Spark-on-yarn-动态资源配置</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T18:17:31+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>一、YARN的配置</strong><br>首先需要对YARN进行配置，使其支持Spark的Shuffle Service。</p>
+<p>修改每台集群上的<code>yarn-site.xml</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> - 修改</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;</span><br><span class="line">&lt;value&gt;mapreduce_shuffle,spark_shuffle&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> - 增加</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.nodemanager.aux-services.spark_shuffle.class&lt;/name&gt;</span><br><span class="line">&lt;value&gt;org.apache.spark.network.yarn.YarnShuffleService&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;spark.shuffle.service.port&lt;/name&gt;</span><br><span class="line">&lt;value&gt;7337&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure>
+<p>将<code>$SPARK_HOME/lib/spark-1.5.2-yarn-shuffle.jar</code>拷贝到每台<code>NodeManager的${HADOOP_HOME}/share/hadoop/yarn/lib/</code>下。<br>重启所有修改配置的节点。</p>
+<p><strong>二、Spark的配置</strong><br>配置<code>$SPARK_HOME/conf/spark-defaults.conf</code>，增加以下参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">spark.shuffle.service.enabled true   //启用External shuffle Service服务</span><br><span class="line">spark.shuffle.service.port 7337 //Shuffle Service默认服务端口，必须和yarn-site中的一致</span><br><span class="line">spark.dynamicAllocation.enabled true  //开启动态资源分配</span><br><span class="line">spark.dynamicAllocation.minExecutors 1  //每个Application最小分配的executor数</span><br><span class="line">spark.dynamicAllocation.maxExecutors 30  //每个Application最大并发分配的executor数</span><br><span class="line">spark.dynamicAllocation.schedulerBacklogTimeout 1s </span><br><span class="line">spark.dynamicAllocation.sustainedSchedulerBacklogTimeout 5s</span><br></pre></td></tr></table></figure>
+<p><strong>动态资源分配策略：</strong><br>开启动态分配策略后，application会在task因没有足够资源被挂起的时候去动态申请资源，这种情况意味着该application现有的executor无法满足所有task并行运行。spark一轮一轮的申请资源，当有task挂起或等待<code>spark.dynamicAllocation.schedulerBacklogTimeout</code>(默认1s)`时间的时候，会开始动态资源分配；之后会每隔spark.dynamicAllocation.sustainedSchedulerBacklogTimeout(默认1s)时间申请一次，直到申请到足够的资源。每次申请的资源量是指数增长的，即1,2,4,8等。<br>之所以采用指数增长，出于两方面考虑：其一，开始申请的少是考虑到可能application会马上得到满足；其次要成倍增加，是为了防止application需要很多资源，而该方式可以在很少次数的申请之后得到满足。</p>
+<p><strong>资源回收策略：</strong><br>当application的executor空闲时间超过<code>spark.dynamicAllocation.executorIdleTimeout（默认60s）</code>后，就会被回收。</p>
+<p>使用spark-sql On Yarn执行SQL，动态分配资源<br>以yarn-client模式启动ThriftServer</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd $SPARK_HOME/sbin/</span><br><span class="line">./start-thriftserver.sh \</span><br><span class="line">--master yarn-client \</span><br><span class="line">--conf spark.driver.memory=10G \</span><br><span class="line">--conf spark.shuffle.service.enabled=true \</span><br><span class="line">--conf spark.dynamicAllocation.enabled=true \</span><br><span class="line">--conf spark.dynamicAllocation.minExecutors=1 \</span><br><span class="line">--conf spark.dynamicAllocation.maxExecutors=300 \</span><br><span class="line">--conf spark.dynamicAllocation.sustainedSchedulerBacklogTimeout=5s</span><br></pre></td></tr></table></figure>
+<p>启动后，ThriftServer会在Yarn上作为一个长服务来运行：</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Spark的这些事（三）——spark常用的Transformations-和Actions/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Spark的这些事（三）——spark常用的Transformations-和Actions/" itemprop="url">Spark的这些事（三）——spark常用的Transformations-和Actions</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T18:17:23+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Transformations"><a href="#Transformations" class="headerlink" title="Transformations"></a><a href="http://spark.apache.org/docs/latest/programming-guide.html#transformations" target="_blank" rel="noopener">Transformations</a></h2><p><strong>map，filter</strong><br>spark最长用的两个Transformations：<strong>map，filter</strong>，下面就来介绍一下这两个。</p>
+<p>先看下面这张图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4579636-92d69157fe274d53?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>从上图中可以清洗的看到 map和filter都是做的什么工作，那我们就代码演示一下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">val input = sc.parallelize(List(1,2,3,4))</span><br><span class="line"></span><br><span class="line">val result1 = input.map(x=&gt;x*x)</span><br><span class="line">val result2 = input.filter(x=&gt;x!=1)</span><br><span class="line"></span><br><span class="line">print(result1.collect().mkString(&quot;,&quot;))</span><br><span class="line">print(&quot;\n&quot;)</span><br><span class="line">print(result2.collect().mkString(&quot;,&quot;))</span><br><span class="line">print(&quot;\n&quot;)</span><br></pre></td></tr></table></figure>
+<p>执行结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 18:48:31 INFO DAGScheduler: ResultStage 0 (collect at Map.scala:17) finished in 0.093 s</span><br><span class="line">16/08/17 18:48:31 INFO DAGScheduler: Job 0 finished: collect at Map.scala:17, took 0.268871 s</span><br><span class="line">1,4,9,16</span><br><span class="line">........</span><br><span class="line">16/08/17 18:48:31 INFO DAGScheduler: ResultStage 1 (collect at Map.scala:19) finished in 0.000 s</span><br><span class="line">16/08/17 18:48:31 INFO DAGScheduler: Job 1 finished: collect at Map.scala:19, took 0.018291 s</span><br><span class="line">2,3,4</span><br></pre></td></tr></table></figure>
+<p>再回头看下上面那张图，是不是明白什么意思了！</p>
+<p><strong>flatMap</strong><br>另外一个常用的就是flatMap，输入一串字符，分割出每个字符</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4579636-23f6c34d7f36ada3?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="map和flatmap的区别"></p>
+<p>来用代码实践一下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">val lines = sc.parallelize(List(&quot;hello world&quot;,&quot;hi&quot;))</span><br><span class="line">   val words = lines.flatMap (lines=&gt;lines.split(&quot; &quot;))</span><br><span class="line">   print(words.first())</span><br><span class="line">   print(&quot;\n&quot;)</span><br></pre></td></tr></table></figure></p>
+<p>执行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 19:23:24 INFO DAGScheduler: Job 2 finished: first at Map.scala:24, took 0.016987 s</span><br><span class="line">hello</span><br><span class="line">16/08/17 19:23:24 INFO SparkContext: Invoking stop() from shutdown hook</span><br></pre></td></tr></table></figure>
+<p>分隔符如果改一下的话：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">val words = lines.flatMap (lines=&gt;lines.split(&quot;,&quot;))</span><br></pre></td></tr></table></figure>
+<p>结果会怎样呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 19:33:14 INFO TaskSchedulerImpl: Removed TaskSet 2.0, whose tasks have all completed, from pool </span><br><span class="line">hello world</span><br><span class="line">16/08/17 19:33:14 INFO SparkContext: Invoking stop() from shutdown hook</span><br></pre></td></tr></table></figure>
+<p>和想象的一样吧~</p>
+<p><strong>distinct，distinct，intersection，subtract</strong><br>还有几个比较常用的：distinct，distinct，intersection，subtract</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4579636-1eea352bfe4e23e7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>来看看代码实践：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">val rdd1 = sc.parallelize(List(&quot;coffee&quot;,&quot;coffee&quot;,&quot;panda&quot;,&quot;monkey&quot;,&quot;tea&quot;))</span><br><span class="line">    val rdd2 = sc.parallelize(List(&quot;coffee&quot;,&quot;monkey&quot;,&quot;kitty&quot;))</span><br><span class="line">    </span><br><span class="line">    rdd1.distinct().take(100).foreach(println)</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 19:52:29 INFO DAGScheduler: ResultStage 4 (take at Map.scala:30) finished in 0.047 s</span><br><span class="line">16/08/17 19:52:29 INFO TaskSchedulerImpl: Removed TaskSet 4.0, whose tasks have all completed, from pool </span><br><span class="line">16/08/17 19:52:29 INFO DAGScheduler: Job 3 finished: take at Map.scala:30, took 0.152405 s</span><br><span class="line">monkey</span><br><span class="line">coffee</span><br><span class="line">panda</span><br><span class="line">tea</span><br><span class="line">16/08/17 19:52:29 INFO SparkContext: Starting job: take at Map.scala:32</span><br></pre></td></tr></table></figure>
+<p>代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdd1.union(rdd2).take(100).foreach(println)</span><br></pre></td></tr></table></figure></p>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">6/08/17 19:52:29 INFO DAGScheduler: Job 5 finished: take at Map.scala:32, took 0.011825 s</span><br><span class="line">coffee</span><br><span class="line">coffee</span><br><span class="line">panda</span><br><span class="line">monkey</span><br><span class="line">tea</span><br><span class="line">coffee</span><br><span class="line">monkey</span><br><span class="line">kitty</span><br><span class="line">16/08/17 19:52:30 INFO SparkContext: Starting job: take at Map.scala:34</span><br><span class="line">16/08/17 19:52:30 INFO DAGScheduler: Registering RDD 11 (intersection at Map.scala:34)</span><br><span class="line">16/08/17 19:52:30 INFO DAGScheduler: Registering RDD 12 (intersection at Map.scala:34)</span><br></pre></td></tr></table></figure>
+<p>代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdd1.intersection(rdd2).take(100).foreach(println)</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 19:52:30 INFO TaskSetManager: Finished task 0.0 in stage 9.0 (TID 9) in 31 ms on localhost (1/1)</span><br><span class="line">16/08/17 19:52:30 INFO TaskSchedulerImpl: Removed TaskSet 9.0, whose tasks have all completed, from pool </span><br><span class="line">16/08/17 19:52:30 INFO DAGScheduler: ResultStage 9 (take at Map.scala:34) finished in 0.031 s</span><br><span class="line">16/08/17 19:52:30 INFO DAGScheduler: Job 6 finished: take at Map.scala:34, took 0.060785 s</span><br><span class="line">monkey</span><br><span class="line">coffee</span><br><span class="line">16/08/17 19:52:30 INFO SparkContext: Starting job: take at Map.scala:36</span><br></pre></td></tr></table></figure>
+<p>代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdd1.subtract(rdd2).take(100).foreach(println)</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 19:52:30 INFO DAGScheduler: Job 6 finished: take at Map.scala:34, took 0.060785 s</span><br><span class="line">monkey</span><br><span class="line">coffee</span><br><span class="line">16/08/17 19:52:30 INFO SparkContext: Starting job: take at Map.scala:36</span><br></pre></td></tr></table></figure>
+<p>再看看上面的图，很容易理解吧</p>
+<h2 id="Actions"><a href="#Actions" class="headerlink" title="Actions"></a><a href="http://spark.apache.org/docs/latest/programming-guide.html#actions" target="_blank" rel="noopener">Actions</a></h2><p>常用的Transformations就介绍到这里，下面介绍下常用的Action:<br><strong>reduce,countByValue,takeOrdered,takeSample,aggregate</strong></p>
+<p>首先看一下：reduce</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">val rdd5 = sc.parallelize(List(1,2,3,4))</span><br><span class="line">print(&quot;reduce action:&quot;+rdd5.reduce((x,y)=&gt;x+y)+&quot;\n&quot;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">16/08/18 11:51:16 INFO DAGScheduler: Job 15 finished: reduce at Function.scala:55, took 0.012698 s</span><br><span class="line">reduce action:10</span><br><span class="line">16/08/18 11:51:16 INFO SparkContext: Starting job: aggregate at Function.scala:57</span><br></pre></td></tr></table></figure>
+<p><strong>countByValue</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(rdd1.countByValue() + &quot;\n&quot;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">16/08/18 11:51:16 INFO DAGScheduler: Job 11 finished: countByValue at Function.scala:48, took 0.031726 s</span><br><span class="line">Map(monkey -&gt; 1, coffee -&gt; 2, panda -&gt; 1, tea -&gt; 1)</span><br><span class="line">16/08/18 11:51:16 INFO SparkContext: Starting job: takeOrdered at Function.scala:50</span><br></pre></td></tr></table></figure>
+<p><strong>takeOrdered</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdd1.takeOrdered(10).take(100).foreach(println)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">16/08/18 11:51:16 INFO DAGScheduler: Job 12 finished: takeOrdered at Function.scala:50, took 0.026160 s</span><br><span class="line">coffee</span><br><span class="line">coffee</span><br><span class="line">monkey</span><br><span class="line">panda</span><br><span class="line">tea</span><br><span class="line">16/08/18 11:51:16 INFO SparkContext: Starting job: takeSample at Function.scala:52</span><br></pre></td></tr></table></figure>
+<p><strong>aggregate</strong><br>这个要重点介绍一下：</p>
+<blockquote>
+<p>Spark文档中aggregate函数定义如下<br>def aggregate<a href="zeroValue: U" target="_blank" rel="noopener">U</a>(seqOp: (U, T) ⇒ U, combOp: (U, U) ⇒ U)(implicit arg0: ClassTag[U]): U<br>Aggregate the elements of each partition, and then the results for all the partitions, using given combine functions and a neutral “zero value”. This function can return a different result type, U, than the type of this RDD, T. Thus, we need one operation for merging a T into an U and one operation for merging two U’s, as in scala.TraversableOnce. Both of these functions are allowed to modify and return their first argument instead of creating a new U to avoid memory allocation.  </p>
+<p>seqOp操作会聚合各分区中的元素，然后combOp操作把所有分区的聚合结果再次聚合，两个操作的初始值都是zeroValue.   seqOp的操作是遍历分区中的所有元素(T)，第一个T跟zeroValue做操作，结果再作为与第二个T做操作的zeroValue，直到遍历完整个分区。combOp操作是把各分区聚合的结果，再聚合。aggregate函数返回一个跟RDD不同类型的值。因此，需要一个操作seqOp来把分区中的元素T合并成一个U，另外一个操作combOp把所有U聚合。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">val rdd5 = sc.parallelize(List(1,2,3,4))</span><br><span class="line">val rdd6 = rdd5.aggregate((0, 0))  ((x, y) =&gt;(x._1 + y, x._2+1),  (x, y) =&gt;(x._1 + y._1, x._2 + y._2))</span><br><span class="line">    print (&quot;aggregate action : &quot; + rdd6 + &quot;\n&quot;  )</span><br></pre></td></tr></table></figure>
+<p>我们看一下结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">16/08/18 11:51:16 INFO DAGScheduler: Job 16 finished: aggregate at Function.scala:57, took 0.011686 s</span><br><span class="line">aggregate action : (10,4)</span><br><span class="line">16/08/18 11:51:16 INFO SparkContext: Invoking stop() from shutdown hook</span><br></pre></td></tr></table></figure>
+<p>我们可以根据以上执行的例子来理解aggregate 用法：</p>
+<blockquote>
+<ul>
+<li>第一步：将rdd5中的元素与初始值遍历进行聚合操作<ul>
+<li>第二步：将初始值加1进行遍历聚合</li>
+<li>第三步：将结果进行聚合</li>
+<li>根据本次的RDD 背部实现如下：</li>
+<li>第一步：其实是0+1</li>
+<li>1+2</li>
+<li>3+3</li>
+<li>6+4</li>
+<li>然后执行：0+1</li>
+<li>1+1</li>
+<li>2+1</li>
+<li>3+1</li>
+<li>此时返回(10,4)</li>
+<li>本次执行是一个节点，如果在集群中的话，多个节点，会先把数据打到不同的分区上，比如(1,2) (3,4)</li>
+<li>得到的结果就会是(3,2) (7,2)</li>
+<li>然后进行第二步combine就得到 (10,4)</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>这样你应该能理解aggregate这个函数了吧</p>
+<p>以上就是对常用的Transformations 和Actions介绍，对于初学者来说，动手代码实践各个函数，才是明白其功能最好的方法。</p>
+<p>PS ：<a href="https://github.com/windyqinchaofeng/Sparkcoding/blob/master/src/com/csap/spark/Function.scala" target="_blank" rel="noopener">源码</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Spark的这些事（二）——几个概念/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Spark的这些事（二）——几个概念/" itemprop="url">Spark的这些事（二）——几个概念</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T18:17:14+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>1、SparkContext [经常简称为 sc]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spark app 的起点和入口，一般用来加载数据集，生成第一个 rdd。</span><br></pre></td></tr></table></figure>
+<p>2、定义一个 spark 应用程序所需要的三大步骤的逻辑：加载数据集，处理数据，结果展示。</p>
+<ul>
+<li>加载数据集</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">加载数据集，这里的数据集大概分为两组:</span><br><span class="line">    - 一种是不变的，静态数据集，大多数场景都是从数据库，文件系统上面加载进来</span><br><span class="line">    - 另一种是动态的数据集，一般做 streaming 应用的时候用到，大多数场景是通过 socket 来加载数据，复杂场景可以通过文件系统，akka actors，kafka，kinesis 和 一些第三方提供的 streaming api [twitter 等] 来作为数据源加载数据</span><br></pre></td></tr></table></figure>
+<ul>
+<li>处理数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">处理数据，这是重点中的重点，不过不外乎都是从三个方面来完成这里的数据清理，逻辑运算等:</span><br><span class="line">    - 自定义的一些复杂处理函数或者第三方包 [下面我们称为函数集]</span><br><span class="line">    - 通过 RDD 的 transform，action 和函数集来完成整个处理，计算流程</span><br><span class="line">    - 通过 RDD 提供的 cache，persist，checkpoint 方法把一些处理流程中的重要处理节点和常用数据缓存和备份，以加速处理，计算速度</span><br></pre></td></tr></table></figure>
+<ul>
+<li>结果展示</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">结果展示，这里一般情况都是使用 RDD 的 collect，take，first，top 等方法把结果取出来，更常用的是先把结果取出来，放到一个数据库或文件系统上，然后再提供给专门展示结果的另一个 application 使用。</span><br></pre></td></tr></table></figure>
+<p>3、有向无环图（DGA）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">有向无环图，有向即有方向，无环即不可逆，其实更详细的说是一个时间上的先来后到，即祖先与子孙的关系，是不可逆的。</span><br></pre></td></tr></table></figure>
+<p><a href="http://baike.baidu.com/link?url=tzBdpDUcmMp-xu2Tf-dRatmMo3-B1yVMG5Jg9vM6FK5VB2lWBsbaqKUJhilj8D7N" target="_blank" rel="noopener">有向无环图（百度百科）</a></p>
+<p>4、RDD<br><a href="http://shiyanjun.cn/archives/744.html" target="_blank" rel="noopener">关于RDD的一篇论文翻译</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Spark的这些事（一）——Windows下spark开发环境搭建/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Spark的这些事（一）——Windows下spark开发环境搭建/" itemprop="url">Spark的这些事（一）——Windows下spark开发环境搭建</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T18:17:00+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>一、首先准备需要安装的软件<br>scala-2.10.4<br>下载地址：<a href="http://www.scala-lang.org/download/2.10.4.html" target="_blank" rel="noopener">http://www.scala-lang.org/download/2.10.4.html</a><br>scala-SDK-4.4.1-vfinal-2.11-win32.win32.x86_64<br>下载地址：<a href="http://scala-ide.org/" target="_blank" rel="noopener">http://scala-ide.org/</a><br>spark-1.6.2-bin-hadoop2.6<br>下载地址：<a href="http://spark.apache.org/" target="_blank" rel="noopener">http://spark.apache.org/</a></p>
+<p>当然还有jdk这里就不说了<br>scala-2.10.4下载后直接安装~</p>
+<p>scala-SDK-4.4.1-vfinal-2.11-win32.win32.x86_64和spark-1.6.2-bin-hadoop2.6下载后直接解压</p>
+<p>scalaIDE解压后就是一个eclipse，这个大家都比较熟悉了。打开IDE，在解压后的spark包中的lib文件夹下找到spark-assembly-1.6.2-hadoop2.6.0，添加到IDE中。<br>然后环境就搭建完成了~<br>下面就来开发一个测试程序试一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">package com.day1.spark</span><br><span class="line"></span><br><span class="line">import org.apache.spark.SparkConf</span><br><span class="line">import org.apache.spark.SparkContext</span><br><span class="line"></span><br><span class="line">object WordCount &#123;</span><br><span class="line">  def  main(args: Array[String]): Unit = &#123;</span><br><span class="line">    </span><br><span class="line">    val conf = new SparkConf()</span><br><span class="line">    conf.setAppName(&quot;MY frist Spark App&quot;)</span><br><span class="line">    conf.setMaster(&quot;local&quot;)</span><br><span class="line">    </span><br><span class="line">    var sc = new SparkContext(conf)</span><br><span class="line">    </span><br><span class="line">    val lines = sc.textFile(&quot;D:\\test.txt&quot;, 1)</span><br><span class="line">    </span><br><span class="line">    val words = lines.flatMap &#123; line =&gt; line.split(&quot; &quot;) &#125;</span><br><span class="line">    </span><br><span class="line">    val pairs = words.map &#123; word =&gt; (word,1) &#125;</span><br><span class="line">    </span><br><span class="line">    val WordCount = pairs.reduceByKey(_+_)</span><br><span class="line">    </span><br><span class="line">    WordCount.foreach(wordNumberPair=&gt;println(wordNumberPair._1 + &quot;:&quot; + wordNumberPair._2))</span><br><span class="line">    </span><br><span class="line">    sc.stop()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>右键运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line">Using Spark&apos;s default log4j profile: org/apache/spark/log4j-defaults.properties</span><br><span class="line">16/07/18 19:07:04 INFO SparkContext: Running Spark version 1.6.2</span><br><span class="line">16/07/18 19:07:13 INFO SecurityManager: Changing view acls to: qinchaofeng</span><br><span class="line">16/07/18 19:07:13 INFO SecurityManager: Changing modify acls to: qinchaofeng</span><br><span class="line">16/07/18 19:07:13 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: Set(qinchaofeng); users with modify permissions: Set(qinchaofeng)</span><br><span class="line">16/07/18 19:07:14 INFO Utils: Successfully started service &apos;sparkDriver&apos; on port 50513.</span><br><span class="line">16/07/18 19:07:14 INFO Slf4jLogger: Slf4jLogger started</span><br><span class="line">16/07/18 19:07:14 INFO Remoting: Starting remoting</span><br><span class="line">16/07/18 19:07:14 INFO Remoting: Remoting started; listening on addresses :[akka.tcp://sparkDriverActorSystem@192.168.108.207:50526]</span><br><span class="line">16/07/18 19:07:14 INFO Utils: Successfully started service &apos;sparkDriverActorSystem&apos; on port 50526.</span><br><span class="line">16/07/18 19:07:14 INFO SparkEnv: Registering MapOutputTracker</span><br><span class="line">16/07/18 19:07:14 INFO SparkEnv: Registering BlockManagerMaster</span><br><span class="line">16/07/18 19:07:14 INFO DiskBlockManager: Created local directory at C:\Users\qinchaofeng\AppData\Local\Temp\blockmgr-25c047c4-505d-4cfb-addd-d777e5a430d7</span><br><span class="line">16/07/18 19:07:14 INFO MemoryStore: MemoryStore started with capacity 797.6 MB</span><br><span class="line">16/07/18 19:07:14 INFO SparkEnv: Registering OutputCommitCoordinator</span><br><span class="line">16/07/18 19:07:15 INFO Utils: Successfully started service &apos;SparkUI&apos; on port 4040.</span><br><span class="line">16/07/18 19:07:15 INFO SparkUI: Started SparkUI at http://192.168.108.207:4040</span><br><span class="line">16/07/18 19:07:15 INFO Executor: Starting executor ID driver on host localhost</span><br><span class="line">16/07/18 19:07:15 INFO Utils: Successfully started service &apos;org.apache.spark.network.netty.NettyBlockTransferService&apos; on port 50533.</span><br><span class="line">16/07/18 19:07:15 INFO NettyBlockTransferService: Server created on 50533</span><br><span class="line">16/07/18 19:07:15 INFO BlockManagerMaster: Trying to register BlockManager</span><br><span class="line">16/07/18 19:07:15 INFO BlockManagerMasterEndpoint: Registering block manager localhost:50533 with 797.6 MB RAM, BlockManagerId(driver, localhost, 50533)</span><br><span class="line">16/07/18 19:07:15 INFO BlockManagerMaster: Registered BlockManager</span><br><span class="line">16/07/18 19:07:15 INFO MemoryStore: Block broadcast_0 stored as values in memory (estimated size 153.6 KB, free 153.6 KB)</span><br><span class="line">16/07/18 19:07:15 INFO MemoryStore: Block broadcast_0_piece0 stored as bytes in memory (estimated size 13.9 KB, free 167.5 KB)</span><br><span class="line">16/07/18 19:07:15 INFO BlockManagerInfo: Added broadcast_0_piece0 in memory on localhost:50533 (size: 13.9 KB, free: 797.6 MB)</span><br><span class="line">16/07/18 19:07:15 INFO SparkContext: Created broadcast 0 from textFile at WordCount.scala:15</span><br><span class="line">16/07/18 19:07:16 WARN : Your hostname, qinchaofeng1 resolves to a loopback/non-reachable address: fe80:0:0:0:0:5efe:c0a8:6ccf%12, but we couldn&apos;t find any external IP address!</span><br><span class="line">16/07/18 19:07:24 INFO FileInputFormat: Total input paths to process : 1</span><br><span class="line">16/07/18 19:07:24 INFO SparkContext: Starting job: foreach at WordCount.scala:23</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Registering RDD 3 (map at WordCount.scala:19)</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Got job 0 (foreach at WordCount.scala:23) with 1 output partitions</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Final stage: ResultStage 1 (foreach at WordCount.scala:23)</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Parents of final stage: List(ShuffleMapStage 0)</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Missing parents: List(ShuffleMapStage 0)</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Submitting ShuffleMapStage 0 (MapPartitionsRDD[3] at map at WordCount.scala:19), which has no missing parents</span><br><span class="line">16/07/18 19:07:24 INFO MemoryStore: Block broadcast_1 stored as values in memory (estimated size 4.1 KB, free 171.6 KB)</span><br><span class="line">16/07/18 19:07:25 INFO MemoryStore: Block broadcast_1_piece0 stored as bytes in memory (estimated size 2.3 KB, free 173.8 KB)</span><br><span class="line">16/07/18 19:07:25 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on localhost:50533 (size: 2.3 KB, free: 797.6 MB)</span><br><span class="line">16/07/18 19:07:25 INFO SparkContext: Created broadcast 1 from broadcast at DAGScheduler.scala:1006</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: Submitting 1 missing tasks from ShuffleMapStage 0 (MapPartitionsRDD[3] at map at WordCount.scala:19)</span><br><span class="line">16/07/18 19:07:25 INFO TaskSchedulerImpl: Adding task set 0.0 with 1 tasks</span><br><span class="line">16/07/18 19:07:25 INFO TaskSetManager: Starting task 0.0 in stage 0.0 (TID 0, localhost, partition 0,PROCESS_LOCAL, 2108 bytes)</span><br><span class="line">16/07/18 19:07:25 INFO Executor: Running task 0.0 in stage 0.0 (TID 0)</span><br><span class="line">16/07/18 19:07:25 INFO HadoopRDD: Input split: file:/D:/test.txt:0+214</span><br><span class="line">16/07/18 19:07:25 INFO deprecation: mapred.tip.id is deprecated. Instead, use mapreduce.task.id</span><br><span class="line">16/07/18 19:07:25 INFO deprecation: mapred.task.id is deprecated. Instead, use mapreduce.task.attempt.id</span><br><span class="line">16/07/18 19:07:25 INFO deprecation: mapred.task.is.map is deprecated. Instead, use mapreduce.task.ismap</span><br><span class="line">16/07/18 19:07:25 INFO deprecation: mapred.task.partition is deprecated. Instead, use mapreduce.task.partition</span><br><span class="line">16/07/18 19:07:25 INFO deprecation: mapred.job.id is deprecated. Instead, use mapreduce.job.id</span><br><span class="line">16/07/18 19:07:25 INFO Executor: Finished task 0.0 in stage 0.0 (TID 0). 2253 bytes result sent to driver</span><br><span class="line">16/07/18 19:07:25 INFO TaskSetManager: Finished task 0.0 in stage 0.0 (TID 0) in 156 ms on localhost (1/1)</span><br><span class="line">16/07/18 19:07:25 INFO TaskSchedulerImpl: Removed TaskSet 0.0, whose tasks have all completed, from pool </span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: ShuffleMapStage 0 (map at WordCount.scala:19) finished in 0.156 s</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: looking for newly runnable stages</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: running: Set()</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: waiting: Set(ResultStage 1)</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: failed: Set()</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: Submitting ResultStage 1 (ShuffledRDD[4] at reduceByKey at WordCount.scala:21), which has no missing parents</span><br><span class="line">16/07/18 19:07:25 INFO MemoryStore: Block broadcast_2 stored as values in memory (estimated size 2.5 KB, free 176.3 KB)</span><br><span class="line">16/07/18 19:07:25 INFO MemoryStore: Block broadcast_2_piece0 stored as bytes in memory (estimated size 1583.0 B, free 177.9 KB)</span><br><span class="line">16/07/18 19:07:25 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on localhost:50533 (size: 1583.0 B, free: 797.6 MB)</span><br><span class="line">16/07/18 19:07:25 INFO SparkContext: Created broadcast 2 from broadcast at DAGScheduler.scala:1006</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 1 (ShuffledRDD[4] at reduceByKey at WordCount.scala:21)</span><br><span class="line">16/07/18 19:07:25 INFO TaskSchedulerImpl: Adding task set 1.0 with 1 tasks</span><br><span class="line">16/07/18 19:07:25 INFO TaskSetManager: Starting task 0.0 in stage 1.0 (TID 1, localhost, partition 0,NODE_LOCAL, 1894 bytes)</span><br><span class="line">16/07/18 19:07:25 INFO Executor: Running task 0.0 in stage 1.0 (TID 1)</span><br><span class="line">16/07/18 19:07:25 INFO ShuffleBlockFetcherIterator: Getting 1 non-empty blocks out of 1 blocks</span><br><span class="line">16/07/18 19:07:25 INFO ShuffleBlockFetcherIterator: Started 0 remote fetches in 16 ms</span><br><span class="line">avg_flow:1</span><br><span class="line">avg_flow_fee:1</span><br><span class="line">local_city_nm:1</span><br><span class="line">cust_num:1</span><br><span class="line">birthday:1</span><br><span class="line">Gender:1</span><br><span class="line">cust_nm:1</span><br><span class="line">join_net_time:1</span><br><span class="line">avg_call_fee:1</span><br><span class="line">net_age:1</span><br><span class="line">prov_code:1</span><br><span class="line">cmpgn:1</span><br><span class="line">buy_time:1</span><br><span class="line">using_meal:1</span><br><span class="line">chnl:1</span><br><span class="line">arpu:1</span><br><span class="line">term_brand:1</span><br><span class="line">term_model:1</span><br><span class="line">avg_call_times:1</span><br><span class="line">flow_pkg:1</span><br><span class="line">16/07/18 19:07:25 INFO Executor: Finished task 0.0 in stage 1.0 (TID 1). 1165 bytes result sent to driver</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: ResultStage 1 (foreach at WordCount.scala:23) finished in 0.062 s</span><br><span class="line">16/07/18 19:07:25 INFO TaskSetManager: Finished task 0.0 in stage 1.0 (TID 1) in 62 ms on localhost (1/1)</span><br><span class="line">16/07/18 19:07:25 INFO TaskSchedulerImpl: Removed TaskSet 1.0, whose tasks have all completed, from pool </span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: Job 0 finished: foreach at WordCount.scala:23, took 0.356812 s</span><br><span class="line">16/07/18 19:07:25 INFO SparkUI: Stopped Spark web UI at http://192.168.108.207:4040</span><br><span class="line">16/07/18 19:07:25 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!</span><br><span class="line">16/07/18 19:07:25 INFO MemoryStore: MemoryStore cleared</span><br><span class="line">16/07/18 19:07:25 INFO BlockManager: BlockManager stopped</span><br><span class="line">16/07/18 19:07:25 INFO BlockManagerMaster: BlockManagerMaster stopped</span><br><span class="line">16/07/18 19:07:25 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!</span><br><span class="line">16/07/18 19:07:25 INFO SparkContext: Successfully stopped SparkContext</span><br><span class="line">16/07/18 19:07:25 INFO ShutdownHookManager: Shutdown hook called</span><br><span class="line">16/07/18 19:07:25 INFO RemoteActorRefProvider$RemotingTerminator: Shutting down remote daemon.</span><br><span class="line">16/07/18 19:07:25 INFO ShutdownHookManager: Deleting directory C:\Users\qinchaofeng\AppData\Local\Temp\spark-c54f4cb1-7351-47d1-9fd4-fbdac0fae228</span><br></pre></td></tr></table></figure>
+<p>可以看到已经执行成功了！</p>
+<p><a href="https://github.com/windyqinchaofeng/Sparkcoding/blob/master/src/com/csap/spark/WordCount.scala" target="_blank" rel="noopener">源码</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（十四）——Vertica实时消费kafka实现/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1092,545 +1688,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（八）——-Vertica-管理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="qinchaofeng">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qinchaofeng的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（八）——-Vertica-管理/" itemprop="url">Vertica的这些事（八）——-Vertica-管理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:49:47+08:00">
-                2018-09-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>1、版本信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; SELECT version();</span><br><span class="line">              version               </span><br><span class="line">------------------------------------</span><br><span class="line"> Vertica Analytic Database v7.2.3-7</span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
-<p>2、license信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; SELECT DISPLAY_LICENSE();</span><br><span class="line">              DISPLAY_LICENSE              </span><br><span class="line">-------------------------------------------</span><br><span class="line"> HPE Vertica</span><br><span class="line">2/16/2016</span><br><span class="line">Perpetual</span><br><span class="line">3</span><br><span class="line">2 TB</span><br><span class="line"></span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
-<p>3、各节点硬盘使用情况</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SELECT /*+label(diag_disk_space_utilization)*/ </span><br><span class="line">       host_name, </span><br><span class="line">       ( disk_space_free_mb / 1024 )  AS disk_space_free_gb, </span><br><span class="line">       ( disk_space_used_mb / 1024 )  AS disk_space_used_gb, </span><br><span class="line">       ( disk_space_total_mb / 1024 ) AS disk_space_total_gb </span><br><span class="line">FROM   v_monitor.host_resources;</span><br></pre></td></tr></table></figure>
-<p>4、各节点内存使用情况</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SELECT /*+label(diag_memory_info)*/ </span><br><span class="line">       host_name, </span><br><span class="line">       total_memory_bytes / ( 1024^3 )           AS total_memory_gb, </span><br><span class="line">       total_memory_free_bytes / ( 1024^3 )      AS total_memory_free_gb, </span><br><span class="line">       total_swap_memory_bytes / ( 1024^3 )      AS total_swap_memory_gb, </span><br><span class="line">       total_swap_memory_free_bytes / ( 1024^3 ) AS total_swap_memory_free_gb </span><br><span class="line">FROM   v_monitor.host_resources;</span><br></pre></td></tr></table></figure>
-<p>5、每个scheme 数据使用情况</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">SELECT /*+label(diag_schema_space_utilization)*/ </span><br><span class="line">       pj.anchor_table_schema, </span><br><span class="line">       pj.used_compressed_gb, </span><br><span class="line">       pj.used_compressed_gb * la.ratio AS raw_estimate_gb </span><br><span class="line">FROM   (SELECT ps.anchor_table_schema, </span><br><span class="line">               SUM(used_bytes) / ( 1024^3 ) AS used_compressed_gb </span><br><span class="line">        FROM   v_catalog.projections p </span><br><span class="line">               JOIN v_monitor.projection_storage ps </span><br><span class="line">                 ON ps.projection_id = p.projection_id </span><br><span class="line">        WHERE  p.is_super_projection = &apos;t&apos; </span><br><span class="line">        GROUP  BY ps.anchor_table_schema) pj </span><br><span class="line">       CROSS JOIN (SELECT (SELECT database_size_bytes </span><br><span class="line">                           FROM   v_catalog.license_audits </span><br><span class="line">                           ORDER  BY audit_start_timestamp DESC </span><br><span class="line">                           LIMIT  1) / (SELECT SUM(used_bytes) </span><br><span class="line">                                        FROM   v_monitor.projection_storage) AS ratio) la </span><br><span class="line">ORDER  BY pj.used_compressed_gb DESC;</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（七）——-关于vertica的Connection-Failover/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="qinchaofeng">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qinchaofeng的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（七）——-关于vertica的Connection-Failover/" itemprop="url">Vertica的这些事（七）——-关于vertica的Connection-Failover</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:49:32+08:00">
-                2018-09-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近在生产中发现vertica有个别节点老是宕机（又碰到的童鞋交流下），实际业务中有Python通过odbc连接vertica，还有Java通过jdbc连接vertica。假如你连接的那个节点正好是down的节点或者是standby节点，那么就会连接失败，程序就会报错，影响正常业务。其实vertica官方文档已经给出了解决方法，下面我们来看一下如何实现。</p>
-<p><a href="https://my.vertica.com/docs/7.2.x/HTML/index.htm#Authoring/ConnectingToHPVertica/ClientODBC/ODBCConnectionFailover.htm?Highlight=ODBC%20Connection%20Failover" target="_blank" rel="noopener">ODBC Connection Failover</a></p>
-<p>官方给出的代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[VMartBadNode]</span><br><span class="line">Description=VMart Vertica Database</span><br><span class="line">Driver=/opt/vertica/lib64/libverticaodbc.so</span><br><span class="line">Database=VMart</span><br><span class="line">Servername=badnode.example.com</span><br><span class="line">BackupServerNode=node02.example.com,node03.example.com</span><br></pre></td></tr></table></figure>
-<p>其中上面的BackupServerNode就是备用的IP</p>
-<p><a href="https://my.vertica.com/docs/7.2.x/HTML/index.htm#Authoring/ConnectingToHPVertica/ClientJDBC/JDBCConnectionFailover.htm?Highlight=ODBC%20Connection%20Failover" target="_blank" rel="noopener">JDBC Connection Failover</a></p>
-<p>代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">import java.sql.*;</span><br><span class="line">import java.util.Properties;</span><br><span class="line"></span><br><span class="line">public class ConnectionFailoverExample &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        // Assume using JDBC 4.0 driver on JVM 6+. No driver loading needed.</span><br><span class="line">        Properties myProp = new Properties();</span><br><span class="line">        myProp.put(&quot;user&quot;, &quot;dbadmin&quot;);</span><br><span class="line">        myProp.put(&quot;password&quot;, &quot;vertica&quot;);</span><br><span class="line">        // Set two backup hosts to be used if connecting to the first host</span><br><span class="line">        // fails. All of these hosts will be tried in order until the connection</span><br><span class="line">        // succeeds or all of the connections fail.</span><br><span class="line">        myProp.put(&quot;BackupServerNode&quot;, &quot;VerticaHost02,VerticaHost03&quot;);</span><br><span class="line">        Connection conn;</span><br><span class="line">        try &#123;</span><br><span class="line">            // The connection string is set to try to connect to a known</span><br><span class="line">            // bnad host (in this case, a host that never existed). </span><br><span class="line">            conn = DriverManager.getConnection(</span><br><span class="line">                    &quot;jdbc:vertica://BadVerticaHost:5433/vmart&quot;, myProp);</span><br><span class="line">            System.out.println(&quot;Connected!&quot;);</span><br><span class="line">            // Query system to table to see what node we are connected to. </span><br><span class="line">            // Assume a single row in response set.            </span><br><span class="line">            Statement stmt = conn.createStatement();</span><br><span class="line">            ResultSet rs = stmt.executeQuery(</span><br><span class="line">                    &quot;SELECT node_name FROM v_monitor.current_session;&quot;);      </span><br><span class="line">            rs.next();</span><br><span class="line">            System.out.println(&quot;Connected to node &quot; + rs.getString(1).trim());</span><br><span class="line">            // Done with connection.</span><br><span class="line">            conn.close();</span><br><span class="line">        &#125; catch (SQLException e) &#123;</span><br><span class="line">            // Catch-all for other exceptions</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>另外也可以通过jdbc连接串来实现：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:vertica://192.168.000.00:5433/DBname?ConnectionLoadBalance=1&amp;BackupServerNode=192.168.000.01:5433,192.168.000.02:5433</span><br></pre></td></tr></table></figure>
-<p>其中ConnectionLoadBalance是vertica的负载均衡，如果在库中没有开启该功能的话，此时是没有作用的，不影响。<br>开启ConnectionLoadBalance的话，需要管理员账户</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT SET_LOAD_BALANCE_POLICY(&apos;ROUNDROBIN&apos;);</span><br></pre></td></tr></table></figure>
-<p>取消该功能：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT SET_LOAD_BALANCE_POLICY(&apos;NONE&apos;);</span><br></pre></td></tr></table></figure>
-<p>查询是否开启：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT GET_LOAD_BALANCE_POLICY();</span><br></pre></td></tr></table></figure>
-<p>通过这次设置，加了几个备用连接节点，确保业务正常。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（六）——-vertica中group-by-和join-语句的优化/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="qinchaofeng">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qinchaofeng的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（六）——-vertica中group-by-和join-语句的优化/" itemprop="url">Vertica的这些事（六）——-vertica中group-by-和join-语句的优化</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:49:20+08:00">
-                2018-09-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>vertica group by优化语句，先对语句进行explain 操作查看预执行计划，其中group by 分为 GROUPBY PIPELINED 和 GROUPBY HASH，通过执行计划可以清楚的看到vertica到底采用的那种执行方式，优化一般就是吧GROUPBY HASH优化为GROUPBY PIPELINED<br>下面讲一下官网举得例子</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE sortopt (</span><br><span class="line">    a INT NOT NULL, </span><br><span class="line">    b INT NOT NULL,</span><br><span class="line">    c INT,</span><br><span class="line">    d INT</span><br><span class="line">);</span><br><span class="line">CREATE PROJECTION sortopt_p (</span><br><span class="line">   a_proj,</span><br><span class="line">   b_proj,</span><br><span class="line">   c_proj,</span><br><span class="line">   d_proj )</span><br><span class="line">AS SELECT * FROM sortopt</span><br><span class="line">ORDER BY a,b,c </span><br><span class="line">UNSEGMENTED ALL NODES;</span><br><span class="line">INSERT INTO sortopt VALUES(5,2,13,84);</span><br><span class="line">INSERT INTO sortopt VALUES(14,22,8,115);</span><br><span class="line">INSERT INTO sortopt VALUES(79,9,401,33);</span><br></pre></td></tr></table></figure>
-<ul>
-<li><strong>第一种情况</strong></li>
-<li>GROUP BY a<br>GROUP BY a,b<br>GROUP BY b,a<br>GROUP BY a,b,c<br>GROUP BY c,a,b<br>如果是按照上面的这种group by 则使用的是GROUPBY PIPELINED，因为group by 后的字段全部在projection中预排序</li>
-<li>GROUP BY a,b,c,d</li>
-<li><p>这种情况则是采用的GROUPBY HASH 不建议~</p>
-</li>
-<li><p><strong>第二种情况</strong><br>GROUP BY a,c<br>执行 按照GROUPBY HASH  因为a,c字段没有相邻，如果是<br>GROUP BY a,c或者GROUP BY b,c则会按照GROUPBY PIPELINED 执行</p>
-</li>
-<li><p><strong>第三种情况</strong></p>
-</li>
-<li>group by 之前有 where条件时</li>
-</ul>
-<blockquote>
-<p> SELECT a FROM tab WHERE a = 10 GROUP BY b  此时按照 GROUPBY PIPELINED</p>
-<p>SELECT a FROM tab WHERE a = 10 GROUP BY c 此时按照 GROUPBY HASH 以为按照c排序的<br>处理的所有的 Projectionn 列的列未出现在  where  子句等值条件中，如果上如改为SELECT a FROM tab<br>WHERE a = 10 and b=10 GROUP BY c 则会按照GROUPBY PIPELINED 执行</p>
-</blockquote>
-<p>通过以上3中情况的介绍，希望大家对vertica的group by有一定的理解。</p>
-<p>**&gt; 关于join vertica会有两种执行方式 Merge Join 和Hash join ，建议关联是要走Merge join</p>
-<blockquote>
-<p>执行Merge  join的必要条件就是 关联的字段要在两个表中预排序，也就是要是两个表的order by 字段**</p>
-</blockquote>
-<p>可以参考官网<a href="https://my.vertica.com/docs/7.2.x/HTML/index.htm#Authoring/AnalyzingData/SQLAnalytics/AvoidingGROUPBYHASHWithProjectionDesign.htm?TocPath=Analyzing%2520Data%7COptimizing%2520Query%2520Performance%7CGROUP%2520BY%2520Queries%7C_____1" target="_blank" rel="noopener">Avoiding GROUP BY HASH with Projection Design</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（五）——-谈谈vertica的flex-table/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="qinchaofeng">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qinchaofeng的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（五）——-谈谈vertica的flex-table/" itemprop="url">Vertica的这些事（五）——-谈谈vertica的flex-table</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:49:06+08:00">
-                2018-09-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Json格式对于现在所有的软件开发者都不陌生，很多数据格式都用他来存储，我们来看一下vertica是怎么处理json数据的。这就是vertica的flex-table！"><a href="#Json格式对于现在所有的软件开发者都不陌生，很多数据格式都用他来存储，我们来看一下vertica是怎么处理json数据的。这就是vertica的flex-table！" class="headerlink" title="Json格式对于现在所有的软件开发者都不陌生，很多数据格式都用他来存储，我们来看一下vertica是怎么处理json数据的。这就是vertica的flex table！"></a>Json格式对于现在所有的软件开发者都不陌生，很多数据格式都用他来存储，我们来看一下vertica是怎么处理json数据的。这就是vertica的flex table！</h1><h2 id="首先创建一个json文件："><a href="#首先创建一个json文件：" class="headerlink" title="首先创建一个json文件："></a>首先创建一个json文件：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;name&quot;: &quot;Everest&quot;, &quot;type&quot;:&quot;mountain&quot;, &quot;height&quot;:29029, &quot;hike_safety&quot;: 34.1&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Mt St Helens&quot;, &quot;type&quot;:&quot;volcano&quot;, &quot;height&quot;:29029, &quot;hike_safety&quot;: 15.4&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Denali&quot;, &quot;type&quot;:&quot;mountain&quot;, &quot;height&quot;:17000, &quot;hike_safety&quot;: 12.2&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Kilimanjaro&quot;, &quot;type&quot;:&quot;mountain&quot;, &quot;height&quot;:14000 &#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Mt Washington&quot;, &quot;type&quot;:&quot;mountain&quot;, &quot;hike_safety&quot;: 50.6&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="然后我们创建一个flex-table："><a href="#然后我们创建一个flex-table：" class="headerlink" title="然后我们创建一个flex table："></a>然后我们创建一个flex table：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; CREATE FLEX TABLE start_json();</span><br><span class="line">CREATE TABLE</span><br></pre></td></tr></table></figure>
-<h2 id="然后把数据copy进去："><a href="#然后把数据copy进去：" class="headerlink" title="然后把数据copy进去："></a>然后把数据copy进去：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; COPY start_json FROM &apos;/home/dbadmin/qcfData/*json*&apos; PARSER fjsonparser();</span><br><span class="line"> Rows Loaded </span><br><span class="line">-------------</span><br><span class="line">           5</span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
-<h2 id="查询结果："><a href="#查询结果：" class="headerlink" title="查询结果："></a>查询结果：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; select * from start_json();</span><br><span class="line">ERROR 4256:  Only relations and subqueries are allowed in the FROM clause</span><br><span class="line">dbadmin=&gt;  SELECT maptostring(__raw__) FROM start_json;</span><br><span class="line">                                               maptostring                                                </span><br><span class="line">----------------------------------------------------------------------------------------------------------</span><br><span class="line"> &#123;</span><br><span class="line">   &quot;height&quot; : &quot;29029&quot;,</span><br><span class="line">   &quot;hike_safety&quot; : &quot;34.1&quot;,</span><br><span class="line">   &quot;name&quot; : &quot;Everest&quot;,</span><br><span class="line">   &quot;type&quot; : &quot;mountain&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> &#123;</span><br><span class="line">   &quot;height&quot; : &quot;29029&quot;,</span><br><span class="line">   &quot;hike_safety&quot; : &quot;15.4&quot;,</span><br><span class="line">   &quot;name&quot; : &quot;Mt St Helens&quot;,</span><br><span class="line">   &quot;type&quot; : &quot;volcano&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> &#123;</span><br><span class="line">   &quot;height&quot; : &quot;17000&quot;,</span><br><span class="line">   &quot;hike_safety&quot; : &quot;12.2&quot;,</span><br><span class="line">   &quot;name&quot; : &quot;Denali&quot;,</span><br><span class="line">   &quot;type&quot; : &quot;mountain&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> &#123;</span><br><span class="line">   &quot;height&quot; : &quot;14000&quot;,</span><br><span class="line">   &quot;name&quot; : &quot;Kilimanjaro&quot;,</span><br><span class="line">   &quot;type&quot; : &quot;mountain&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> &#123;</span><br><span class="line">   &quot;hike_safety&quot; : &quot;50.6&quot;,</span><br><span class="line">   &quot;name&quot; : &quot;Mt Washington&quot;,</span><br><span class="line">   &quot;type&quot; : &quot;mountain&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">(5 rows)</span><br></pre></td></tr></table></figure>
-<h2 id="发现很好的解析了json文件，并且格式化了文件。"><a href="#发现很好的解析了json文件，并且格式化了文件。" class="headerlink" title="发现很好的解析了json文件，并且格式化了文件。"></a>发现很好的解析了json文件，并且格式化了文件。</h2><h2 id="查询json数据："><a href="#查询json数据：" class="headerlink" title="查询json数据："></a>查询json数据：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt;  SELECT start_json.type,start_json.name FROM start_json;</span><br><span class="line">   type   |     name      </span><br><span class="line">----------+---------------</span><br><span class="line"> mountain | Everest</span><br><span class="line"> volcano  | Mt St Helens</span><br><span class="line"> mountain | Denali</span><br><span class="line"> mountain | Kilimanjaro</span><br><span class="line"> mountain | Mt Washington</span><br><span class="line">(5 rows)</span><br></pre></td></tr></table></figure>
-<p>此时如果使用 * 查询 会出现乱码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM start_json;</span><br></pre></td></tr></table></figure>
-<p>需要使用函数 compute_flextable_keys</p>
-<p>select compute_flextable_keys(‘start_json’);</p>
-<p>然后查询就可以有结果</p>
-<h2 id="综上，flex-table-对json格式的数据提供了很好的存储于展示。"><a href="#综上，flex-table-对json格式的数据提供了很好的存储于展示。" class="headerlink" title="综上，flex table 对json格式的数据提供了很好的存储于展示。"></a>综上，flex table 对json格式的数据提供了很好的存储于展示。</h2>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1681,7 +1738,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
