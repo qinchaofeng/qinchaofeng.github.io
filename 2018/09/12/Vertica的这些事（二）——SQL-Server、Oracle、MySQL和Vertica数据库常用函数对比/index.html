@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="SQL Server、Oracle、MySQL和Vertica数据库常用函数对比Vertica数据库是HP公司新收购的用于BI方面的数据库。  绝对值  1234567S:select abs(-1) valueO:select abs(-1) value from dualM:select abs(-1) value from dualV:select abs(-1)  向上取整  123456">
+<meta name="keywords" content="vertica">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比">
+<meta property="og:url" content="http://yoursite.com/2018/09/12/Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比/index.html">
+<meta property="og:site_name" content="qinchaofeng的博客">
+<meta property="og:description" content="SQL Server、Oracle、MySQL和Vertica数据库常用函数对比Vertica数据库是HP公司新收购的用于BI方面的数据库。  绝对值  1234567S:select abs(-1) valueO:select abs(-1) value from dualM:select abs(-1) value from dualV:select abs(-1)  向上取整  123456">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-12T04:51:36.212Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比">
+<meta name="twitter:description" content="SQL Server、Oracle、MySQL和Vertica数据库常用函数对比Vertica数据库是HP公司新收购的用于BI方面的数据库。  绝对值  1234567S:select abs(-1) valueO:select abs(-1) value from dualM:select abs(-1) value from dualV:select abs(-1)  向上取整  123456">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/12/Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比/"/>
+
+
+
+
+
+  <title>Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比 | qinchaofeng的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">qinchaofeng的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">大数据实践者</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:48:08+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>SQL Server、Oracle、MySQL和Vertica数据库常用函数对比<br>Vertica数据库是HP公司新收购的用于BI方面的数据库。</p>
+<ol>
+<li>绝对值</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select abs(-1) value</span><br><span class="line"></span><br><span class="line">O:select abs(-1) value from dual</span><br><span class="line"></span><br><span class="line">M:select abs(-1) value from dual</span><br><span class="line"></span><br><span class="line">V:select abs(-1)</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>向上取整</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select ceiling(-1.001) value</span><br><span class="line"></span><br><span class="line">O:select ceil(-1.001) value from dual</span><br><span class="line"></span><br><span class="line">M:select ceil(-1.001) value from dual</span><br><span class="line"></span><br><span class="line">V:select ceil(-1.001)</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>向下取整</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select floor(-1.001) value</span><br><span class="line"></span><br><span class="line">O:select floor(-1.001) value from dual</span><br><span class="line"></span><br><span class="line">M:select floor(-1.001) value from dual</span><br><span class="line"></span><br><span class="line">V:select floor(-1.001)</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>取整（截取）</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">S:select cast(-1.002 as int) value</span><br><span class="line"></span><br><span class="line">O:select trunc(-1.002) value from dual</span><br><span class="line"></span><br><span class="line">V:select trunc(-1.002)</span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li>四舍五入</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select round(1.23456,4) value 1.23460</span><br><span class="line"></span><br><span class="line">O:select round(1.23456,4) value from dual 1.2346</span><br><span class="line"></span><br><span class="line">M:select round(1.23456,4) value from dual 1.2346</span><br><span class="line"></span><br><span class="line">V:select round(1.23456,4.0)</span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li>e为底的幂</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select Exp(1) value 2.71828182845905</span><br><span class="line"></span><br><span class="line">O:select Exp(1) value from dual 2.71828182</span><br><span class="line"></span><br><span class="line">M:select Exp(1) value from dual 2.718281828459045</span><br><span class="line"></span><br><span class="line">V:select Exp(1.0) 2.71828182845905</span><br></pre></td></tr></table></figure>
+<ol start="7">
+<li>取e为底的对数</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select log(2.7182818284590451) value 1</span><br><span class="line"></span><br><span class="line">O:select ln(2.7182818284590451) value from dual; 1</span><br><span class="line"></span><br><span class="line">M:select ln(2.7182818284590451) value from dual; 1</span><br><span class="line"></span><br><span class="line">V: select ln(2.7182818284590451) 1</span><br></pre></td></tr></table></figure>
+<ol start="8">
+<li>取10为底对数</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select log10(10) value 1</span><br><span class="line"></span><br><span class="line">O:select log(10,10) value from dual; 1</span><br><span class="line"></span><br><span class="line">M:select log(10,10) value from dual; 1</span><br><span class="line"></span><br><span class="line">M: select log(10,10) 1</span><br></pre></td></tr></table></figure>
+<ol start="9">
+<li>取平方</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select SQUARE(4) value 16</span><br><span class="line"></span><br><span class="line">O:select power(4,2) value from dual 16</span><br><span class="line"></span><br><span class="line">M:select power(4,2) value from dual 16</span><br><span class="line"></span><br><span class="line">V:select power(4,2) 16</span><br></pre></td></tr></table></figure>
+<ol start="10">
+<li>取平方根</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select SQRT(4) value 2</span><br><span class="line"></span><br><span class="line">O:select SQRT(4) value from dual 2</span><br><span class="line"></span><br><span class="line">M:select SQRT(4) value from dual 2</span><br><span class="line"></span><br><span class="line">V:select SQRT(4) 2</span><br></pre></td></tr></table></figure>
+<ol start="11">
+<li>求任意数为底的幂</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select power(3,4) value 81</span><br><span class="line"></span><br><span class="line">O:select power(3,4) value from dual 81</span><br><span class="line"></span><br><span class="line">M:select power(3,4) value from dual 81</span><br><span class="line"></span><br><span class="line">V:select power(3,4) 81</span><br></pre></td></tr></table></figure>
+<ol start="12">
+<li>取随机数</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select rand() value</span><br><span class="line"></span><br><span class="line">O:select sys.dbms_random.value(0,1) value from dual;</span><br><span class="line"></span><br><span class="line">M:select rand() value from dual;</span><br><span class="line"></span><br><span class="line">V:select random()</span><br></pre></td></tr></table></figure>
+<ol start="13">
+<li>取符号</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select sign(-8) value -1</span><br><span class="line"></span><br><span class="line">O:select sign(-8) value from dual -1</span><br><span class="line"></span><br><span class="line">M:select sign(-8) value from dual -1</span><br><span class="line"></span><br><span class="line">V:select sign(-8) -1</span><br></pre></td></tr></table></figure>
+<ol start="14">
+<li>圆周率</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:SELECT PI() value 3.14159265358979</span><br><span class="line"></span><br><span class="line">O: SELECT ACOS(-1) FROM DUAL;</span><br><span class="line"></span><br><span class="line">M: SELECT ACOS(-1) FROM DUAL; 3.141592653589793</span><br><span class="line"></span><br><span class="line">V: SELECT PI() 3.14159265358979</span><br></pre></td></tr></table></figure>
+<p>数值间比较</p>
+<ol start="15">
+<li>求集合最大值</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">S:select max(value) value from</span><br><span class="line"></span><br><span class="line">(select 1 value</span><br><span class="line"></span><br><span class="line">union</span><br><span class="line"></span><br><span class="line">select -2 value</span><br><span class="line"></span><br><span class="line">union</span><br><span class="line"></span><br><span class="line">select 4 value</span><br><span class="line"></span><br><span class="line">union</span><br><span class="line"></span><br><span class="line">select 3 value)a</span><br><span class="line"></span><br><span class="line">O:select greatest(1,-2,4,3) value from dual</span><br><span class="line"></span><br><span class="line">M:select greatest(1,-2,4,3) value from dual</span><br><span class="line"></span><br><span class="line">V:select greatest(1,-2,4,3)</span><br></pre></td></tr></table></figure>
+<ol start="16">
+<li>求集合最小值</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">S:select min(value) value from</span><br><span class="line"></span><br><span class="line">(select 1 value</span><br><span class="line"></span><br><span class="line">Union</span><br><span class="line"></span><br><span class="line">select -2 value</span><br><span class="line"></span><br><span class="line">union</span><br><span class="line"></span><br><span class="line">select 4 value</span><br><span class="line"></span><br><span class="line">union</span><br><span class="line"></span><br><span class="line">select 3 value)a</span><br><span class="line"></span><br><span class="line">O:select least(1,-2,4,3) value from dual</span><br><span class="line"></span><br><span class="line">M:select least(1,-2,4,3) value from dual</span><br><span class="line"></span><br><span class="line">V:select least(1,-2,4,3)</span><br></pre></td></tr></table></figure>
+<ol start="17">
+<li>如何处理null值(F2中的null以10代替)</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Create table tbl (f1 varchar(10),f2 int);</span><br><span class="line"></span><br><span class="line">Insert into tbl(f1,f2) values(‘aa’,null);</span><br><span class="line"></span><br><span class="line">Insert into tbl(f1,f2) values(‘bb’,7);</span><br><span class="line"></span><br><span class="line">S:select F1,IsNull(F2,10) value from Tbl</span><br><span class="line"></span><br><span class="line">O:select F1,nvl(F2,10) value from Tbl</span><br><span class="line"></span><br><span class="line">M:select F1,ifnull(F2,10) value from Tbl</span><br><span class="line"></span><br><span class="line">V:select F1,IsNull(F2,10) value from Tbl</span><br></pre></td></tr></table></figure>
+<ol start="18">
+<li>求字符ascii码</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select ascii(&apos;a&apos;) value</span><br><span class="line"></span><br><span class="line">O:select ascii(&apos;a&apos;) value from dual</span><br><span class="line"></span><br><span class="line">M:select ascii(&apos;a&apos;) value from dual</span><br><span class="line"></span><br><span class="line">V:select ascii(&apos;a&apos;)</span><br></pre></td></tr></table></figure>
+<ol start="19">
+<li>从ascii码求字符</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select char(97) value</span><br><span class="line"></span><br><span class="line">O:select chr(97) value from dual</span><br><span class="line"></span><br><span class="line">M:select char(97) value from dual</span><br><span class="line"></span><br><span class="line">V:select chr(97)</span><br></pre></td></tr></table></figure>
+<ol start="20">
+<li>连接字符串</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select &apos;11&apos;+&apos;22&apos;+&apos;33&apos; value</span><br><span class="line"></span><br><span class="line">O:select CONCAT(&apos;11&apos;,&apos;22&apos;)　　33 value from dual</span><br><span class="line"></span><br><span class="line">M:select concat(&apos;11&apos;,&apos;22&apos;,&apos;33&apos;) value</span><br><span class="line"></span><br><span class="line">V:select &apos;11&apos;||&apos;22&apos;||&apos;33&apos;</span><br></pre></td></tr></table></figure>
+<ol start="21">
+<li>子串位置 –返回3</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select CHARINDEX(&apos;s&apos;,&apos;sdsq&apos;,2) value</span><br><span class="line"></span><br><span class="line">O:select INSTR(&apos;sdsq&apos;,&apos;s&apos;,2) value from dual</span><br><span class="line"></span><br><span class="line">M:select LOCATE(&apos;s&apos;,&apos;sdsq&apos;,2) value from dual</span><br><span class="line"></span><br><span class="line">V:select INSTR(&apos;sdsq&apos;,&apos;s&apos;,2)</span><br></pre></td></tr></table></figure>
+<ol start="22">
+<li>求子串</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select substring(&apos;abcd&apos;,2,2) value</span><br><span class="line"></span><br><span class="line">O:select substr(&apos;abcd&apos;,2,2) value from dual</span><br><span class="line"></span><br><span class="line">M:select substr(&apos;abcd&apos;,2,2) value from dual</span><br><span class="line"></span><br><span class="line">V:select substr(&apos;abcd&apos;,2,2)</span><br></pre></td></tr></table></figure>
+<ol start="23">
+<li>子串代替 返回aijklmnef</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:SELECT STUFF(&apos;abcdef&apos;, 2, 3, &apos;ijklmn&apos;) value</span><br><span class="line"></span><br><span class="line">O:SELECT Replace(&apos;abcdef&apos;, &apos;bcd&apos;, &apos;ijklmn&apos;) value from dual</span><br><span class="line"></span><br><span class="line">M:SELECT Replace(&apos;abcdef&apos;, &apos;bcd&apos;, &apos;ijklmn&apos;) value from dual</span><br><span class="line"></span><br><span class="line">V:SELECT Replace(&apos;abcdef&apos;, &apos;bcd&apos;, &apos;ijklmn&apos;)</span><br></pre></td></tr></table></figure>
+<ol start="24">
+<li>字符串长度</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">S:len,datalength</span><br><span class="line"></span><br><span class="line">O: select length(&apos;aaa&apos;) value from dual</span><br><span class="line"></span><br><span class="line">M: select length(&apos;aaa&apos;) value from dual</span><br><span class="line"></span><br><span class="line">V: select length(&apos;aaa &apos;::CHAR(10))</span><br><span class="line"></span><br><span class="line">Select length(&apos;aaa &apos;::varchar(10))</span><br><span class="line"></span><br><span class="line">select length(&apos;aaa&apos;)</span><br></pre></td></tr></table></figure>
+<ol start="25">
+<li>大小写转换 lower,upper</li>
+<li>左补空格（LPAD的第一个参数为空格则同space函数）</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select space(10)+&apos;abcd&apos; value</span><br><span class="line"></span><br><span class="line">O:select LPAD(&apos;abcd&apos;,14) value from dual</span><br><span class="line"></span><br><span class="line">M:select LPAD(&apos;abcd&apos;,14, &apos; &apos;) value from dual</span><br><span class="line"></span><br><span class="line">V:select LPAD(&apos;abcd&apos;,14, &apos; &apos;) value from dual</span><br></pre></td></tr></table></figure>
+<ol start="27">
+<li>右补空格（RPAD的第一个参数为空格则同space函数）</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select &apos;abcd&apos;+space(10) value</span><br><span class="line"></span><br><span class="line">O:select RPAD(&apos;abcd&apos;,14) value from dual</span><br><span class="line"></span><br><span class="line">M:select RPAD(&apos;abcd&apos;,14, &apos; &apos;) value from dual</span><br><span class="line"></span><br><span class="line">V:select RPAD(&apos;abcd&apos;,14, &apos; &apos;) value from dual</span><br></pre></td></tr></table></figure>
+<ol start="28">
+<li>删除空格</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:ltrim,rtrim</span><br><span class="line"></span><br><span class="line">O:ltrim,rtrim,trim</span><br><span class="line"></span><br><span class="line">M:ltrim,rtrim,trim</span><br><span class="line"></span><br><span class="line">V:ltrim,rtrim,trim</span><br></pre></td></tr></table></figure>
+<p>日期函数</p>
+<ol start="29">
+<li>系统时间</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">S:select getdate() value</span><br><span class="line"></span><br><span class="line">O:select sysdate value from dual</span><br><span class="line"></span><br><span class="line">M:select now() value from dual</span><br><span class="line"></span><br><span class="line">V:select sysdate()</span><br><span class="line"></span><br><span class="line">select getdate()</span><br><span class="line"></span><br><span class="line">select now() 会显示时区</span><br></pre></td></tr></table></figure>
+<ol start="30">
+<li>前后几日</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:直接与整数相加减</span><br><span class="line"></span><br><span class="line">O:直接与整数相加减</span><br><span class="line"></span><br><span class="line">M: select now()+interval 1 day value from dual</span><br><span class="line"></span><br><span class="line">V:直接与整数相加减</span><br></pre></td></tr></table></figure>
+<ol start="31">
+<li>求日期</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">S:select convert(char(10),getdate(),20) value</span><br><span class="line"></span><br><span class="line">O:select trunc(sysdate) value from dual</span><br><span class="line"></span><br><span class="line">select to_char(sysdate,&apos;yyyy-mm-dd&apos;) value from dual</span><br><span class="line"></span><br><span class="line">M:select DATE_FORMAT(NOW(),&apos;%Y-%m-%d&apos;) value from dual;</span><br><span class="line"></span><br><span class="line">V:select to_char(sysdate(),&apos;YYYY-MM-DD&apos;)</span><br></pre></td></tr></table></figure>
+<ol start="32">
+<li>求时间</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S:select convert(char(8),getdate(),108) value</span><br><span class="line"></span><br><span class="line">O:select to_char(sysdate,&apos;hh24:mm:ss&apos;) value from dual</span><br><span class="line"></span><br><span class="line">M:select DATE_FORMAT(NOW(),&apos;%T&apos;) value from dual</span><br><span class="line"></span><br><span class="line">V:select to_char(sysdate,&apos;hh24:mi:ss&apos;)</span><br></pre></td></tr></table></figure>
+<ol start="33">
+<li>取日期时间的其他部分</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">S:DATEPART 和 DATENAME 函数 （第一个参数决定）</span><br><span class="line"></span><br><span class="line">O:to_char函数 第二个参数决定</span><br><span class="line"></span><br><span class="line">参数---------------------------------下表需要补充</span><br><span class="line"></span><br><span class="line">year yy, yyyy</span><br><span class="line"></span><br><span class="line">quarter qq, q (季度)</span><br><span class="line"></span><br><span class="line">month mm, m (m O无效)</span><br><span class="line"></span><br><span class="line">dayofyear dy, y (O表星期)</span><br><span class="line"></span><br><span class="line">day dd, d (d O无效)</span><br><span class="line"></span><br><span class="line">week wk, ww (wk O无效)</span><br><span class="line"></span><br><span class="line">weekday dw (O不清楚)</span><br><span class="line"></span><br><span class="line">Hour hh,hh12,hh24 (hh12,hh24 S无效)</span><br><span class="line"></span><br><span class="line">minute mi, n (n O无效)</span><br><span class="line"></span><br><span class="line">second ss, s (s O无效)</span><br><span class="line"></span><br><span class="line">millisecond ms (O无效)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line">M:date_format函数 第二个参数决定</span><br><span class="line"></span><br><span class="line">格式</span><br><span class="line"></span><br><span class="line">描述</span><br><span class="line"></span><br><span class="line">%a</span><br><span class="line"></span><br><span class="line">缩写星期名</span><br><span class="line"></span><br><span class="line">%b</span><br><span class="line"></span><br><span class="line">缩写月名</span><br><span class="line"></span><br><span class="line">%c</span><br><span class="line"></span><br><span class="line">月，数值</span><br><span class="line"></span><br><span class="line">%D</span><br><span class="line"></span><br><span class="line">带有英文前缀的月中的天</span><br><span class="line"></span><br><span class="line">%d</span><br><span class="line"></span><br><span class="line">月的天，数值(00-31)</span><br><span class="line"></span><br><span class="line">%e</span><br><span class="line"></span><br><span class="line">月的天，数值(0-31)</span><br><span class="line"></span><br><span class="line">%f</span><br><span class="line"></span><br><span class="line">微秒</span><br><span class="line"></span><br><span class="line">%H</span><br><span class="line"></span><br><span class="line">小时 (00-23)</span><br><span class="line"></span><br><span class="line">%h</span><br><span class="line"></span><br><span class="line">小时 (01-12)</span><br><span class="line"></span><br><span class="line">%I</span><br><span class="line"></span><br><span class="line">小时 (01-12)</span><br><span class="line"></span><br><span class="line">%i</span><br><span class="line"></span><br><span class="line">分钟，数值(00-59)</span><br><span class="line"></span><br><span class="line">%j</span><br><span class="line"></span><br><span class="line">年的天 (001-366)</span><br><span class="line"></span><br><span class="line">%k</span><br><span class="line"></span><br><span class="line">小时 (0-23)</span><br><span class="line"></span><br><span class="line">%l</span><br><span class="line"></span><br><span class="line">小时 (1-12)</span><br><span class="line"></span><br><span class="line">%M</span><br><span class="line"></span><br><span class="line">月名</span><br><span class="line"></span><br><span class="line">%m</span><br><span class="line"></span><br><span class="line">月，数值(00-12)</span><br><span class="line"></span><br><span class="line">%p</span><br><span class="line"></span><br><span class="line">AM 或 PM</span><br><span class="line"></span><br><span class="line">%r</span><br><span class="line"></span><br><span class="line">时间，12-小时（hh:mm:ss AM 或 PM）</span><br><span class="line"></span><br><span class="line">%S</span><br><span class="line"></span><br><span class="line">秒(00-59)</span><br><span class="line"></span><br><span class="line">%s</span><br></pre></td></tr></table></figure>
+<p>原地址：<a href="http://www.verydemo.com/demo_c152_i10134.html" target="_blank" rel="noopener">http://www.verydemo.com/demo_c152_i10134.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/12/Vertica的这些事（一）——VSQL常用命令/" rel="next" title="Vertica的这些事（一）——VSQL常用命令">
+                <i class="fa fa-chevron-left"></i> Vertica的这些事（一）——VSQL常用命令
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/12/Vertica的这些事（三）——Vertica中实现Oracle中的ws-concat功能/" rel="prev" title="Vertica的这些事（三）——Vertica中实现Oracle中的ws_concat功能">
+                Vertica的这些事（三）——Vertica中实现Oracle中的ws_concat功能 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">qinchaofeng</p>
+              <p class="site-description motion-element" itemprop="description">大数据实践的那些事</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qinchaofeng" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">qinchaofeng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js">
+  </script>
+  
+
+</body>
+</html>

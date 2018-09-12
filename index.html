@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="大数据实践的那些事">
+<meta name="keywords" content="vertica">
+<meta property="og:type" content="website">
+<meta property="og:title" content="qinchaofeng的博客">
+<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:site_name" content="qinchaofeng的博客">
+<meta property="og:description" content="大数据实践的那些事">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="qinchaofeng的博客">
+<meta name="twitter:description" content="大数据实践的那些事">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/"/>
+
+
+
+
+
+  <title>qinchaofeng的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left 
+  page-home">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">qinchaofeng的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">大数据实践者</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Spark的这些事（四）——Spark-on-yarn-动态资源配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Spark的这些事（四）——Spark-on-yarn-动态资源配置/" itemprop="url">Spark的这些事（四）——Spark-on-yarn-动态资源配置</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T18:17:31+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>一、YARN的配置</strong><br>首先需要对YARN进行配置，使其支持Spark的Shuffle Service。</p>
+<p>修改每台集群上的<code>yarn-site.xml</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> - 修改</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;</span><br><span class="line">&lt;value&gt;mapreduce_shuffle,spark_shuffle&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> - 增加</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.nodemanager.aux-services.spark_shuffle.class&lt;/name&gt;</span><br><span class="line">&lt;value&gt;org.apache.spark.network.yarn.YarnShuffleService&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;spark.shuffle.service.port&lt;/name&gt;</span><br><span class="line">&lt;value&gt;7337&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br></pre></td></tr></table></figure>
+<p>将<code>$SPARK_HOME/lib/spark-1.5.2-yarn-shuffle.jar</code>拷贝到每台<code>NodeManager的${HADOOP_HOME}/share/hadoop/yarn/lib/</code>下。<br>重启所有修改配置的节点。</p>
+<p><strong>二、Spark的配置</strong><br>配置<code>$SPARK_HOME/conf/spark-defaults.conf</code>，增加以下参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">spark.shuffle.service.enabled true   //启用External shuffle Service服务</span><br><span class="line">spark.shuffle.service.port 7337 //Shuffle Service默认服务端口，必须和yarn-site中的一致</span><br><span class="line">spark.dynamicAllocation.enabled true  //开启动态资源分配</span><br><span class="line">spark.dynamicAllocation.minExecutors 1  //每个Application最小分配的executor数</span><br><span class="line">spark.dynamicAllocation.maxExecutors 30  //每个Application最大并发分配的executor数</span><br><span class="line">spark.dynamicAllocation.schedulerBacklogTimeout 1s </span><br><span class="line">spark.dynamicAllocation.sustainedSchedulerBacklogTimeout 5s</span><br></pre></td></tr></table></figure>
+<p><strong>动态资源分配策略：</strong><br>开启动态分配策略后，application会在task因没有足够资源被挂起的时候去动态申请资源，这种情况意味着该application现有的executor无法满足所有task并行运行。spark一轮一轮的申请资源，当有task挂起或等待<code>spark.dynamicAllocation.schedulerBacklogTimeout</code>(默认1s)`时间的时候，会开始动态资源分配；之后会每隔spark.dynamicAllocation.sustainedSchedulerBacklogTimeout(默认1s)时间申请一次，直到申请到足够的资源。每次申请的资源量是指数增长的，即1,2,4,8等。<br>之所以采用指数增长，出于两方面考虑：其一，开始申请的少是考虑到可能application会马上得到满足；其次要成倍增加，是为了防止application需要很多资源，而该方式可以在很少次数的申请之后得到满足。</p>
+<p><strong>资源回收策略：</strong><br>当application的executor空闲时间超过<code>spark.dynamicAllocation.executorIdleTimeout（默认60s）</code>后，就会被回收。</p>
+<p>使用spark-sql On Yarn执行SQL，动态分配资源<br>以yarn-client模式启动ThriftServer</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd $SPARK_HOME/sbin/</span><br><span class="line">./start-thriftserver.sh \</span><br><span class="line">--master yarn-client \</span><br><span class="line">--conf spark.driver.memory=10G \</span><br><span class="line">--conf spark.shuffle.service.enabled=true \</span><br><span class="line">--conf spark.dynamicAllocation.enabled=true \</span><br><span class="line">--conf spark.dynamicAllocation.minExecutors=1 \</span><br><span class="line">--conf spark.dynamicAllocation.maxExecutors=300 \</span><br><span class="line">--conf spark.dynamicAllocation.sustainedSchedulerBacklogTimeout=5s</span><br></pre></td></tr></table></figure>
+<p>启动后，ThriftServer会在Yarn上作为一个长服务来运行：</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Spark的这些事（三）——spark常用的Transformations-和Actions/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Spark的这些事（三）——spark常用的Transformations-和Actions/" itemprop="url">Spark的这些事（三）——spark常用的Transformations-和Actions</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T18:17:23+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Transformations"><a href="#Transformations" class="headerlink" title="Transformations"></a><a href="http://spark.apache.org/docs/latest/programming-guide.html#transformations" target="_blank" rel="noopener">Transformations</a></h2><p><strong>map，filter</strong><br>spark最长用的两个Transformations：<strong>map，filter</strong>，下面就来介绍一下这两个。</p>
+<p>先看下面这张图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4579636-92d69157fe274d53?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>从上图中可以清洗的看到 map和filter都是做的什么工作，那我们就代码演示一下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">val input = sc.parallelize(List(1,2,3,4))</span><br><span class="line"></span><br><span class="line">val result1 = input.map(x=&gt;x*x)</span><br><span class="line">val result2 = input.filter(x=&gt;x!=1)</span><br><span class="line"></span><br><span class="line">print(result1.collect().mkString(&quot;,&quot;))</span><br><span class="line">print(&quot;\n&quot;)</span><br><span class="line">print(result2.collect().mkString(&quot;,&quot;))</span><br><span class="line">print(&quot;\n&quot;)</span><br></pre></td></tr></table></figure>
+<p>执行结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 18:48:31 INFO DAGScheduler: ResultStage 0 (collect at Map.scala:17) finished in 0.093 s</span><br><span class="line">16/08/17 18:48:31 INFO DAGScheduler: Job 0 finished: collect at Map.scala:17, took 0.268871 s</span><br><span class="line">1,4,9,16</span><br><span class="line">........</span><br><span class="line">16/08/17 18:48:31 INFO DAGScheduler: ResultStage 1 (collect at Map.scala:19) finished in 0.000 s</span><br><span class="line">16/08/17 18:48:31 INFO DAGScheduler: Job 1 finished: collect at Map.scala:19, took 0.018291 s</span><br><span class="line">2,3,4</span><br></pre></td></tr></table></figure>
+<p>再回头看下上面那张图，是不是明白什么意思了！</p>
+<p><strong>flatMap</strong><br>另外一个常用的就是flatMap，输入一串字符，分割出每个字符</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4579636-23f6c34d7f36ada3?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="map和flatmap的区别"></p>
+<p>来用代码实践一下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">val lines = sc.parallelize(List(&quot;hello world&quot;,&quot;hi&quot;))</span><br><span class="line">   val words = lines.flatMap (lines=&gt;lines.split(&quot; &quot;))</span><br><span class="line">   print(words.first())</span><br><span class="line">   print(&quot;\n&quot;)</span><br></pre></td></tr></table></figure></p>
+<p>执行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 19:23:24 INFO DAGScheduler: Job 2 finished: first at Map.scala:24, took 0.016987 s</span><br><span class="line">hello</span><br><span class="line">16/08/17 19:23:24 INFO SparkContext: Invoking stop() from shutdown hook</span><br></pre></td></tr></table></figure>
+<p>分隔符如果改一下的话：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">val words = lines.flatMap (lines=&gt;lines.split(&quot;,&quot;))</span><br></pre></td></tr></table></figure>
+<p>结果会怎样呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 19:33:14 INFO TaskSchedulerImpl: Removed TaskSet 2.0, whose tasks have all completed, from pool </span><br><span class="line">hello world</span><br><span class="line">16/08/17 19:33:14 INFO SparkContext: Invoking stop() from shutdown hook</span><br></pre></td></tr></table></figure>
+<p>和想象的一样吧~</p>
+<p><strong>distinct，distinct，intersection，subtract</strong><br>还有几个比较常用的：distinct，distinct，intersection，subtract</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4579636-1eea352bfe4e23e7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>来看看代码实践：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">val rdd1 = sc.parallelize(List(&quot;coffee&quot;,&quot;coffee&quot;,&quot;panda&quot;,&quot;monkey&quot;,&quot;tea&quot;))</span><br><span class="line">    val rdd2 = sc.parallelize(List(&quot;coffee&quot;,&quot;monkey&quot;,&quot;kitty&quot;))</span><br><span class="line">    </span><br><span class="line">    rdd1.distinct().take(100).foreach(println)</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 19:52:29 INFO DAGScheduler: ResultStage 4 (take at Map.scala:30) finished in 0.047 s</span><br><span class="line">16/08/17 19:52:29 INFO TaskSchedulerImpl: Removed TaskSet 4.0, whose tasks have all completed, from pool </span><br><span class="line">16/08/17 19:52:29 INFO DAGScheduler: Job 3 finished: take at Map.scala:30, took 0.152405 s</span><br><span class="line">monkey</span><br><span class="line">coffee</span><br><span class="line">panda</span><br><span class="line">tea</span><br><span class="line">16/08/17 19:52:29 INFO SparkContext: Starting job: take at Map.scala:32</span><br></pre></td></tr></table></figure>
+<p>代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdd1.union(rdd2).take(100).foreach(println)</span><br></pre></td></tr></table></figure></p>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">6/08/17 19:52:29 INFO DAGScheduler: Job 5 finished: take at Map.scala:32, took 0.011825 s</span><br><span class="line">coffee</span><br><span class="line">coffee</span><br><span class="line">panda</span><br><span class="line">monkey</span><br><span class="line">tea</span><br><span class="line">coffee</span><br><span class="line">monkey</span><br><span class="line">kitty</span><br><span class="line">16/08/17 19:52:30 INFO SparkContext: Starting job: take at Map.scala:34</span><br><span class="line">16/08/17 19:52:30 INFO DAGScheduler: Registering RDD 11 (intersection at Map.scala:34)</span><br><span class="line">16/08/17 19:52:30 INFO DAGScheduler: Registering RDD 12 (intersection at Map.scala:34)</span><br></pre></td></tr></table></figure>
+<p>代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdd1.intersection(rdd2).take(100).foreach(println)</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 19:52:30 INFO TaskSetManager: Finished task 0.0 in stage 9.0 (TID 9) in 31 ms on localhost (1/1)</span><br><span class="line">16/08/17 19:52:30 INFO TaskSchedulerImpl: Removed TaskSet 9.0, whose tasks have all completed, from pool </span><br><span class="line">16/08/17 19:52:30 INFO DAGScheduler: ResultStage 9 (take at Map.scala:34) finished in 0.031 s</span><br><span class="line">16/08/17 19:52:30 INFO DAGScheduler: Job 6 finished: take at Map.scala:34, took 0.060785 s</span><br><span class="line">monkey</span><br><span class="line">coffee</span><br><span class="line">16/08/17 19:52:30 INFO SparkContext: Starting job: take at Map.scala:36</span><br></pre></td></tr></table></figure>
+<p>代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdd1.subtract(rdd2).take(100).foreach(println)</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">16/08/17 19:52:30 INFO DAGScheduler: Job 6 finished: take at Map.scala:34, took 0.060785 s</span><br><span class="line">monkey</span><br><span class="line">coffee</span><br><span class="line">16/08/17 19:52:30 INFO SparkContext: Starting job: take at Map.scala:36</span><br></pre></td></tr></table></figure>
+<p>再看看上面的图，很容易理解吧</p>
+<h2 id="Actions"><a href="#Actions" class="headerlink" title="Actions"></a><a href="http://spark.apache.org/docs/latest/programming-guide.html#actions" target="_blank" rel="noopener">Actions</a></h2><p>常用的Transformations就介绍到这里，下面介绍下常用的Action:<br><strong>reduce,countByValue,takeOrdered,takeSample,aggregate</strong></p>
+<p>首先看一下：reduce</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">val rdd5 = sc.parallelize(List(1,2,3,4))</span><br><span class="line">print(&quot;reduce action:&quot;+rdd5.reduce((x,y)=&gt;x+y)+&quot;\n&quot;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">16/08/18 11:51:16 INFO DAGScheduler: Job 15 finished: reduce at Function.scala:55, took 0.012698 s</span><br><span class="line">reduce action:10</span><br><span class="line">16/08/18 11:51:16 INFO SparkContext: Starting job: aggregate at Function.scala:57</span><br></pre></td></tr></table></figure>
+<p><strong>countByValue</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(rdd1.countByValue() + &quot;\n&quot;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">16/08/18 11:51:16 INFO DAGScheduler: Job 11 finished: countByValue at Function.scala:48, took 0.031726 s</span><br><span class="line">Map(monkey -&gt; 1, coffee -&gt; 2, panda -&gt; 1, tea -&gt; 1)</span><br><span class="line">16/08/18 11:51:16 INFO SparkContext: Starting job: takeOrdered at Function.scala:50</span><br></pre></td></tr></table></figure>
+<p><strong>takeOrdered</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdd1.takeOrdered(10).take(100).foreach(println)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">16/08/18 11:51:16 INFO DAGScheduler: Job 12 finished: takeOrdered at Function.scala:50, took 0.026160 s</span><br><span class="line">coffee</span><br><span class="line">coffee</span><br><span class="line">monkey</span><br><span class="line">panda</span><br><span class="line">tea</span><br><span class="line">16/08/18 11:51:16 INFO SparkContext: Starting job: takeSample at Function.scala:52</span><br></pre></td></tr></table></figure>
+<p><strong>aggregate</strong><br>这个要重点介绍一下：</p>
+<blockquote>
+<p>Spark文档中aggregate函数定义如下<br>def aggregate<a href="zeroValue: U" target="_blank" rel="noopener">U</a>(seqOp: (U, T) ⇒ U, combOp: (U, U) ⇒ U)(implicit arg0: ClassTag[U]): U<br>Aggregate the elements of each partition, and then the results for all the partitions, using given combine functions and a neutral “zero value”. This function can return a different result type, U, than the type of this RDD, T. Thus, we need one operation for merging a T into an U and one operation for merging two U’s, as in scala.TraversableOnce. Both of these functions are allowed to modify and return their first argument instead of creating a new U to avoid memory allocation.  </p>
+<p>seqOp操作会聚合各分区中的元素，然后combOp操作把所有分区的聚合结果再次聚合，两个操作的初始值都是zeroValue.   seqOp的操作是遍历分区中的所有元素(T)，第一个T跟zeroValue做操作，结果再作为与第二个T做操作的zeroValue，直到遍历完整个分区。combOp操作是把各分区聚合的结果，再聚合。aggregate函数返回一个跟RDD不同类型的值。因此，需要一个操作seqOp来把分区中的元素T合并成一个U，另外一个操作combOp把所有U聚合。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">val rdd5 = sc.parallelize(List(1,2,3,4))</span><br><span class="line">val rdd6 = rdd5.aggregate((0, 0))  ((x, y) =&gt;(x._1 + y, x._2+1),  (x, y) =&gt;(x._1 + y._1, x._2 + y._2))</span><br><span class="line">    print (&quot;aggregate action : &quot; + rdd6 + &quot;\n&quot;  )</span><br></pre></td></tr></table></figure>
+<p>我们看一下结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">16/08/18 11:51:16 INFO DAGScheduler: Job 16 finished: aggregate at Function.scala:57, took 0.011686 s</span><br><span class="line">aggregate action : (10,4)</span><br><span class="line">16/08/18 11:51:16 INFO SparkContext: Invoking stop() from shutdown hook</span><br></pre></td></tr></table></figure>
+<p>我们可以根据以上执行的例子来理解aggregate 用法：</p>
+<blockquote>
+<ul>
+<li>第一步：将rdd5中的元素与初始值遍历进行聚合操作<ul>
+<li>第二步：将初始值加1进行遍历聚合</li>
+<li>第三步：将结果进行聚合</li>
+<li>根据本次的RDD 背部实现如下：</li>
+<li>第一步：其实是0+1</li>
+<li>1+2</li>
+<li>3+3</li>
+<li>6+4</li>
+<li>然后执行：0+1</li>
+<li>1+1</li>
+<li>2+1</li>
+<li>3+1</li>
+<li>此时返回(10,4)</li>
+<li>本次执行是一个节点，如果在集群中的话，多个节点，会先把数据打到不同的分区上，比如(1,2) (3,4)</li>
+<li>得到的结果就会是(3,2) (7,2)</li>
+<li>然后进行第二步combine就得到 (10,4)</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>这样你应该能理解aggregate这个函数了吧</p>
+<p>以上就是对常用的Transformations 和Actions介绍，对于初学者来说，动手代码实践各个函数，才是明白其功能最好的方法。</p>
+<p>PS ：<a href="https://github.com/windyqinchaofeng/Sparkcoding/blob/master/src/com/csap/spark/Function.scala" target="_blank" rel="noopener">源码</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Spark的这些事（二）——几个概念/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Spark的这些事（二）——几个概念/" itemprop="url">Spark的这些事（二）——几个概念</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T18:17:14+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>1、SparkContext [经常简称为 sc]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spark app 的起点和入口，一般用来加载数据集，生成第一个 rdd。</span><br></pre></td></tr></table></figure>
+<p>2、定义一个 spark 应用程序所需要的三大步骤的逻辑：加载数据集，处理数据，结果展示。</p>
+<ul>
+<li>加载数据集</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">加载数据集，这里的数据集大概分为两组:</span><br><span class="line">    - 一种是不变的，静态数据集，大多数场景都是从数据库，文件系统上面加载进来</span><br><span class="line">    - 另一种是动态的数据集，一般做 streaming 应用的时候用到，大多数场景是通过 socket 来加载数据，复杂场景可以通过文件系统，akka actors，kafka，kinesis 和 一些第三方提供的 streaming api [twitter 等] 来作为数据源加载数据</span><br></pre></td></tr></table></figure>
+<ul>
+<li>处理数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">处理数据，这是重点中的重点，不过不外乎都是从三个方面来完成这里的数据清理，逻辑运算等:</span><br><span class="line">    - 自定义的一些复杂处理函数或者第三方包 [下面我们称为函数集]</span><br><span class="line">    - 通过 RDD 的 transform，action 和函数集来完成整个处理，计算流程</span><br><span class="line">    - 通过 RDD 提供的 cache，persist，checkpoint 方法把一些处理流程中的重要处理节点和常用数据缓存和备份，以加速处理，计算速度</span><br></pre></td></tr></table></figure>
+<ul>
+<li>结果展示</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">结果展示，这里一般情况都是使用 RDD 的 collect，take，first，top 等方法把结果取出来，更常用的是先把结果取出来，放到一个数据库或文件系统上，然后再提供给专门展示结果的另一个 application 使用。</span><br></pre></td></tr></table></figure>
+<p>3、有向无环图（DGA）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">有向无环图，有向即有方向，无环即不可逆，其实更详细的说是一个时间上的先来后到，即祖先与子孙的关系，是不可逆的。</span><br></pre></td></tr></table></figure>
+<p><a href="http://baike.baidu.com/link?url=tzBdpDUcmMp-xu2Tf-dRatmMo3-B1yVMG5Jg9vM6FK5VB2lWBsbaqKUJhilj8D7N" target="_blank" rel="noopener">有向无环图（百度百科）</a></p>
+<p>4、RDD<br><a href="http://shiyanjun.cn/archives/744.html" target="_blank" rel="noopener">关于RDD的一篇论文翻译</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Spark的这些事（一）——Windows下spark开发环境搭建/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Spark的这些事（一）——Windows下spark开发环境搭建/" itemprop="url">Spark的这些事（一）——Windows下spark开发环境搭建</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T18:17:00+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>一、首先准备需要安装的软件<br>scala-2.10.4<br>下载地址：<a href="http://www.scala-lang.org/download/2.10.4.html" target="_blank" rel="noopener">http://www.scala-lang.org/download/2.10.4.html</a><br>scala-SDK-4.4.1-vfinal-2.11-win32.win32.x86_64<br>下载地址：<a href="http://scala-ide.org/" target="_blank" rel="noopener">http://scala-ide.org/</a><br>spark-1.6.2-bin-hadoop2.6<br>下载地址：<a href="http://spark.apache.org/" target="_blank" rel="noopener">http://spark.apache.org/</a></p>
+<p>当然还有jdk这里就不说了<br>scala-2.10.4下载后直接安装~</p>
+<p>scala-SDK-4.4.1-vfinal-2.11-win32.win32.x86_64和spark-1.6.2-bin-hadoop2.6下载后直接解压</p>
+<p>scalaIDE解压后就是一个eclipse，这个大家都比较熟悉了。打开IDE，在解压后的spark包中的lib文件夹下找到spark-assembly-1.6.2-hadoop2.6.0，添加到IDE中。<br>然后环境就搭建完成了~<br>下面就来开发一个测试程序试一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">package com.day1.spark</span><br><span class="line"></span><br><span class="line">import org.apache.spark.SparkConf</span><br><span class="line">import org.apache.spark.SparkContext</span><br><span class="line"></span><br><span class="line">object WordCount &#123;</span><br><span class="line">  def  main(args: Array[String]): Unit = &#123;</span><br><span class="line">    </span><br><span class="line">    val conf = new SparkConf()</span><br><span class="line">    conf.setAppName(&quot;MY frist Spark App&quot;)</span><br><span class="line">    conf.setMaster(&quot;local&quot;)</span><br><span class="line">    </span><br><span class="line">    var sc = new SparkContext(conf)</span><br><span class="line">    </span><br><span class="line">    val lines = sc.textFile(&quot;D:\\test.txt&quot;, 1)</span><br><span class="line">    </span><br><span class="line">    val words = lines.flatMap &#123; line =&gt; line.split(&quot; &quot;) &#125;</span><br><span class="line">    </span><br><span class="line">    val pairs = words.map &#123; word =&gt; (word,1) &#125;</span><br><span class="line">    </span><br><span class="line">    val WordCount = pairs.reduceByKey(_+_)</span><br><span class="line">    </span><br><span class="line">    WordCount.foreach(wordNumberPair=&gt;println(wordNumberPair._1 + &quot;:&quot; + wordNumberPair._2))</span><br><span class="line">    </span><br><span class="line">    sc.stop()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>右键运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line">Using Spark&apos;s default log4j profile: org/apache/spark/log4j-defaults.properties</span><br><span class="line">16/07/18 19:07:04 INFO SparkContext: Running Spark version 1.6.2</span><br><span class="line">16/07/18 19:07:13 INFO SecurityManager: Changing view acls to: qinchaofeng</span><br><span class="line">16/07/18 19:07:13 INFO SecurityManager: Changing modify acls to: qinchaofeng</span><br><span class="line">16/07/18 19:07:13 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: Set(qinchaofeng); users with modify permissions: Set(qinchaofeng)</span><br><span class="line">16/07/18 19:07:14 INFO Utils: Successfully started service &apos;sparkDriver&apos; on port 50513.</span><br><span class="line">16/07/18 19:07:14 INFO Slf4jLogger: Slf4jLogger started</span><br><span class="line">16/07/18 19:07:14 INFO Remoting: Starting remoting</span><br><span class="line">16/07/18 19:07:14 INFO Remoting: Remoting started; listening on addresses :[akka.tcp://sparkDriverActorSystem@192.168.108.207:50526]</span><br><span class="line">16/07/18 19:07:14 INFO Utils: Successfully started service &apos;sparkDriverActorSystem&apos; on port 50526.</span><br><span class="line">16/07/18 19:07:14 INFO SparkEnv: Registering MapOutputTracker</span><br><span class="line">16/07/18 19:07:14 INFO SparkEnv: Registering BlockManagerMaster</span><br><span class="line">16/07/18 19:07:14 INFO DiskBlockManager: Created local directory at C:\Users\qinchaofeng\AppData\Local\Temp\blockmgr-25c047c4-505d-4cfb-addd-d777e5a430d7</span><br><span class="line">16/07/18 19:07:14 INFO MemoryStore: MemoryStore started with capacity 797.6 MB</span><br><span class="line">16/07/18 19:07:14 INFO SparkEnv: Registering OutputCommitCoordinator</span><br><span class="line">16/07/18 19:07:15 INFO Utils: Successfully started service &apos;SparkUI&apos; on port 4040.</span><br><span class="line">16/07/18 19:07:15 INFO SparkUI: Started SparkUI at http://192.168.108.207:4040</span><br><span class="line">16/07/18 19:07:15 INFO Executor: Starting executor ID driver on host localhost</span><br><span class="line">16/07/18 19:07:15 INFO Utils: Successfully started service &apos;org.apache.spark.network.netty.NettyBlockTransferService&apos; on port 50533.</span><br><span class="line">16/07/18 19:07:15 INFO NettyBlockTransferService: Server created on 50533</span><br><span class="line">16/07/18 19:07:15 INFO BlockManagerMaster: Trying to register BlockManager</span><br><span class="line">16/07/18 19:07:15 INFO BlockManagerMasterEndpoint: Registering block manager localhost:50533 with 797.6 MB RAM, BlockManagerId(driver, localhost, 50533)</span><br><span class="line">16/07/18 19:07:15 INFO BlockManagerMaster: Registered BlockManager</span><br><span class="line">16/07/18 19:07:15 INFO MemoryStore: Block broadcast_0 stored as values in memory (estimated size 153.6 KB, free 153.6 KB)</span><br><span class="line">16/07/18 19:07:15 INFO MemoryStore: Block broadcast_0_piece0 stored as bytes in memory (estimated size 13.9 KB, free 167.5 KB)</span><br><span class="line">16/07/18 19:07:15 INFO BlockManagerInfo: Added broadcast_0_piece0 in memory on localhost:50533 (size: 13.9 KB, free: 797.6 MB)</span><br><span class="line">16/07/18 19:07:15 INFO SparkContext: Created broadcast 0 from textFile at WordCount.scala:15</span><br><span class="line">16/07/18 19:07:16 WARN : Your hostname, qinchaofeng1 resolves to a loopback/non-reachable address: fe80:0:0:0:0:5efe:c0a8:6ccf%12, but we couldn&apos;t find any external IP address!</span><br><span class="line">16/07/18 19:07:24 INFO FileInputFormat: Total input paths to process : 1</span><br><span class="line">16/07/18 19:07:24 INFO SparkContext: Starting job: foreach at WordCount.scala:23</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Registering RDD 3 (map at WordCount.scala:19)</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Got job 0 (foreach at WordCount.scala:23) with 1 output partitions</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Final stage: ResultStage 1 (foreach at WordCount.scala:23)</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Parents of final stage: List(ShuffleMapStage 0)</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Missing parents: List(ShuffleMapStage 0)</span><br><span class="line">16/07/18 19:07:24 INFO DAGScheduler: Submitting ShuffleMapStage 0 (MapPartitionsRDD[3] at map at WordCount.scala:19), which has no missing parents</span><br><span class="line">16/07/18 19:07:24 INFO MemoryStore: Block broadcast_1 stored as values in memory (estimated size 4.1 KB, free 171.6 KB)</span><br><span class="line">16/07/18 19:07:25 INFO MemoryStore: Block broadcast_1_piece0 stored as bytes in memory (estimated size 2.3 KB, free 173.8 KB)</span><br><span class="line">16/07/18 19:07:25 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on localhost:50533 (size: 2.3 KB, free: 797.6 MB)</span><br><span class="line">16/07/18 19:07:25 INFO SparkContext: Created broadcast 1 from broadcast at DAGScheduler.scala:1006</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: Submitting 1 missing tasks from ShuffleMapStage 0 (MapPartitionsRDD[3] at map at WordCount.scala:19)</span><br><span class="line">16/07/18 19:07:25 INFO TaskSchedulerImpl: Adding task set 0.0 with 1 tasks</span><br><span class="line">16/07/18 19:07:25 INFO TaskSetManager: Starting task 0.0 in stage 0.0 (TID 0, localhost, partition 0,PROCESS_LOCAL, 2108 bytes)</span><br><span class="line">16/07/18 19:07:25 INFO Executor: Running task 0.0 in stage 0.0 (TID 0)</span><br><span class="line">16/07/18 19:07:25 INFO HadoopRDD: Input split: file:/D:/test.txt:0+214</span><br><span class="line">16/07/18 19:07:25 INFO deprecation: mapred.tip.id is deprecated. Instead, use mapreduce.task.id</span><br><span class="line">16/07/18 19:07:25 INFO deprecation: mapred.task.id is deprecated. Instead, use mapreduce.task.attempt.id</span><br><span class="line">16/07/18 19:07:25 INFO deprecation: mapred.task.is.map is deprecated. Instead, use mapreduce.task.ismap</span><br><span class="line">16/07/18 19:07:25 INFO deprecation: mapred.task.partition is deprecated. Instead, use mapreduce.task.partition</span><br><span class="line">16/07/18 19:07:25 INFO deprecation: mapred.job.id is deprecated. Instead, use mapreduce.job.id</span><br><span class="line">16/07/18 19:07:25 INFO Executor: Finished task 0.0 in stage 0.0 (TID 0). 2253 bytes result sent to driver</span><br><span class="line">16/07/18 19:07:25 INFO TaskSetManager: Finished task 0.0 in stage 0.0 (TID 0) in 156 ms on localhost (1/1)</span><br><span class="line">16/07/18 19:07:25 INFO TaskSchedulerImpl: Removed TaskSet 0.0, whose tasks have all completed, from pool </span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: ShuffleMapStage 0 (map at WordCount.scala:19) finished in 0.156 s</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: looking for newly runnable stages</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: running: Set()</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: waiting: Set(ResultStage 1)</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: failed: Set()</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: Submitting ResultStage 1 (ShuffledRDD[4] at reduceByKey at WordCount.scala:21), which has no missing parents</span><br><span class="line">16/07/18 19:07:25 INFO MemoryStore: Block broadcast_2 stored as values in memory (estimated size 2.5 KB, free 176.3 KB)</span><br><span class="line">16/07/18 19:07:25 INFO MemoryStore: Block broadcast_2_piece0 stored as bytes in memory (estimated size 1583.0 B, free 177.9 KB)</span><br><span class="line">16/07/18 19:07:25 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on localhost:50533 (size: 1583.0 B, free: 797.6 MB)</span><br><span class="line">16/07/18 19:07:25 INFO SparkContext: Created broadcast 2 from broadcast at DAGScheduler.scala:1006</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 1 (ShuffledRDD[4] at reduceByKey at WordCount.scala:21)</span><br><span class="line">16/07/18 19:07:25 INFO TaskSchedulerImpl: Adding task set 1.0 with 1 tasks</span><br><span class="line">16/07/18 19:07:25 INFO TaskSetManager: Starting task 0.0 in stage 1.0 (TID 1, localhost, partition 0,NODE_LOCAL, 1894 bytes)</span><br><span class="line">16/07/18 19:07:25 INFO Executor: Running task 0.0 in stage 1.0 (TID 1)</span><br><span class="line">16/07/18 19:07:25 INFO ShuffleBlockFetcherIterator: Getting 1 non-empty blocks out of 1 blocks</span><br><span class="line">16/07/18 19:07:25 INFO ShuffleBlockFetcherIterator: Started 0 remote fetches in 16 ms</span><br><span class="line">avg_flow:1</span><br><span class="line">avg_flow_fee:1</span><br><span class="line">local_city_nm:1</span><br><span class="line">cust_num:1</span><br><span class="line">birthday:1</span><br><span class="line">Gender:1</span><br><span class="line">cust_nm:1</span><br><span class="line">join_net_time:1</span><br><span class="line">avg_call_fee:1</span><br><span class="line">net_age:1</span><br><span class="line">prov_code:1</span><br><span class="line">cmpgn:1</span><br><span class="line">buy_time:1</span><br><span class="line">using_meal:1</span><br><span class="line">chnl:1</span><br><span class="line">arpu:1</span><br><span class="line">term_brand:1</span><br><span class="line">term_model:1</span><br><span class="line">avg_call_times:1</span><br><span class="line">flow_pkg:1</span><br><span class="line">16/07/18 19:07:25 INFO Executor: Finished task 0.0 in stage 1.0 (TID 1). 1165 bytes result sent to driver</span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: ResultStage 1 (foreach at WordCount.scala:23) finished in 0.062 s</span><br><span class="line">16/07/18 19:07:25 INFO TaskSetManager: Finished task 0.0 in stage 1.0 (TID 1) in 62 ms on localhost (1/1)</span><br><span class="line">16/07/18 19:07:25 INFO TaskSchedulerImpl: Removed TaskSet 1.0, whose tasks have all completed, from pool </span><br><span class="line">16/07/18 19:07:25 INFO DAGScheduler: Job 0 finished: foreach at WordCount.scala:23, took 0.356812 s</span><br><span class="line">16/07/18 19:07:25 INFO SparkUI: Stopped Spark web UI at http://192.168.108.207:4040</span><br><span class="line">16/07/18 19:07:25 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!</span><br><span class="line">16/07/18 19:07:25 INFO MemoryStore: MemoryStore cleared</span><br><span class="line">16/07/18 19:07:25 INFO BlockManager: BlockManager stopped</span><br><span class="line">16/07/18 19:07:25 INFO BlockManagerMaster: BlockManagerMaster stopped</span><br><span class="line">16/07/18 19:07:25 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!</span><br><span class="line">16/07/18 19:07:25 INFO SparkContext: Successfully stopped SparkContext</span><br><span class="line">16/07/18 19:07:25 INFO ShutdownHookManager: Shutdown hook called</span><br><span class="line">16/07/18 19:07:25 INFO RemoteActorRefProvider$RemotingTerminator: Shutting down remote daemon.</span><br><span class="line">16/07/18 19:07:25 INFO ShutdownHookManager: Deleting directory C:\Users\qinchaofeng\AppData\Local\Temp\spark-c54f4cb1-7351-47d1-9fd4-fbdac0fae228</span><br></pre></td></tr></table></figure>
+<p>可以看到已经执行成功了！</p>
+<p><a href="https://github.com/windyqinchaofeng/Sparkcoding/blob/master/src/com/csap/spark/WordCount.scala" target="_blank" rel="noopener">源码</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（十四）——Vertica实时消费kafka实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（十四）——Vertica实时消费kafka实现/" itemprop="url">Vertica的这些事（十四）——Vertica实时消费kafka实现</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:51:18+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>一、    安装环境<br>Vertica官方提供了消费kafka的方法，需要注意版本对应<br> <img src="http://upload-images.jianshu.io/upload_images/4579636-1bdb8d907cc0f59a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"><br>消费kafka原理，是Vertica提供的Udx</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4579636-a50aee6cba0da716?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>首先需要安装相应的环境</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/$&#123;vertica&#125;/packages/kafka/ddl/install.sql</span><br></pre></td></tr></table></figure>
+<p>判断是否安装成功</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/$&#123;vertica&#125;/packages/kafka/ddl/isinstalled.sql</span><br></pre></td></tr></table></figure>
+<p>二、    单次消费kafka<br>参考官方文档 <a href="https://my.vertica.com/docs/7.2.x/HTML/index.htm#Authoring/KafkaIntegrationGuide/UsingCOPYwithKafka.htm?TocPath=Integrating%2520with%2520Apache%2520Kafka%7C_____5" target="_blank" rel="noopener">Using COPY with Kafka</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">COPY schema.target_table SOURCE KafkaSource (stream=&apos;topic1|1|1,topic2|2|2&apos;, brokers=&apos;host1:9092,</span><br><span class="line">                                                host2:9092&apos;,duration= INTERVAL&apos;timeslice&apos;,stop_on_eof=TRUE,</span><br><span class="line">                                                eof_timeout= INTERVAL&apos;timeslice&apos;)</span><br><span class="line">        PARSER KafkaJSONParser(flatten_arrays=False, flatten_maps=False)</span><br><span class="line">           REJECTED DATA AS TABLE schema.rejection_table TRICKLE;</span><br></pre></td></tr></table></figure>
+<p>三、    实时消费kafka<br>参考官方文档<a href="https://my.vertica.com/docs/7.2.x/HTML/index.htm#Authoring/KafkaIntegrationGuide/Using_Kafka_with_HP_Vertica.htm?TocPath=Integrating%2520with%2520Apache%2520Kafka%7C_____4" target="_blank" rel="noopener">Using Kafka with Vertica</a></p>
+<ol>
+<li>首先创建一个Scheduler</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig scheduler --add --config-schema myScheduler --operator user1</span><br></pre></td></tr></table></figure>
+<p>使用conf封装Vertica数据库登录信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kafka_config=”—cinfig-schema kafka01 –dbhoust 172.17.12.1 –username dbadmin –password pass1”</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>创建Scheduler脚本</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig scheduler –add $&#123; kafka_config &#125; –config-schema kafka_config  --operator dbadmin</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>创建kafka集群信息</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BROKERS=”172.17.12.2:9099, 172.17.12.3:9099, 172.17.12.4:9099”</span><br><span class="line">/opt/vertica/packages/kafka/bin/vkconfig kafka-cluster –add  $&#123; kafka_config &#125; --onfig-schema kafka_config  --cluster KafkaCluster –brokers $ BROKERS</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>读取topic</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig topic –add $&#123; kafka_config &#125; –target public.kafka_tgt –rejection-table public.kafka_rej –cluster KafkaCluster –topic web_pagelogs –number-partitions 1</span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li>发布Scheduler</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig launch $&#123; kafka_config &#125; -- onfig-schema kafka_config –instance-name webpagelogs</span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li>删除scheduler</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig scheduler $&#123;kafka_config&#125; –remove –config-schema kafka_config</span><br></pre></td></tr></table></figure>
+<ol start="7">
+<li>删除topic接收</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig topic $&#123;kafka_config&#125; –remove –target public.kafka_tgt</span><br></pre></td></tr></table></figure>
+<p>PS：<br>通过最新对Vertica消费kafka的使用，发现这个功能比较鸡肋。多个topic也只能放到一个scheduler里面执行消费，而且每次修改增加都需要停下所有topic的消费进程。另外在使用过程中也发现了丢失数据的现象。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（十三）——Vertica备份元数据信息/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（十三）——Vertica备份元数据信息/" itemprop="url">Vertica的这些事（十三）——Vertica备份元数据信息</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:51:09+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>—备份资源池</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SELECT    &apos;CREATE RESOURCE POOL &apos; || name</span><br><span class="line">        || CASE WHEN memorysize                IS NULL THEN &apos; &apos; ELSE &apos; MEMORYSIZE &apos;                 || &apos;&apos;&apos;&apos; || memorysize               || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN maxmemorysize = &apos;&apos;                THEN &apos; &apos; ELSE &apos; MAXMEMORYSIZE &apos;              || &apos;&apos;&apos;&apos; || maxmemorysize            || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN executionparallelism     = &apos;AUTO&apos; THEN &apos; &apos; ELSE &apos; EXECUTIONPARALLELISM &apos;       || &apos;&apos;&apos;&apos; || executionparallelism     || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN NULLIFZERO(priority)      IS NULL THEN &apos; &apos; ELSE &apos; PRIORITY &apos;                   || &apos;&apos;&apos;&apos; || priority                 || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN runtimepriority           IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMEPRIORITY &apos;            ||         runtimepriority                  END</span><br><span class="line">        || CASE WHEN runtimeprioritythreshold  IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMEPRIORITYTHRESHOLD &apos;   ||         runtimeprioritythreshold         END</span><br><span class="line">        || CASE WHEN queuetimeout              IS NULL THEN &apos; &apos; ELSE &apos; QUEUETIMEOUT &apos;               ||         queuetimeout                     END</span><br><span class="line">        || CASE WHEN maxconcurrency            IS NULL THEN &apos; &apos; ELSE &apos; MAXCONCURRENCY &apos;             ||         maxconcurrency                   END</span><br><span class="line">        || CASE WHEN runtimecap                IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMECAP &apos;                 || &apos;&apos;&apos;&apos; || runtimecap               || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || &apos; ; &apos;</span><br><span class="line">FROM v_catalog.resource_pools</span><br><span class="line">WHERE NOT is_internal</span><br><span class="line">ORDER BY name;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>—备份角色</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Roles&apos;;</span><br><span class="line">SELECT &apos;CREATE ROLE &apos; || name || &apos; ;&apos; AS TXT_CR</span><br><span class="line">FROM v_catalog.roles</span><br><span class="line">WHERE name NOT IN (&apos;public&apos;,&apos;dbadmin&apos;,&apos;pseudosuperuser&apos;,&apos;dbduser&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Add users to roles&apos;;</span><br><span class="line">SELECT &apos;GRANT &apos; || all_roles || &apos; TO &apos; || user_name || &apos;;&apos;</span><br><span class="line">FROM v_catalog.users</span><br><span class="line">WHERE user_name NOT IN (&apos;dbadmin&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份schema</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Schema&apos;;</span><br><span class="line">SELECT &apos;CREATE SCHEMA &apos; || schema_name  ||  &apos;;&apos;</span><br><span class="line">FROM schemata</span><br><span class="line">WHERE schema_name NOT IN (&apos;v_internal&apos;,&apos;v_catalog&apos;,&apos;v_monitor&apos;,&apos;TxtIndex&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份用户</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Users&apos;;</span><br><span class="line">SELECT &apos;CREATE USER &apos; || user_name  || &apos; RESOURCE POOL &apos; || resource_pool ||  &apos; ;&apos;</span><br><span class="line">FROM v_catalog.users</span><br><span class="line">WHERE user_name NOT IN (&apos;dbadmin&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>—各手shcema大小</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">SELECT /*+(estimated_raw_size)*/</span><br><span class="line">       pj.anchor_table_schema,</span><br><span class="line">       pj.used_compressed_gb,</span><br><span class="line">       pj.used_compressed_gb * la.ratio AS raw_estimate_gb</span><br><span class="line">FROM   (SELECT ps.anchor_table_schema,</span><br><span class="line">               SUM(used_bytes) / ( 1024^3 ) AS used_compressed_gb</span><br><span class="line">        FROM   v_catalog.projections p</span><br><span class="line">               JOIN v_monitor.projection_storage ps</span><br><span class="line">                 ON ps.projection_id = p.projection_id</span><br><span class="line">        WHERE  p.is_super_projection = &apos;t&apos;</span><br><span class="line">        GROUP  BY ps.anchor_table_schema) pj</span><br><span class="line">       CROSS JOIN (SELECT (SELECT database_size_bytes</span><br><span class="line">                           FROM   v_catalog.license_audits</span><br><span class="line">                           ORDER  BY audit_start_timestamp DESC</span><br><span class="line">                           LIMIT  1) / (SELECT SUM(used_bytes)</span><br><span class="line">                                        FROM   V_MONITOR.projection_storage) AS ratio) la</span><br><span class="line">ORDER  BY pj.used_compressed_gb DESC;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份赋权语句<br>–backup grants</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select &apos;grant &apos;|| privileges_description || &apos; on &apos;|| object_name || &apos; to &apos;|| grantee||&apos;;&apos; </span><br><span class="line">from grants where grantor&lt;&gt;grantee </span><br><span class="line">order by object_name;</span><br></pre></td></tr></table></figure>
+<p>备份建表语句以及schema语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT EXPORT_CATALOG(&apos;&apos;,&apos;DESIGN_ALL&apos;)&quot;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（十二）——-vertica备份与恢复/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（十二）——-vertica备份与恢复/" itemprop="url">Vertica的这些事（十二）——-vertica备份与恢复</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:50:56+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复-以下是整理的过程，分享给大家，如有问题欢迎大家指正-可加QQ群交流：412191494"><a href="#最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复-以下是整理的过程，分享给大家，如有问题欢迎大家指正-可加QQ群交流：412191494" class="headerlink" title="最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复 以下是整理的过程，分享给大家，如有问题欢迎大家指正~ 可加QQ群交流：412191494"></a>最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复 以下是整理的过程，分享给大家，如有问题欢迎大家指正~ 可加QQ群交流：412191494</h2><h2 id="1、vertica备份"><a href="#1、vertica备份" class="headerlink" title="1、vertica备份"></a>1、vertica备份</h2><h2 id="1-1-vertica备份配置"><a href="#1-1-vertica备份配置" class="headerlink" title="1.1 vertica备份配置:"></a>1.1 vertica备份配置:</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py  --setupconfig</span><br><span class="line">Snapshot name (backup_snapshot): full_backup20160505</span><br><span class="line">Number of restore points (1): 1</span><br><span class="line">Specify objects (no default): </span><br><span class="line">Object restore mode (coexist, createOrReplace or create) (createOrReplace): </span><br><span class="line">Vertica user name (dbadmin): dbadmin</span><br><span class="line">Save password to avoid runtime prompt? (n) [y/n]: y</span><br><span class="line">Database user password to save in vbr password config file (no default):</span><br><span class="line">Node v_windy1990_node0001</span><br><span class="line">Backup host name (no default): 192.168.231.110</span><br><span class="line">Backup directory (no default): /home/dbadmin/backup</span><br><span class="line">Change advanced settings? (n) [y/n]: y</span><br><span class="line">Temp directory (/tmp/vbr): </span><br><span class="line">Number of times to retry (2): </span><br><span class="line">Seconds between retry attempts (1): </span><br><span class="line">Encrypt data during transmission? (n) [y/n]: </span><br><span class="line">Use checksum for data integrity (not file data and size)? (n) [y/n]: </span><br><span class="line">Port number for rsync daemon (50000): </span><br><span class="line">User name to access rsync daemon (no default): </span><br><span class="line">Password of the user who accesses rsync daemon:</span><br><span class="line">Backup transfer bandwidth limit in KBps or 0 for unlimited (0): </span><br><span class="line">Number of concurrency for backup (1): </span><br><span class="line">Restore transfer bandwidth limit in KBps or 0 for unlimited (0): </span><br><span class="line">Number of concurrency for restore (1): </span><br><span class="line">Password file name (no default): password</span><br><span class="line">Saved vbr password to password.</span><br><span class="line">Config file name (full_backup20160505.ini): </span><br><span class="line">Saved vbr config to full_backup20160505.ini.</span><br></pre></td></tr></table></figure>
+<h2 id="备份成功后查看备份的文件内容如下："><a href="#备份成功后查看备份的文件内容如下：" class="headerlink" title="备份成功后查看备份的文件内容如下："></a>备份成功后查看备份的文件内容如下：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ more full_backup20160505.ini </span><br><span class="line">[Misc]</span><br><span class="line">snapshotName = full_backup20160505</span><br><span class="line">restorePointLimit = 1</span><br><span class="line">objectRestoreMode = createOrReplace</span><br><span class="line">tempDir = /tmp/vbr</span><br><span class="line">retryCount = 2</span><br><span class="line">retryDelay = 1</span><br><span class="line">passwordFile = password</span><br><span class="line"></span><br><span class="line">[Database]</span><br><span class="line">dbName = Windy1990</span><br><span class="line">dbUser = dbadmin</span><br><span class="line"></span><br><span class="line">[Transmission]</span><br><span class="line">encrypt = False</span><br><span class="line">checksum = False</span><br><span class="line">port_rsync = 50000</span><br><span class="line">serviceAccessUser = None</span><br><span class="line">total_bwlimit_backup = 0</span><br><span class="line">concurrency_backup = 1</span><br><span class="line">total_bwlimit_restore = 0</span><br><span class="line">concurrency_restore = 1</span><br><span class="line"></span><br><span class="line">[Mapping]</span><br><span class="line">v_windy1990_node0001 = 192.168.231.110:/home/dbadmin/backup</span><br></pre></td></tr></table></figure>
+<h2 id="备份中我选了一个文件保存密码："><a href="#备份中我选了一个文件保存密码：" class="headerlink" title="备份中我选了一个文件保存密码："></a>备份中我选了一个文件保存密码：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/dbadmin/password</span><br></pre></td></tr></table></figure>
+<h2 id="里面存有数据路的密码："><a href="#里面存有数据路的密码：" class="headerlink" title="里面存有数据路的密码："></a>里面存有数据路的密码：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ more password </span><br><span class="line">[Passwords]</span><br><span class="line">dbPassword = dbadmin</span><br><span class="line">1.2 vertica 全备份</span><br><span class="line">官方文档：</span><br><span class="line">A full backup is a complete copy of the database catalog, its schemas, tables, and other objects. It is a consistent image of the database at the time the backup occurred. You can use a full backup for disaster recovery to restore a damaged or incomplete database.</span><br></pre></td></tr></table></figure>
+<h2 id="执行备份命令："><a href="#执行备份命令：" class="headerlink" title="执行备份命令："></a>执行备份命令：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file full_backup20160505.ini</span><br><span class="line">Error: Manifest not found at rsync://[192.168.231.110]:50000/home/dbadmin/backup/ -- is the backup location initialized? Hint: Execute &apos;--task init&apos; first.</span><br><span class="line">Backup FAILED.</span><br></pre></td></tr></table></figure>
+<h2 id="发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）"><a href="#发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）" class="headerlink" title="发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）"></a>发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task init --config-file full_backup20160505.ini</span><br><span class="line">Initializing backup locations.</span><br><span class="line">Backup locations initialized.</span><br></pre></td></tr></table></figure>
+<h2 id="路径声明成功！-查看该备份路径下多了一个文件。"><a href="#路径声明成功！-查看该备份路径下多了一个文件。" class="headerlink" title="路径声明成功！ 查看该备份路径下多了一个文件。"></a>路径声明成功！ 查看该备份路径下多了一个文件。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost backup]$ ls -l</span><br><span class="line">total 4</span><br><span class="line">-rw-r--r--. 1 dbadmin verticadba 22 May  5 13:47 backup_manifest</span><br></pre></td></tr></table></figure>
+<h2 id="然后再次执行备份命令："><a href="#然后再次执行备份命令：" class="headerlink" title="然后再次执行备份命令："></a>然后再次执行备份命令：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task backup --config-file full_backup20160505.ini</span><br></pre></td></tr></table></figure>
+<h2 id="可以看到这次可以备份成功了："><a href="#可以看到这次可以备份成功了：" class="headerlink" title="可以看到这次可以备份成功了："></a>可以看到这次可以备份成功了：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file full_backup20160505.ini</span><br><span class="line">Starting backup of database Windy1990.</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Snapshotting database.</span><br><span class="line">Snapshot complete.</span><br><span class="line">Approximate bytes to copy: 60269241 of 60269241 total.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Copying backup metadata.</span><br><span class="line">Finalizing backup.</span><br><span class="line">Backup complete!</span><br></pre></td></tr></table></figure>
+<h2 id="我们可以看到，已经完全备份了vertica数据库。-此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径-home-dbamin-backup下："><a href="#我们可以看到，已经完全备份了vertica数据库。-此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径-home-dbamin-backup下：" class="headerlink" title="我们可以看到，已经完全备份了vertica数据库。 此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径/home/dbamin/backup下："></a>我们可以看到，已经完全备份了vertica数据库。 此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径/home/dbamin/backup下：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost backup]$ ll</span><br><span class="line">total 12</span><br><span class="line">-rw-r--r--. 1 dbadmin verticadba 1044 May  5 14:08 backup_manifest</span><br><span class="line">drwxr-xr-x. 8 dbadmin verticadba 4096 May  5 14:07 Objects</span><br><span class="line">drwxr-xr-x. 3 dbadmin verticadba 4096 May  5 14:08 Snapshots</span><br></pre></td></tr></table></figure>
+<h2 id="可以看到多了2个文件夹-Objects-Snapshots-我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。-home-dbadmin-backup-Snapshots-full-backup20160505-20160505-060600-v-windy1990-node0001目录下存放着我们备份的原vertica数据库的一下信息。"><a href="#可以看到多了2个文件夹-Objects-Snapshots-我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。-home-dbadmin-backup-Snapshots-full-backup20160505-20160505-060600-v-windy1990-node0001目录下存放着我们备份的原vertica数据库的一下信息。" class="headerlink" title="可以看到多了2个文件夹 /Objects / Snapshots 我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。 /home/dbadmin/backup/Snapshots/full_backup20160505_20160505_060600/v_windy1990_node0001目录下存放着我们备份的原vertica数据库的一下信息。"></a>可以看到多了2个文件夹 /Objects / Snapshots 我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。 /home/dbadmin/backup/Snapshots/full_backup20160505_20160505_060600/v_windy1990_node0001目录下存放着我们备份的原vertica数据库的一下信息。</h2><h2 id="检查每个节点的数据流："><a href="#检查每个节点的数据流：" class="headerlink" title="检查每个节点的数据流："></a>检查每个节点的数据流：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select node_name,sum(used_bytes) as size_in_bytes from v_monitor.storage_containers group by node_name;</span><br></pre></td></tr></table></figure>
+<h2 id="1-3-vertica的增量备份-官方文档上是把全量和增量一起介绍的，称为Full-and-Incremental-Backups，在这里我把增量单独列了出来。-restorePointLimit控制着增量备份集的数量-我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit-1-再次执行1-2中的全备份命令即可实现增量备份"><a href="#1-3-vertica的增量备份-官方文档上是把全量和增量一起介绍的，称为Full-and-Incremental-Backups，在这里我把增量单独列了出来。-restorePointLimit控制着增量备份集的数量-我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit-1-再次执行1-2中的全备份命令即可实现增量备份" class="headerlink" title="1.3 vertica的增量备份 官方文档上是把全量和增量一起介绍的，称为Full and Incremental Backups，在这里我把增量单独列了出来。 restorePointLimit控制着增量备份集的数量 我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit = 1 再次执行1.2中的全备份命令即可实现增量备份~"></a>1.3 vertica的增量备份 官方文档上是把全量和增量一起介绍的，称为Full and Incremental Backups，在这里我把增量单独列了出来。 restorePointLimit控制着增量备份集的数量 我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit = 1 再次执行1.2中的全备份命令即可实现增量备份~</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file full_backup20160505.ini</span><br><span class="line">Starting backup of database Windy1990.</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Snapshotting database.</span><br><span class="line">Snapshot complete.</span><br><span class="line">Approximate bytes to copy: 0 of 60269241 total.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Copying backup metadata.</span><br><span class="line">Finalizing backup.</span><br><span class="line">Backup complete!</span><br></pre></td></tr></table></figure>
+<h2 id="有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？-这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到："><a href="#有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？-这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到：" class="headerlink" title="有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？ 这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到："></a>有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？ 这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ cd backup/</span><br><span class="line">[dbadmin@localhost backup]$ ll</span><br><span class="line">total 12</span><br><span class="line">-rw-r--r--. 1 dbadmin verticadba 1103 May  5 14:36 backup_manifest</span><br><span class="line">drwxr-xr-x. 8 dbadmin verticadba 4096 May  5 14:07 Objects</span><br><span class="line">drwxr-xr-x. 4 dbadmin verticadba 4096 May  5 14:36 Snapshots</span><br></pre></td></tr></table></figure>
+<h2 id="大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。-所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。-我插入一条手机号："><a href="#大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。-所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。-我插入一条手机号：" class="headerlink" title="大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。 所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。 我插入一条手机号："></a>大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。 所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。 我插入一条手机号：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; insert into tb_serv_num values(&apos;13488888888&apos;,&apos;qin**&apos;);</span><br><span class="line"> OUTPUT </span><br><span class="line">--------</span><br><span class="line">      1</span><br><span class="line">(1 row)</span><br><span class="line"></span><br><span class="line">dbadmin=&gt; commit;</span><br><span class="line">COMMIT</span><br><span class="line">dbadmin=&gt; \q</span><br></pre></td></tr></table></figure>
+<h2 id="然后重新执行备份语句，执行后查看backup文件下的内容："><a href="#然后重新执行备份语句，执行后查看backup文件下的内容：" class="headerlink" title="然后重新执行备份语句，执行后查看backup文件下的内容："></a>然后重新执行备份语句，执行后查看backup文件下的内容：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ cd backup/</span><br><span class="line">[dbadmin@localhost backup]$ ll</span><br><span class="line">total 12</span><br><span class="line">-rw-r--r--. 1 dbadmin verticadba 1171 May  5 14:46 backup_manifest</span><br><span class="line">drwxr-xr-x. 9 dbadmin verticadba 4096 May  5 14:46 Objects</span><br><span class="line">drwxr-xr-x. 4 dbadmin verticadba 4096 May  5 14:46 Snapshots</span><br></pre></td></tr></table></figure>
+<h2 id="看文件时间，是不是说明我们上面的推理是正确的呢-所以，不要怀疑了，我们的增量备份是没有问题的！-1-4-vertica对象级备份-官网文档：-The-database-administrator-user-can-create-object-level-backups-consisting-of-one-or-more-schemas-and-tables-Object-level-backups-are-especially-useful-for-multi-tenanted-database-sites-其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）："><a href="#看文件时间，是不是说明我们上面的推理是正确的呢-所以，不要怀疑了，我们的增量备份是没有问题的！-1-4-vertica对象级备份-官网文档：-The-database-administrator-user-can-create-object-level-backups-consisting-of-one-or-more-schemas-and-tables-Object-level-backups-are-especially-useful-for-multi-tenanted-database-sites-其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）：" class="headerlink" title="看文件时间，是不是说明我们上面的推理是正确的呢~~~ 所以，不要怀疑了，我们的增量备份是没有问题的！ 1.4 vertica对象级备份 官网文档： The database administrator user can create object-level backups consisting of one or more schemas and tables. Object-level backups are especially useful for multi-tenanted database sites. 其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）："></a>看文件时间，是不是说明我们上面的推理是正确的呢~~~ 所以，不要怀疑了，我们的增量备份是没有问题的！ 1.4 vertica对象级备份 官网文档： The database administrator user can create object-level backups consisting of one or more schemas and tables. Object-level backups are especially useful for multi-tenanted database sites. 其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --setupconfigSnapshot name (backup_snapshot): backup_object_tb_serv</span><br><span class="line">Number of restore points (1): </span><br><span class="line">Specify objects (no default): tb_serv_num</span><br><span class="line">Object restore mode (coexist, createOrReplace or create) (createOrReplace): </span><br><span class="line">Vertica user name (dbadmin): </span><br><span class="line">Save password to avoid runtime prompt? (n) [y/n]: y</span><br><span class="line">Database user password to save in vbr password config file (no default):</span><br><span class="line">Node v_windy1990_node0001</span><br><span class="line">Backup host name (no default): 192.168.231.110</span><br><span class="line">Backup directory (no default): /home/dbadmin/backup</span><br><span class="line">Change advanced settings? (n) [y/n]: </span><br><span class="line">Password file name (no default): password</span><br><span class="line">Saved vbr password to password.</span><br><span class="line">Config file name (backup_object_tb_serv.ini): </span><br><span class="line">Saved vbr config to backup_object_tb_serv.ini.</span><br></pre></td></tr></table></figure>
+<h2 id="然后在执行备份命令："><a href="#然后在执行备份命令：" class="headerlink" title="然后在执行备份命令："></a>然后在执行备份命令：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file backup_object_tb_serv.ini </span><br><span class="line">Starting backup of database Windy1990.</span><br><span class="line">Objects: [&apos;tb_serv_num&apos;]</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Snapshotting database.</span><br><span class="line">Snapshot complete.</span><br><span class="line">Approximate bytes to copy: 0 of 244 total.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Copying backup metadata.</span><br><span class="line">Finalizing backup.</span><br><span class="line">Backup complete!</span><br></pre></td></tr></table></figure>
+<h2 id="已备份完成-1-5-vertica-Hard-Link-Local备份-官方文档：-A-hard-link-local-backup-is-a-full-or-object-level-backup-consisting-of-a-complete-copy-of-the-database-catalog-and-a-set-of-hard-file-links-to-corresponding-data-files-直接修改全备份的配置文件即可，加上一行："><a href="#已备份完成-1-5-vertica-Hard-Link-Local备份-官方文档：-A-hard-link-local-backup-is-a-full-or-object-level-backup-consisting-of-a-complete-copy-of-the-database-catalog-and-a-set-of-hard-file-links-to-corresponding-data-files-直接修改全备份的配置文件即可，加上一行：" class="headerlink" title="已备份完成~~ 1.5 vertica Hard Link Local备份 官方文档： A hard link local backup is a full or object-level backup consisting of a complete copy of the database catalog, and a set of hard file links to corresponding data files. 直接修改全备份的配置文件即可，加上一行："></a>已备份完成~~ 1.5 vertica Hard Link Local备份 官方文档： A hard link local backup is a full or object-level backup consisting of a complete copy of the database catalog, and a set of hard file links to corresponding data files. 直接修改全备份的配置文件即可，加上一行：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[Transmission]</span><br><span class="line">encrypt = False</span><br><span class="line">checksum = False</span><br><span class="line">port_rsync = 50000</span><br><span class="line">serviceAccessUser = None</span><br><span class="line">total_bwlimit_backup = 0</span><br><span class="line">concurrency_backup = 1</span><br><span class="line">total_bwlimit_restore = 0</span><br><span class="line">concurrency_restore = 1</span><br><span class="line">hardLinkLocal = True</span><br></pre></td></tr></table></figure>
+<h2 id="然后还是执行备份命令："><a href="#然后还是执行备份命令：" class="headerlink" title="然后还是执行备份命令："></a>然后还是执行备份命令：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task backup --config-file HardLinkLocal_backup20160505.ini</span><br><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file HardLinkLocal_backup20160505.ini </span><br><span class="line">Starting backup of database Windy1990.</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Snapshotting database.</span><br><span class="line">Snapshot complete.</span><br><span class="line">Approximate bytes to copy: 0 of 60269355 total.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Copying backup metadata.</span><br><span class="line">Finalizing backup.</span><br><span class="line">Backup complete!</span><br></pre></td></tr></table></figure>
+<h2 id="1-6-查看备份-查看备份的内容："><a href="#1-6-查看备份-查看备份的内容：" class="headerlink" title="1.6 查看备份 查看备份的内容："></a>1.6 查看备份 查看备份的内容：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task listbackup --config-file HardLinkLocal_backup20160505.ini</span><br><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task listbackup --config-file HardLinkLocal_backup20160505.ini </span><br><span class="line">backup                                epoch   objects   hosts(nodes)                            file_system_type  </span><br><span class="line">full_backup20160505_20160505_074850   16                v_windy1990_node0001(192.168.231.110)   [Linux]           </span><br><span class="line">full_backup20160505_20160505_064640   16                v_windy1990_node0001(192.168.231.110)   [Linux]</span><br></pre></td></tr></table></figure>
+<h2 id="在vertica数据库中可以查询到备份的信息："><a href="#在vertica数据库中可以查询到备份的信息：" class="headerlink" title="在vertica数据库中可以查询到备份的信息："></a>在vertica数据库中可以查询到备份的信息：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; select * from database_backups;</span><br><span class="line">       backup_timestamp        |      node_name       |     snapshot_name     | backup_epoch | node_count | file_system_type |   objects   </span><br><span class="line">-------------------------------+----------------------+-----------------------+--------------+------------+------------------+-------------</span><br><span class="line"> 2016-05-05 14:08:03.369797+08 | v_windy1990_node0001 | full_backup20160505   |           15 |          1 | [Linux]          | </span><br><span class="line"> 2016-05-05 14:36:39.496688+08 | v_windy1990_node0001 | full_backup20160505   |           15 |          1 | [Linux]          | </span><br><span class="line"> 2016-05-05 14:42:35.517465+08 | v_windy1990_node0001 | full_backup20160505   |           15 |          1 | [Linux]          | </span><br><span class="line"> 2016-05-05 14:44:43.043536+08 | v_windy1990_node0001 | full_backup20160505   |           15 |          1 | [Linux]          | </span><br><span class="line"> 2016-05-05 14:46:57.958863+08 | v_windy1990_node0001 | full_backup20160505   |           16 |          1 | [Linux]          | </span><br><span class="line"> 2016-05-05 15:03:19.580159+08 | v_windy1990_node0001 | backup_object_tb_serv |           16 |          1 | [Linux]          | tb_serv_num</span><br><span class="line"> 2016-05-05 15:50:53.143446+08 | v_windy1990_node0001 | full_backup20160505   |           16 |          1 | [Linux]          | </span><br><span class="line">(7 rows)</span><br></pre></td></tr></table></figure>
+<h2 id="2、vertica恢复"><a href="#2、vertica恢复" class="headerlink" title="2、vertica恢复"></a>2、vertica恢复</h2><h2 id="2-1-vertica恢复"><a href="#2-1-vertica恢复" class="headerlink" title="2.1 vertica恢复"></a>2.1 vertica恢复</h2><h2 id="为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据"><a href="#为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据" class="headerlink" title="为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据"></a>为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; select * from tb_rp_st_user_day ;</span><br><span class="line"> serv_number | user_name </span><br><span class="line">-------------+-----------</span><br><span class="line">(0 rows)</span><br><span class="line"></span><br><span class="line">dbadmin=&gt; drop table tb_rp_st_user_day;</span><br><span class="line">DROP TABLE</span><br><span class="line"></span><br><span class="line">dbadmin=&gt; select * from tb_serv_num where name=&apos;ss&apos;;</span><br><span class="line">  serv_num   | name </span><br><span class="line">-------------+------</span><br><span class="line"> 186371***** | ss</span><br><span class="line">(1 row)</span><br><span class="line"></span><br><span class="line">dbadmin=&gt; delete from tb_serv_num where name=&apos;ss&apos;;</span><br><span class="line"> OUTPUT </span><br><span class="line">--------</span><br><span class="line">      1</span><br><span class="line">(1 row)</span><br><span class="line"></span><br><span class="line">dbadmin=&gt; commit;</span><br><span class="line">COMMIT</span><br></pre></td></tr></table></figure>
+<h2 id="开始执行恢复命令："><a href="#开始执行恢复命令：" class="headerlink" title="开始执行恢复命令："></a>开始执行恢复命令：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task restore --config-file full_backup20160505.ini</span><br><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task restore --config-file full_backup20160505.ini Error: Full database restore requires the nodes be DOWN.</span><br><span class="line">Restore FAILED.</span><br></pre></td></tr></table></figure>
+<h2 id="报错啦-提示只有在vertica数据库down的状态下才能恢复……"><a href="#报错啦-提示只有在vertica数据库down的状态下才能恢复……" class="headerlink" title="报错啦~ 提示只有在vertica数据库down的状态下才能恢复……"></a>报错啦~ 提示只有在vertica数据库down的状态下才能恢复……</h2><h2 id="查看官方文档："><a href="#查看官方文档：" class="headerlink" title="查看官方文档："></a>查看官方文档：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">To restore a full database backup, you must ensure that:</span><br><span class="line">•	The database is down. You cannot restore a full backup when the database is running.</span><br><span class="line">•	All of the backup hosts are up and available.</span><br><span class="line">•	The backup directory exists and contains the backups from which to restore.</span><br><span class="line">•	The cluster to which you are restoring the backup has the same number of hosts as the one used to create the backup. The node names and the IP addresses must also be identical.</span><br><span class="line">•	The database you are restoring must already exist on the cluster to which you are restoring data. The database can be completely empty without any data or schema. As long as the database name matches the name in the backup, and all of the node names match the names of the nodes in the configuration file, you can restore to it.</span><br><span class="line">•	The user performing the restore is the database administrator.</span><br></pre></td></tr></table></figure>
+<h2 id="所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb-serv-num表做了对象级备份："><a href="#所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb-serv-num表做了对象级备份：" class="headerlink" title="所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb_serv_num表做了对象级备份："></a>所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb_serv_num表做了对象级备份：</h2><h2 id="执行对象级恢复："><a href="#执行对象级恢复：" class="headerlink" title="执行对象级恢复："></a>执行对象级恢复：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task restore --config-file backup_object_tb_serv.ini</span><br><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task restore --config-file backup_object_tb_serv.ini </span><br><span class="line">Starting object restore of database Windy1990.</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Objects to restore: tb_serv_num.</span><br><span class="line">Restoring from restore point: backup_object_tb_serv_20160505_070249</span><br><span class="line">Loading snapshot catalog from backup.</span><br><span class="line">Syncing data from backup to cluster nodes.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Finalizing restore.</span><br><span class="line">Restore complete!</span><br></pre></td></tr></table></figure>
+<h2 id="OK-看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。"><a href="#OK-看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。" class="headerlink" title="OK~看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。"></a>OK~看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; select * from tb_serv_num ;</span><br><span class="line">  serv_num   | name  </span><br><span class="line">-------------+-------</span><br><span class="line"> 138***** | windy</span><br><span class="line"> 186***** | ss</span><br><span class="line"> 134***** | qin**</span><br><span class="line">(3 rows)</span><br></pre></td></tr></table></figure>
+<h2 id="可以看到，数据已恢复了-，等等，刚才我们还drop了一个-表，这个表是不是恢复了呢？"><a href="#可以看到，数据已恢复了-，等等，刚才我们还drop了一个-表，这个表是不是恢复了呢？" class="headerlink" title="可以看到，数据已恢复了~，等等，刚才我们还drop了一个 表，这个表是不是恢复了呢？"></a>可以看到，数据已恢复了~，等等，刚才我们还drop了一个 表，这个表是不是恢复了呢？</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \d tb_rp_st_user_day;</span><br><span class="line">Did not find any relation.</span><br></pre></td></tr></table></figure>
+<h2 id="可以看到，表并没有恢复，为什么呢？-要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb-serv-num表的数据而已，随意恢复也只能恢复该表的所有数据。-那么我们用第三种Hard-Link-Local方式恢复数据："><a href="#可以看到，表并没有恢复，为什么呢？-要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb-serv-num表的数据而已，随意恢复也只能恢复该表的所有数据。-那么我们用第三种Hard-Link-Local方式恢复数据：" class="headerlink" title="可以看到，表并没有恢复，为什么呢？ 要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb_serv_num表的数据而已，随意恢复也只能恢复该表的所有数据。 那么我们用第三种Hard Link Local方式恢复数据："></a>可以看到，表并没有恢复，为什么呢？ 要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb_serv_num表的数据而已，随意恢复也只能恢复该表的所有数据。 那么我们用第三种Hard Link Local方式恢复数据：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task restore --config-file HardLinkLocal_backup20160505.ini</span><br><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task restore --config-file HardLinkLocal_backup20160505.ini </span><br><span class="line">Error: Full database restore requires the nodes be DOWN.</span><br><span class="line">Restore FAILED.</span><br></pre></td></tr></table></figure>
+<h2 id="同样看到，也需要vertica数据库为DOWN"><a href="#同样看到，也需要vertica数据库为DOWN" class="headerlink" title="同样看到，也需要vertica数据库为DOWN"></a>同样看到，也需要vertica数据库为DOWN</h2><p>看来要停掉vertica数据库了~（停掉数据库，此处略）<br>停掉vertica数据库后，再试全量恢复：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task restore --config-file full_backup20160505.ini </span><br><span class="line">Starting full restore of database Windy1990.</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Restoring from restore point: full_backup20160505_20160505_074850</span><br><span class="line">Computing the size of data to be synced from backup to cluster nodes.</span><br><span class="line">Syncing data from backup to cluster nodes.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Restoring catalog.</span><br><span class="line">Restore complete!</span><br></pre></td></tr></table></figure>
+<p>可以看到，恢复的还不错。<br>再重新启动vertica，登上vertica后查看表tb_rp_st_user_day是否恢复了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \d tb_rp_st_user_day;</span><br><span class="line">                                            List of Fields by Tables</span><br><span class="line"> Schema |       Table       |   Column    |    Type     | Size | Default | Not Null | Primary Key | Foreign Key </span><br><span class="line">--------+-------------------+-------------+-------------+------+---------+----------+-------------+-------------</span><br><span class="line"> public | tb_rp_st_user_day | serv_number | varchar(13) |   13 |         | f        | f           | </span><br><span class="line"> public | tb_rp_st_user_day | user_name   | varchar(50) |   50 |         | f        | f           | </span><br><span class="line">(2 rows)</span><br></pre></td></tr></table></figure>
+<p>可以看到，恢复成功了。</p>
+<p>以上就是vertica备份以及简单的恢复。</p>
+<h2 id="通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。"><a href="#通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。" class="headerlink" title="通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。"></a>通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。</h2>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（十一）——-Vertica备份元数据信息/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（十一）——-Vertica备份元数据信息/" itemprop="url">Vertica的这些事（十一）——-Vertica备份元数据信息</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:50:44+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>—备份资源池</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SELECT    &apos;CREATE RESOURCE POOL &apos; || name</span><br><span class="line">        || CASE WHEN memorysize                IS NULL THEN &apos; &apos; ELSE &apos; MEMORYSIZE &apos;                 || &apos;&apos;&apos;&apos; || memorysize               || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN maxmemorysize = &apos;&apos;                THEN &apos; &apos; ELSE &apos; MAXMEMORYSIZE &apos;              || &apos;&apos;&apos;&apos; || maxmemorysize            || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN executionparallelism     = &apos;AUTO&apos; THEN &apos; &apos; ELSE &apos; EXECUTIONPARALLELISM &apos;       || &apos;&apos;&apos;&apos; || executionparallelism     || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN NULLIFZERO(priority)      IS NULL THEN &apos; &apos; ELSE &apos; PRIORITY &apos;                   || &apos;&apos;&apos;&apos; || priority                 || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN runtimepriority           IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMEPRIORITY &apos;            ||         runtimepriority                  END</span><br><span class="line">        || CASE WHEN runtimeprioritythreshold  IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMEPRIORITYTHRESHOLD &apos;   ||         runtimeprioritythreshold         END</span><br><span class="line">        || CASE WHEN queuetimeout              IS NULL THEN &apos; &apos; ELSE &apos; QUEUETIMEOUT &apos;               ||         queuetimeout                     END</span><br><span class="line">        || CASE WHEN maxconcurrency            IS NULL THEN &apos; &apos; ELSE &apos; MAXCONCURRENCY &apos;             ||         maxconcurrency                   END</span><br><span class="line">        || CASE WHEN runtimecap                IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMECAP &apos;                 || &apos;&apos;&apos;&apos; || runtimecap               || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || &apos; ; &apos;</span><br><span class="line">FROM v_catalog.resource_pools</span><br><span class="line">WHERE NOT is_internal</span><br><span class="line">ORDER BY name;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>—备份角色</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Roles&apos;;</span><br><span class="line">SELECT &apos;CREATE ROLE &apos; || name || &apos; ;&apos; AS TXT_CR</span><br><span class="line">FROM v_catalog.roles</span><br><span class="line">WHERE name NOT IN (&apos;public&apos;,&apos;dbadmin&apos;,&apos;pseudosuperuser&apos;,&apos;dbduser&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Add users to roles&apos;;</span><br><span class="line">SELECT &apos;GRANT &apos; || all_roles || &apos; TO &apos; || user_name || &apos;;&apos;</span><br><span class="line">FROM v_catalog.users</span><br><span class="line">WHERE user_name NOT IN (&apos;dbadmin&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份schema</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Schema&apos;;</span><br><span class="line">SELECT &apos;CREATE SCHEMA &apos; || schema_name  ||  &apos;;&apos;</span><br><span class="line">FROM schemata</span><br><span class="line">WHERE schema_name NOT IN (&apos;v_internal&apos;,&apos;v_catalog&apos;,&apos;v_monitor&apos;,&apos;TxtIndex&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份用户</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Users&apos;;</span><br><span class="line">SELECT &apos;CREATE USER &apos; || user_name  || &apos; RESOURCE POOL &apos; || resource_pool ||  &apos; ;&apos;</span><br><span class="line">FROM v_catalog.users</span><br><span class="line">WHERE user_name NOT IN (&apos;dbadmin&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>—各手shcema大小</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">SELECT /*+(estimated_raw_size)*/</span><br><span class="line">       pj.anchor_table_schema,</span><br><span class="line">       pj.used_compressed_gb,</span><br><span class="line">       pj.used_compressed_gb * la.ratio AS raw_estimate_gb</span><br><span class="line">FROM   (SELECT ps.anchor_table_schema,</span><br><span class="line">               SUM(used_bytes) / ( 1024^3 ) AS used_compressed_gb</span><br><span class="line">        FROM   v_catalog.projections p</span><br><span class="line">               JOIN v_monitor.projection_storage ps</span><br><span class="line">                 ON ps.projection_id = p.projection_id</span><br><span class="line">        WHERE  p.is_super_projection = &apos;t&apos;</span><br><span class="line">        GROUP  BY ps.anchor_table_schema) pj</span><br><span class="line">       CROSS JOIN (SELECT (SELECT database_size_bytes</span><br><span class="line">                           FROM   v_catalog.license_audits</span><br><span class="line">                           ORDER  BY audit_start_timestamp DESC</span><br><span class="line">                           LIMIT  1) / (SELECT SUM(used_bytes)</span><br><span class="line">                                        FROM   V_MONITOR.projection_storage) AS ratio) la</span><br><span class="line">ORDER  BY pj.used_compressed_gb DESC;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份赋权语句<br>–backup grants</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select &apos;grant &apos;|| privileges_description || &apos; on &apos;|| object_name || &apos; to &apos;|| grantee||&apos;;&apos; </span><br><span class="line">from grants where grantor&lt;&gt;grantee </span><br><span class="line">order by object_name;</span><br></pre></td></tr></table></figure>
+<p>备份建表语句以及schema语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT EXPORT_CATALOG(&apos;&apos;,&apos;DESIGN_ALL&apos;)&quot;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/vertica的这些事（十）——-Vertica停止数据库的操作步骤/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/vertica的这些事（十）——-Vertica停止数据库的操作步骤/" itemprop="url">vertica的这些事（十）——-Vertica停止数据库的操作步骤</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:50:27+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ul>
+<li>1、查看各个节点的状态，保证没有节点出现down状态</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from nodes;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>2、设置最大会话数</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">=&gt; SELECT CURRENT_VALUE FROM CONFIGURATION_PARAMETERS WHERE parameter_name=&apos;MaxClientSessions&apos;;</span><br><span class="line">  CURRENT_VALUE</span><br><span class="line">---------------</span><br><span class="line"> 50</span><br><span class="line">(1 row)</span><br><span class="line">ALTER DATABASE mydb SET MaxClientSessions = 0;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>3、关闭所有会话</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from sessions;</span><br><span class="line">SELECT CLOSE_ALL_SESSIONS();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>4、打开admintools，停库</li>
+<li>5、操作完成后回复最大会话数</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER DATABASE CSAP SET MaxClientSessions = 50;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（九）——-vertica存储统计信息/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（九）——-vertica存储统计信息/" itemprop="url">Vertica的这些事（九）——-vertica存储统计信息</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:49:58+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>vertica存储统计信息：</strong></p>
+<p>表数量： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(distinct table_name)  FROM tables;</span><br></pre></td></tr></table></figure>
+<p>分区表数量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(distinct table_name) from PARTITION_COLUMNS;</span><br></pre></td></tr></table></figure>
+<p>总表占大小：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT sum(used_bytes)/1024/1024/1024 FROM projection_storage ;</span><br></pre></td></tr></table></figure>
+<p>分区表总大小：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select sum(disk_space_bytes)/1024/1024/1024 from PARTITION_COLUMNS;</span><br><span class="line">SELECT sum(used_bytes)/1024/1024/1024 FROM projection_storage where anchor_table_name in (select distinct table_name from PARTITION_COLUMNS);</span><br></pre></td></tr></table></figure>
+<p>分区表大小（前10）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select table_name,sum(disk_space_bytes)/1024/1024/1024 size from PARTITION_COLUMNS group by table_name order by size desc limit 10;</span><br></pre></td></tr></table></figure>
+<p>分区表每个分区的大小（前20）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select partition_key,sum(disk_space_bytes)/1024/1024/1024 size from PARTITION_COLUMNS group by partition_key order by size desc limit 20;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+  </section>
+
+  
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+
+          
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">qinchaofeng</p>
+              <p class="site-description motion-element" itemprop="description">大数据实践的那些事</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qinchaofeng" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">qinchaofeng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js">
+  </script>
+  
+
+</body>
+</html>
