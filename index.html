@@ -233,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（一）——VSQL常用命令/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="qinchaofeng">
@@ -252,7 +252,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/12/hello-world/" itemprop="url">Hello World</a></h1>
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（一）——VSQL常用命令/" itemprop="url">未命名</a></h1>
         
 
         <div class="post-meta">
@@ -264,7 +264,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T10:51:44+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:05+08:00">
                 2018-09-12
               </time>
             
@@ -304,15 +304,1295 @@
       
         
           
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+            <p><strong>Linux环境下，一般都是使用vsql客户端连接vertica来执行命令的，下面就介绍一下vsql常用的命令有哪些。</strong></p>
+<p><strong>导出数据</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vsql -U $usr -p 5433 -h 172.17.12.208 -w $pwd -At -o /home/zyzx/20160809.dat -c &quot;select * from tb_test;&quot;</span><br></pre></td></tr></table></figure>
+<p>默认是以‘|’分割的，指定分隔符如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vsql -U $usr -p 5433 -h 172.17.12.208 -w $pwd -F $&apos;\t&apos;  -At -o /home/zyzx/20160809.dat -c &quot;select * from tb_test;&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>切换路径 ：\cd</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \!pwd</span><br><span class="line">/home/zyzx</span><br><span class="line">dbadmin=&gt; \cd /tmp</span><br><span class="line">dbadmin=&gt; \!pwd</span><br><span class="line">/tmp</span><br></pre></td></tr></table></figure>
+<p><strong>列出多有表：\d</strong><br><strong>列出多有函数：\df</strong><br><strong>列出所有projection：\dj</strong><br><strong>列出所有的schema：\dn</strong><br><strong>列出所有的序列：\ds</strong><br><strong>列出所有的系统字典表：\dS</strong><br><strong>列出所有支持的类型：\dT</strong><br><strong>列出所有的视图：\dv</strong><br><strong>编辑sql：\e</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此时会进入编辑模式，输入需要执行的sql脚本，然后保存，就可以执行了（可以同时执行多个sql语句）</span><br></pre></td></tr></table></figure>
+<p><strong>执行缓存的sql：\g</strong><br><strong>输出HTML格式的结果：\H</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \H</span><br><span class="line">Output format is html.</span><br><span class="line">dbadmin=&gt; select * from nodes limit 1;</span><br><span class="line">&lt;table border=&quot;1&quot;&gt;</span><br><span class="line">  &lt;tr&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_name&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_id&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_state&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_address&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_address_family&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;export_address&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;export_address_family&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;catalog_path&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_type&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;is_ephemeral&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;standing_in_for&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_down_since&lt;/th&gt;</span><br><span class="line">  &lt;/tr&gt;</span><br><span class="line">  &lt;tr valign=&quot;top&quot;&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;v_csap_node0001&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;right&quot;&gt;45035996273704980&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;UP&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;172.17.12.208&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;ipv4&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;172.17.12.208&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;ipv4&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;/data/CSAP/v_csap_node0001_catalog/Catalog&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;PERMANENT&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;f&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;&amp;nbsp; &lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;&amp;nbsp; &lt;/td&gt;</span><br><span class="line">  &lt;/tr&gt;</span><br><span class="line">&lt;/table&gt;</span><br><span class="line">&lt;p&gt;(1 row)&lt;br /&gt;</span><br><span class="line">&lt;/p&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>查看当前缓存buffer里的内容：\p</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \p</span><br><span class="line">select * from nodes limit 1;</span><br></pre></td></tr></table></figure>
+<p><strong>修改密码：\password [ USER ]</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \password test</span><br><span class="line">Changing password for &quot;test&quot;</span><br><span class="line">New password:</span><br></pre></td></tr></table></figure>
+<p><strong>情况当前buffer：\r</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \r</span><br><span class="line">Query buffer reset (cleared).</span><br><span class="line">dbadmin=&gt; \p</span><br><span class="line">Query buffer is empty.</span><br></pre></td></tr></table></figure>
+<p><strong>历史命令查看保存为file：\s [ FILE ]</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\s history.log</span><br></pre></td></tr></table></figure>
+<p><strong>查看所有表的权限：\dp 或者\z</strong></p>
+<p><strong>copy:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vsql -U username -w passwd -d vmart -c &quot;COPY store.store_sales_fact FROM STDIN DELIMITER &apos;|&apos;;&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>直接copyHDFS的文件到vertica</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">COPY testTable SOURCE Hdfs(url=&apos;http://hadoop:50070/webhdfs/v1/tmp/test.txt&apos;,</span><br><span class="line">   username=&apos;hadoopUser&apos;);</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（五）——-谈谈vertica的flex-table/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（五）——-谈谈vertica的flex-table/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:05+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Json格式对于现在所有的软件开发者都不陌生，很多数据格式都用他来存储，我们来看一下vertica是怎么处理json数据的。这就是vertica的flex-table！"><a href="#Json格式对于现在所有的软件开发者都不陌生，很多数据格式都用他来存储，我们来看一下vertica是怎么处理json数据的。这就是vertica的flex-table！" class="headerlink" title="Json格式对于现在所有的软件开发者都不陌生，很多数据格式都用他来存储，我们来看一下vertica是怎么处理json数据的。这就是vertica的flex table！"></a>Json格式对于现在所有的软件开发者都不陌生，很多数据格式都用他来存储，我们来看一下vertica是怎么处理json数据的。这就是vertica的flex table！</h1><h2 id="首先创建一个json文件："><a href="#首先创建一个json文件：" class="headerlink" title="首先创建一个json文件："></a>首先创建一个json文件：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;name&quot;: &quot;Everest&quot;, &quot;type&quot;:&quot;mountain&quot;, &quot;height&quot;:29029, &quot;hike_safety&quot;: 34.1&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Mt St Helens&quot;, &quot;type&quot;:&quot;volcano&quot;, &quot;height&quot;:29029, &quot;hike_safety&quot;: 15.4&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Denali&quot;, &quot;type&quot;:&quot;mountain&quot;, &quot;height&quot;:17000, &quot;hike_safety&quot;: 12.2&#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Kilimanjaro&quot;, &quot;type&quot;:&quot;mountain&quot;, &quot;height&quot;:14000 &#125;</span><br><span class="line">&#123;&quot;name&quot;: &quot;Mt Washington&quot;, &quot;type&quot;:&quot;mountain&quot;, &quot;hike_safety&quot;: 50.6&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="然后我们创建一个flex-table："><a href="#然后我们创建一个flex-table：" class="headerlink" title="然后我们创建一个flex table："></a>然后我们创建一个flex table：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; CREATE FLEX TABLE start_json();</span><br><span class="line">CREATE TABLE</span><br></pre></td></tr></table></figure>
+<h2 id="然后把数据copy进去："><a href="#然后把数据copy进去：" class="headerlink" title="然后把数据copy进去："></a>然后把数据copy进去：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; COPY start_json FROM &apos;/home/dbadmin/qcfData/*json*&apos; PARSER fjsonparser();</span><br><span class="line"> Rows Loaded </span><br><span class="line">-------------</span><br><span class="line">           5</span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
+<h2 id="查询结果："><a href="#查询结果：" class="headerlink" title="查询结果："></a>查询结果：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; select * from start_json();</span><br><span class="line">ERROR 4256:  Only relations and subqueries are allowed in the FROM clause</span><br><span class="line">dbadmin=&gt;  SELECT maptostring(__raw__) FROM start_json;</span><br><span class="line">                                               maptostring                                                </span><br><span class="line">----------------------------------------------------------------------------------------------------------</span><br><span class="line"> &#123;</span><br><span class="line">   &quot;height&quot; : &quot;29029&quot;,</span><br><span class="line">   &quot;hike_safety&quot; : &quot;34.1&quot;,</span><br><span class="line">   &quot;name&quot; : &quot;Everest&quot;,</span><br><span class="line">   &quot;type&quot; : &quot;mountain&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> &#123;</span><br><span class="line">   &quot;height&quot; : &quot;29029&quot;,</span><br><span class="line">   &quot;hike_safety&quot; : &quot;15.4&quot;,</span><br><span class="line">   &quot;name&quot; : &quot;Mt St Helens&quot;,</span><br><span class="line">   &quot;type&quot; : &quot;volcano&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> &#123;</span><br><span class="line">   &quot;height&quot; : &quot;17000&quot;,</span><br><span class="line">   &quot;hike_safety&quot; : &quot;12.2&quot;,</span><br><span class="line">   &quot;name&quot; : &quot;Denali&quot;,</span><br><span class="line">   &quot;type&quot; : &quot;mountain&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> &#123;</span><br><span class="line">   &quot;height&quot; : &quot;14000&quot;,</span><br><span class="line">   &quot;name&quot; : &quot;Kilimanjaro&quot;,</span><br><span class="line">   &quot;type&quot; : &quot;mountain&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> &#123;</span><br><span class="line">   &quot;hike_safety&quot; : &quot;50.6&quot;,</span><br><span class="line">   &quot;name&quot; : &quot;Mt Washington&quot;,</span><br><span class="line">   &quot;type&quot; : &quot;mountain&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">(5 rows)</span><br></pre></td></tr></table></figure>
+<h2 id="发现很好的解析了json文件，并且格式化了文件。"><a href="#发现很好的解析了json文件，并且格式化了文件。" class="headerlink" title="发现很好的解析了json文件，并且格式化了文件。"></a>发现很好的解析了json文件，并且格式化了文件。</h2><h2 id="查询json数据："><a href="#查询json数据：" class="headerlink" title="查询json数据："></a>查询json数据：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt;  SELECT start_json.type,start_json.name FROM start_json;</span><br><span class="line">   type   |     name      </span><br><span class="line">----------+---------------</span><br><span class="line"> mountain | Everest</span><br><span class="line"> volcano  | Mt St Helens</span><br><span class="line"> mountain | Denali</span><br><span class="line"> mountain | Kilimanjaro</span><br><span class="line"> mountain | Mt Washington</span><br><span class="line">(5 rows)</span><br></pre></td></tr></table></figure>
+<p>此时如果使用 * 查询 会出现乱码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM start_json;</span><br></pre></td></tr></table></figure>
+<p>需要使用函数 compute_flextable_keys</p>
+<p>select compute_flextable_keys(‘start_json’);</p>
+<p>然后查询就可以有结果</p>
+<h2 id="综上，flex-table-对json格式的数据提供了很好的存储于展示。"><a href="#综上，flex-table-对json格式的数据提供了很好的存储于展示。" class="headerlink" title="综上，flex table 对json格式的数据提供了很好的存储于展示。"></a>综上，flex table 对json格式的数据提供了很好的存储于展示。</h2>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（四）——-vertica加密数据/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（四）——-vertica加密数据/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>通过创建 Secure Access Policies可以对vertica中的某一列数据进行加密：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CREATE ACCESS POLICY ON [schema][tablename]</span><br><span class="line">FOR COLUMN columnname</span><br><span class="line">expression</span><br><span class="line">[ENABLE/DISABLE];</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE ACCESS POLICY ON customers_table</span><br><span class="line">FOR COLUMN SSN</span><br><span class="line">CASE</span><br><span class="line">WHEN ENABLED_ROLE(&apos;manager&apos;) THEN SSN</span><br><span class="line">WHEN ENABLED_ROLE(&apos;operator&apos;) THEN SUBSTR(SSN, 8, 4)</span><br><span class="line">ELSE NULL</span><br><span class="line">END</span><br><span class="line">ENABLE;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ALTER ACCESS POLICY</span><br><span class="line">ALTER ACCESS POLICY ON tablename</span><br><span class="line"></span><br><span class="line">.. .FOR COLUMN columnname</span><br><span class="line">... expression</span><br><span class="line">... [ENABLE | DISABLE];</span><br><span class="line">... | FOR COLUMN columname</span><br><span class="line">...   COPY TO tablename;</span><br><span class="line"></span><br><span class="line">DROP ACCESS POLICY</span><br><span class="line">DROP ACCESS POLICY ON tablename</span><br><span class="line">FOR COLUMN columnname;</span><br></pre></td></tr></table></figure>
+<p>如果表中存在策略的话，那么drop table 时会报错：<br> <img src="http://upload-images.jianshu.io/upload_images/4579636-e86ec5139ce973ad?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（十一）——-Vertica备份元数据信息/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（十一）——-Vertica备份元数据信息/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>—备份资源池</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SELECT    &apos;CREATE RESOURCE POOL &apos; || name</span><br><span class="line">        || CASE WHEN memorysize                IS NULL THEN &apos; &apos; ELSE &apos; MEMORYSIZE &apos;                 || &apos;&apos;&apos;&apos; || memorysize               || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN maxmemorysize = &apos;&apos;                THEN &apos; &apos; ELSE &apos; MAXMEMORYSIZE &apos;              || &apos;&apos;&apos;&apos; || maxmemorysize            || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN executionparallelism     = &apos;AUTO&apos; THEN &apos; &apos; ELSE &apos; EXECUTIONPARALLELISM &apos;       || &apos;&apos;&apos;&apos; || executionparallelism     || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN NULLIFZERO(priority)      IS NULL THEN &apos; &apos; ELSE &apos; PRIORITY &apos;                   || &apos;&apos;&apos;&apos; || priority                 || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN runtimepriority           IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMEPRIORITY &apos;            ||         runtimepriority                  END</span><br><span class="line">        || CASE WHEN runtimeprioritythreshold  IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMEPRIORITYTHRESHOLD &apos;   ||         runtimeprioritythreshold         END</span><br><span class="line">        || CASE WHEN queuetimeout              IS NULL THEN &apos; &apos; ELSE &apos; QUEUETIMEOUT &apos;               ||         queuetimeout                     END</span><br><span class="line">        || CASE WHEN maxconcurrency            IS NULL THEN &apos; &apos; ELSE &apos; MAXCONCURRENCY &apos;             ||         maxconcurrency                   END</span><br><span class="line">        || CASE WHEN runtimecap                IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMECAP &apos;                 || &apos;&apos;&apos;&apos; || runtimecap               || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || &apos; ; &apos;</span><br><span class="line">FROM v_catalog.resource_pools</span><br><span class="line">WHERE NOT is_internal</span><br><span class="line">ORDER BY name;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>—备份角色</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Roles&apos;;</span><br><span class="line">SELECT &apos;CREATE ROLE &apos; || name || &apos; ;&apos; AS TXT_CR</span><br><span class="line">FROM v_catalog.roles</span><br><span class="line">WHERE name NOT IN (&apos;public&apos;,&apos;dbadmin&apos;,&apos;pseudosuperuser&apos;,&apos;dbduser&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Add users to roles&apos;;</span><br><span class="line">SELECT &apos;GRANT &apos; || all_roles || &apos; TO &apos; || user_name || &apos;;&apos;</span><br><span class="line">FROM v_catalog.users</span><br><span class="line">WHERE user_name NOT IN (&apos;dbadmin&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份schema</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Schema&apos;;</span><br><span class="line">SELECT &apos;CREATE SCHEMA &apos; || schema_name  ||  &apos;;&apos;</span><br><span class="line">FROM schemata</span><br><span class="line">WHERE schema_name NOT IN (&apos;v_internal&apos;,&apos;v_catalog&apos;,&apos;v_monitor&apos;,&apos;TxtIndex&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份用户</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Users&apos;;</span><br><span class="line">SELECT &apos;CREATE USER &apos; || user_name  || &apos; RESOURCE POOL &apos; || resource_pool ||  &apos; ;&apos;</span><br><span class="line">FROM v_catalog.users</span><br><span class="line">WHERE user_name NOT IN (&apos;dbadmin&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>—各手shcema大小</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">SELECT /*+(estimated_raw_size)*/</span><br><span class="line">       pj.anchor_table_schema,</span><br><span class="line">       pj.used_compressed_gb,</span><br><span class="line">       pj.used_compressed_gb * la.ratio AS raw_estimate_gb</span><br><span class="line">FROM   (SELECT ps.anchor_table_schema,</span><br><span class="line">               SUM(used_bytes) / ( 1024^3 ) AS used_compressed_gb</span><br><span class="line">        FROM   v_catalog.projections p</span><br><span class="line">               JOIN v_monitor.projection_storage ps</span><br><span class="line">                 ON ps.projection_id = p.projection_id</span><br><span class="line">        WHERE  p.is_super_projection = &apos;t&apos;</span><br><span class="line">        GROUP  BY ps.anchor_table_schema) pj</span><br><span class="line">       CROSS JOIN (SELECT (SELECT database_size_bytes</span><br><span class="line">                           FROM   v_catalog.license_audits</span><br><span class="line">                           ORDER  BY audit_start_timestamp DESC</span><br><span class="line">                           LIMIT  1) / (SELECT SUM(used_bytes)</span><br><span class="line">                                        FROM   V_MONITOR.projection_storage) AS ratio) la</span><br><span class="line">ORDER  BY pj.used_compressed_gb DESC;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份赋权语句<br>–backup grants</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select &apos;grant &apos;|| privileges_description || &apos; on &apos;|| object_name || &apos; to &apos;|| grantee||&apos;;&apos; </span><br><span class="line">from grants where grantor&lt;&gt;grantee </span><br><span class="line">order by object_name;</span><br></pre></td></tr></table></figure>
+<p>备份建表语句以及schema语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT EXPORT_CATALOG(&apos;&apos;,&apos;DESIGN_ALL&apos;)&quot;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（十四）——Vertica实时消费kafka实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（十四）——Vertica实时消费kafka实现/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>一、    安装环境<br>Vertica官方提供了消费kafka的方法，需要注意版本对应<br> <img src="http://upload-images.jianshu.io/upload_images/4579636-1bdb8d907cc0f59a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"><br>消费kafka原理，是Vertica提供的Udx</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4579636-a50aee6cba0da716?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>首先需要安装相应的环境</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/$&#123;vertica&#125;/packages/kafka/ddl/install.sql</span><br></pre></td></tr></table></figure>
+<p>判断是否安装成功</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/$&#123;vertica&#125;/packages/kafka/ddl/isinstalled.sql</span><br></pre></td></tr></table></figure>
+<p>二、    单次消费kafka<br>参考官方文档 <a href="https://my.vertica.com/docs/7.2.x/HTML/index.htm#Authoring/KafkaIntegrationGuide/UsingCOPYwithKafka.htm?TocPath=Integrating%2520with%2520Apache%2520Kafka%7C_____5" target="_blank" rel="noopener">Using COPY with Kafka</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">COPY schema.target_table SOURCE KafkaSource (stream=&apos;topic1|1|1,topic2|2|2&apos;, brokers=&apos;host1:9092,</span><br><span class="line">                                                host2:9092&apos;,duration= INTERVAL&apos;timeslice&apos;,stop_on_eof=TRUE,</span><br><span class="line">                                                eof_timeout= INTERVAL&apos;timeslice&apos;)</span><br><span class="line">        PARSER KafkaJSONParser(flatten_arrays=False, flatten_maps=False)</span><br><span class="line">           REJECTED DATA AS TABLE schema.rejection_table TRICKLE;</span><br></pre></td></tr></table></figure>
+<p>三、    实时消费kafka<br>参考官方文档<a href="https://my.vertica.com/docs/7.2.x/HTML/index.htm#Authoring/KafkaIntegrationGuide/Using_Kafka_with_HP_Vertica.htm?TocPath=Integrating%2520with%2520Apache%2520Kafka%7C_____4" target="_blank" rel="noopener">Using Kafka with Vertica</a></p>
+<ol>
+<li>首先创建一个Scheduler</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig scheduler --add --config-schema myScheduler --operator user1</span><br></pre></td></tr></table></figure>
+<p>使用conf封装Vertica数据库登录信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kafka_config=”—cinfig-schema kafka01 –dbhoust 172.17.12.1 –username dbadmin –password pass1”</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>创建Scheduler脚本</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig scheduler –add $&#123; kafka_config &#125; –config-schema kafka_config  --operator dbadmin</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>创建kafka集群信息</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BROKERS=”172.17.12.2:9099, 172.17.12.3:9099, 172.17.12.4:9099”</span><br><span class="line">/opt/vertica/packages/kafka/bin/vkconfig kafka-cluster –add  $&#123; kafka_config &#125; --onfig-schema kafka_config  --cluster KafkaCluster –brokers $ BROKERS</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>读取topic</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig topic –add $&#123; kafka_config &#125; –target public.kafka_tgt –rejection-table public.kafka_rej –cluster KafkaCluster –topic web_pagelogs –number-partitions 1</span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li>发布Scheduler</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig launch $&#123; kafka_config &#125; -- onfig-schema kafka_config –instance-name webpagelogs</span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li>删除scheduler</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig scheduler $&#123;kafka_config&#125; –remove –config-schema kafka_config</span><br></pre></td></tr></table></figure>
+<ol start="7">
+<li>删除topic接收</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/packages/kafka/bin/vkconfig topic $&#123;kafka_config&#125; –remove –target public.kafka_tgt</span><br></pre></td></tr></table></figure>
+<p>PS：<br>通过最新对Vertica消费kafka的使用，发现这个功能比较鸡肋。多个topic也只能放到一个scheduler里面执行消费，而且每次修改增加都需要停下所有topic的消费进程。另外在使用过程中也发现了丢失数据的现象。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（十三）——Vertica备份元数据信息/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（十三）——Vertica备份元数据信息/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>—备份资源池</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SELECT    &apos;CREATE RESOURCE POOL &apos; || name</span><br><span class="line">        || CASE WHEN memorysize                IS NULL THEN &apos; &apos; ELSE &apos; MEMORYSIZE &apos;                 || &apos;&apos;&apos;&apos; || memorysize               || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN maxmemorysize = &apos;&apos;                THEN &apos; &apos; ELSE &apos; MAXMEMORYSIZE &apos;              || &apos;&apos;&apos;&apos; || maxmemorysize            || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN executionparallelism     = &apos;AUTO&apos; THEN &apos; &apos; ELSE &apos; EXECUTIONPARALLELISM &apos;       || &apos;&apos;&apos;&apos; || executionparallelism     || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN NULLIFZERO(priority)      IS NULL THEN &apos; &apos; ELSE &apos; PRIORITY &apos;                   || &apos;&apos;&apos;&apos; || priority                 || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || CASE WHEN runtimepriority           IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMEPRIORITY &apos;            ||         runtimepriority                  END</span><br><span class="line">        || CASE WHEN runtimeprioritythreshold  IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMEPRIORITYTHRESHOLD &apos;   ||         runtimeprioritythreshold         END</span><br><span class="line">        || CASE WHEN queuetimeout              IS NULL THEN &apos; &apos; ELSE &apos; QUEUETIMEOUT &apos;               ||         queuetimeout                     END</span><br><span class="line">        || CASE WHEN maxconcurrency            IS NULL THEN &apos; &apos; ELSE &apos; MAXCONCURRENCY &apos;             ||         maxconcurrency                   END</span><br><span class="line">        || CASE WHEN runtimecap                IS NULL THEN &apos; &apos; ELSE &apos; RUNTIMECAP &apos;                 || &apos;&apos;&apos;&apos; || runtimecap               || &apos;&apos;&apos;&apos; END</span><br><span class="line">        || &apos; ; &apos;</span><br><span class="line">FROM v_catalog.resource_pools</span><br><span class="line">WHERE NOT is_internal</span><br><span class="line">ORDER BY name;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>—备份角色</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Roles&apos;;</span><br><span class="line">SELECT &apos;CREATE ROLE &apos; || name || &apos; ;&apos; AS TXT_CR</span><br><span class="line">FROM v_catalog.roles</span><br><span class="line">WHERE name NOT IN (&apos;public&apos;,&apos;dbadmin&apos;,&apos;pseudosuperuser&apos;,&apos;dbduser&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Add users to roles&apos;;</span><br><span class="line">SELECT &apos;GRANT &apos; || all_roles || &apos; TO &apos; || user_name || &apos;;&apos;</span><br><span class="line">FROM v_catalog.users</span><br><span class="line">WHERE user_name NOT IN (&apos;dbadmin&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份schema</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Schema&apos;;</span><br><span class="line">SELECT &apos;CREATE SCHEMA &apos; || schema_name  ||  &apos;;&apos;</span><br><span class="line">FROM schemata</span><br><span class="line">WHERE schema_name NOT IN (&apos;v_internal&apos;,&apos;v_catalog&apos;,&apos;v_monitor&apos;,&apos;TxtIndex&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份用户</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT &apos;-- Create Users&apos;;</span><br><span class="line">SELECT &apos;CREATE USER &apos; || user_name  || &apos; RESOURCE POOL &apos; || resource_pool ||  &apos; ;&apos;</span><br><span class="line">FROM v_catalog.users</span><br><span class="line">WHERE user_name NOT IN (&apos;dbadmin&apos;)</span><br><span class="line">ORDER BY 1;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>—各手shcema大小</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">SELECT /*+(estimated_raw_size)*/</span><br><span class="line">       pj.anchor_table_schema,</span><br><span class="line">       pj.used_compressed_gb,</span><br><span class="line">       pj.used_compressed_gb * la.ratio AS raw_estimate_gb</span><br><span class="line">FROM   (SELECT ps.anchor_table_schema,</span><br><span class="line">               SUM(used_bytes) / ( 1024^3 ) AS used_compressed_gb</span><br><span class="line">        FROM   v_catalog.projections p</span><br><span class="line">               JOIN v_monitor.projection_storage ps</span><br><span class="line">                 ON ps.projection_id = p.projection_id</span><br><span class="line">        WHERE  p.is_super_projection = &apos;t&apos;</span><br><span class="line">        GROUP  BY ps.anchor_table_schema) pj</span><br><span class="line">       CROSS JOIN (SELECT (SELECT database_size_bytes</span><br><span class="line">                           FROM   v_catalog.license_audits</span><br><span class="line">                           ORDER  BY audit_start_timestamp DESC</span><br><span class="line">                           LIMIT  1) / (SELECT SUM(used_bytes)</span><br><span class="line">                                        FROM   V_MONITOR.projection_storage) AS ratio) la</span><br><span class="line">ORDER  BY pj.used_compressed_gb DESC;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>–备份赋权语句<br>–backup grants</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select &apos;grant &apos;|| privileges_description || &apos; on &apos;|| object_name || &apos; to &apos;|| grantee||&apos;;&apos; </span><br><span class="line">from grants where grantor&lt;&gt;grantee </span><br><span class="line">order by object_name;</span><br></pre></td></tr></table></figure>
+<p>备份建表语句以及schema语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT EXPORT_CATALOG(&apos;&apos;,&apos;DESIGN_ALL&apos;)&quot;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（十二）——-vertica备份与恢复/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（十二）——-vertica备份与恢复/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复-以下是整理的过程，分享给大家，如有问题欢迎大家指正-可加QQ群交流：412191494"><a href="#最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复-以下是整理的过程，分享给大家，如有问题欢迎大家指正-可加QQ群交流：412191494" class="headerlink" title="最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复 以下是整理的过程，分享给大家，如有问题欢迎大家指正~ 可加QQ群交流：412191494"></a>最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复 以下是整理的过程，分享给大家，如有问题欢迎大家指正~ 可加QQ群交流：412191494</h2><h2 id="1、vertica备份"><a href="#1、vertica备份" class="headerlink" title="1、vertica备份"></a>1、vertica备份</h2><h2 id="1-1-vertica备份配置"><a href="#1-1-vertica备份配置" class="headerlink" title="1.1 vertica备份配置:"></a>1.1 vertica备份配置:</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py  --setupconfig</span><br><span class="line">Snapshot name (backup_snapshot): full_backup20160505</span><br><span class="line">Number of restore points (1): 1</span><br><span class="line">Specify objects (no default): </span><br><span class="line">Object restore mode (coexist, createOrReplace or create) (createOrReplace): </span><br><span class="line">Vertica user name (dbadmin): dbadmin</span><br><span class="line">Save password to avoid runtime prompt? (n) [y/n]: y</span><br><span class="line">Database user password to save in vbr password config file (no default):</span><br><span class="line">Node v_windy1990_node0001</span><br><span class="line">Backup host name (no default): 192.168.231.110</span><br><span class="line">Backup directory (no default): /home/dbadmin/backup</span><br><span class="line">Change advanced settings? (n) [y/n]: y</span><br><span class="line">Temp directory (/tmp/vbr): </span><br><span class="line">Number of times to retry (2): </span><br><span class="line">Seconds between retry attempts (1): </span><br><span class="line">Encrypt data during transmission? (n) [y/n]: </span><br><span class="line">Use checksum for data integrity (not file data and size)? (n) [y/n]: </span><br><span class="line">Port number for rsync daemon (50000): </span><br><span class="line">User name to access rsync daemon (no default): </span><br><span class="line">Password of the user who accesses rsync daemon:</span><br><span class="line">Backup transfer bandwidth limit in KBps or 0 for unlimited (0): </span><br><span class="line">Number of concurrency for backup (1): </span><br><span class="line">Restore transfer bandwidth limit in KBps or 0 for unlimited (0): </span><br><span class="line">Number of concurrency for restore (1): </span><br><span class="line">Password file name (no default): password</span><br><span class="line">Saved vbr password to password.</span><br><span class="line">Config file name (full_backup20160505.ini): </span><br><span class="line">Saved vbr config to full_backup20160505.ini.</span><br></pre></td></tr></table></figure>
+<h2 id="备份成功后查看备份的文件内容如下："><a href="#备份成功后查看备份的文件内容如下：" class="headerlink" title="备份成功后查看备份的文件内容如下："></a>备份成功后查看备份的文件内容如下：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ more full_backup20160505.ini </span><br><span class="line">[Misc]</span><br><span class="line">snapshotName = full_backup20160505</span><br><span class="line">restorePointLimit = 1</span><br><span class="line">objectRestoreMode = createOrReplace</span><br><span class="line">tempDir = /tmp/vbr</span><br><span class="line">retryCount = 2</span><br><span class="line">retryDelay = 1</span><br><span class="line">passwordFile = password</span><br><span class="line"></span><br><span class="line">[Database]</span><br><span class="line">dbName = Windy1990</span><br><span class="line">dbUser = dbadmin</span><br><span class="line"></span><br><span class="line">[Transmission]</span><br><span class="line">encrypt = False</span><br><span class="line">checksum = False</span><br><span class="line">port_rsync = 50000</span><br><span class="line">serviceAccessUser = None</span><br><span class="line">total_bwlimit_backup = 0</span><br><span class="line">concurrency_backup = 1</span><br><span class="line">total_bwlimit_restore = 0</span><br><span class="line">concurrency_restore = 1</span><br><span class="line"></span><br><span class="line">[Mapping]</span><br><span class="line">v_windy1990_node0001 = 192.168.231.110:/home/dbadmin/backup</span><br></pre></td></tr></table></figure>
+<h2 id="备份中我选了一个文件保存密码："><a href="#备份中我选了一个文件保存密码：" class="headerlink" title="备份中我选了一个文件保存密码："></a>备份中我选了一个文件保存密码：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/dbadmin/password</span><br></pre></td></tr></table></figure>
+<h2 id="里面存有数据路的密码："><a href="#里面存有数据路的密码：" class="headerlink" title="里面存有数据路的密码："></a>里面存有数据路的密码：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ more password </span><br><span class="line">[Passwords]</span><br><span class="line">dbPassword = dbadmin</span><br><span class="line">1.2 vertica 全备份</span><br><span class="line">官方文档：</span><br><span class="line">A full backup is a complete copy of the database catalog, its schemas, tables, and other objects. It is a consistent image of the database at the time the backup occurred. You can use a full backup for disaster recovery to restore a damaged or incomplete database.</span><br></pre></td></tr></table></figure>
+<h2 id="执行备份命令："><a href="#执行备份命令：" class="headerlink" title="执行备份命令："></a>执行备份命令：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file full_backup20160505.ini</span><br><span class="line">Error: Manifest not found at rsync://[192.168.231.110]:50000/home/dbadmin/backup/ -- is the backup location initialized? Hint: Execute &apos;--task init&apos; first.</span><br><span class="line">Backup FAILED.</span><br></pre></td></tr></table></figure>
+<h2 id="发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）"><a href="#发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）" class="headerlink" title="发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）"></a>发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task init --config-file full_backup20160505.ini</span><br><span class="line">Initializing backup locations.</span><br><span class="line">Backup locations initialized.</span><br></pre></td></tr></table></figure>
+<h2 id="路径声明成功！-查看该备份路径下多了一个文件。"><a href="#路径声明成功！-查看该备份路径下多了一个文件。" class="headerlink" title="路径声明成功！ 查看该备份路径下多了一个文件。"></a>路径声明成功！ 查看该备份路径下多了一个文件。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost backup]$ ls -l</span><br><span class="line">total 4</span><br><span class="line">-rw-r--r--. 1 dbadmin verticadba 22 May  5 13:47 backup_manifest</span><br></pre></td></tr></table></figure>
+<h2 id="然后再次执行备份命令："><a href="#然后再次执行备份命令：" class="headerlink" title="然后再次执行备份命令："></a>然后再次执行备份命令：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task backup --config-file full_backup20160505.ini</span><br></pre></td></tr></table></figure>
+<h2 id="可以看到这次可以备份成功了："><a href="#可以看到这次可以备份成功了：" class="headerlink" title="可以看到这次可以备份成功了："></a>可以看到这次可以备份成功了：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file full_backup20160505.ini</span><br><span class="line">Starting backup of database Windy1990.</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Snapshotting database.</span><br><span class="line">Snapshot complete.</span><br><span class="line">Approximate bytes to copy: 60269241 of 60269241 total.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Copying backup metadata.</span><br><span class="line">Finalizing backup.</span><br><span class="line">Backup complete!</span><br></pre></td></tr></table></figure>
+<h2 id="我们可以看到，已经完全备份了vertica数据库。-此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径-home-dbamin-backup下："><a href="#我们可以看到，已经完全备份了vertica数据库。-此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径-home-dbamin-backup下：" class="headerlink" title="我们可以看到，已经完全备份了vertica数据库。 此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径/home/dbamin/backup下："></a>我们可以看到，已经完全备份了vertica数据库。 此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径/home/dbamin/backup下：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost backup]$ ll</span><br><span class="line">total 12</span><br><span class="line">-rw-r--r--. 1 dbadmin verticadba 1044 May  5 14:08 backup_manifest</span><br><span class="line">drwxr-xr-x. 8 dbadmin verticadba 4096 May  5 14:07 Objects</span><br><span class="line">drwxr-xr-x. 3 dbadmin verticadba 4096 May  5 14:08 Snapshots</span><br></pre></td></tr></table></figure>
+<h2 id="可以看到多了2个文件夹-Objects-Snapshots-我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。-home-dbadmin-backup-Snapshots-full-backup20160505-20160505-060600-v-windy1990-node0001目录下存放着我们备份的原vertica数据库的一下信息。"><a href="#可以看到多了2个文件夹-Objects-Snapshots-我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。-home-dbadmin-backup-Snapshots-full-backup20160505-20160505-060600-v-windy1990-node0001目录下存放着我们备份的原vertica数据库的一下信息。" class="headerlink" title="可以看到多了2个文件夹 /Objects / Snapshots 我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。 /home/dbadmin/backup/Snapshots/full_backup20160505_20160505_060600/v_windy1990_node0001目录下存放着我们备份的原vertica数据库的一下信息。"></a>可以看到多了2个文件夹 /Objects / Snapshots 我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。 /home/dbadmin/backup/Snapshots/full_backup20160505_20160505_060600/v_windy1990_node0001目录下存放着我们备份的原vertica数据库的一下信息。</h2><h2 id="检查每个节点的数据流："><a href="#检查每个节点的数据流：" class="headerlink" title="检查每个节点的数据流："></a>检查每个节点的数据流：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select node_name,sum(used_bytes) as size_in_bytes from v_monitor.storage_containers group by node_name;</span><br></pre></td></tr></table></figure>
+<h2 id="1-3-vertica的增量备份-官方文档上是把全量和增量一起介绍的，称为Full-and-Incremental-Backups，在这里我把增量单独列了出来。-restorePointLimit控制着增量备份集的数量-我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit-1-再次执行1-2中的全备份命令即可实现增量备份"><a href="#1-3-vertica的增量备份-官方文档上是把全量和增量一起介绍的，称为Full-and-Incremental-Backups，在这里我把增量单独列了出来。-restorePointLimit控制着增量备份集的数量-我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit-1-再次执行1-2中的全备份命令即可实现增量备份" class="headerlink" title="1.3 vertica的增量备份 官方文档上是把全量和增量一起介绍的，称为Full and Incremental Backups，在这里我把增量单独列了出来。 restorePointLimit控制着增量备份集的数量 我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit = 1 再次执行1.2中的全备份命令即可实现增量备份~"></a>1.3 vertica的增量备份 官方文档上是把全量和增量一起介绍的，称为Full and Incremental Backups，在这里我把增量单独列了出来。 restorePointLimit控制着增量备份集的数量 我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit = 1 再次执行1.2中的全备份命令即可实现增量备份~</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file full_backup20160505.ini</span><br><span class="line">Starting backup of database Windy1990.</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Snapshotting database.</span><br><span class="line">Snapshot complete.</span><br><span class="line">Approximate bytes to copy: 0 of 60269241 total.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Copying backup metadata.</span><br><span class="line">Finalizing backup.</span><br><span class="line">Backup complete!</span><br></pre></td></tr></table></figure>
+<h2 id="有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？-这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到："><a href="#有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？-这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到：" class="headerlink" title="有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？ 这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到："></a>有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？ 这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ cd backup/</span><br><span class="line">[dbadmin@localhost backup]$ ll</span><br><span class="line">total 12</span><br><span class="line">-rw-r--r--. 1 dbadmin verticadba 1103 May  5 14:36 backup_manifest</span><br><span class="line">drwxr-xr-x. 8 dbadmin verticadba 4096 May  5 14:07 Objects</span><br><span class="line">drwxr-xr-x. 4 dbadmin verticadba 4096 May  5 14:36 Snapshots</span><br></pre></td></tr></table></figure>
+<h2 id="大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。-所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。-我插入一条手机号："><a href="#大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。-所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。-我插入一条手机号：" class="headerlink" title="大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。 所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。 我插入一条手机号："></a>大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。 所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。 我插入一条手机号：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; insert into tb_serv_num values(&apos;13488888888&apos;,&apos;qin**&apos;);</span><br><span class="line"> OUTPUT </span><br><span class="line">--------</span><br><span class="line">      1</span><br><span class="line">(1 row)</span><br><span class="line"></span><br><span class="line">dbadmin=&gt; commit;</span><br><span class="line">COMMIT</span><br><span class="line">dbadmin=&gt; \q</span><br></pre></td></tr></table></figure>
+<h2 id="然后重新执行备份语句，执行后查看backup文件下的内容："><a href="#然后重新执行备份语句，执行后查看backup文件下的内容：" class="headerlink" title="然后重新执行备份语句，执行后查看backup文件下的内容："></a>然后重新执行备份语句，执行后查看backup文件下的内容：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ cd backup/</span><br><span class="line">[dbadmin@localhost backup]$ ll</span><br><span class="line">total 12</span><br><span class="line">-rw-r--r--. 1 dbadmin verticadba 1171 May  5 14:46 backup_manifest</span><br><span class="line">drwxr-xr-x. 9 dbadmin verticadba 4096 May  5 14:46 Objects</span><br><span class="line">drwxr-xr-x. 4 dbadmin verticadba 4096 May  5 14:46 Snapshots</span><br></pre></td></tr></table></figure>
+<h2 id="看文件时间，是不是说明我们上面的推理是正确的呢-所以，不要怀疑了，我们的增量备份是没有问题的！-1-4-vertica对象级备份-官网文档：-The-database-administrator-user-can-create-object-level-backups-consisting-of-one-or-more-schemas-and-tables-Object-level-backups-are-especially-useful-for-multi-tenanted-database-sites-其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）："><a href="#看文件时间，是不是说明我们上面的推理是正确的呢-所以，不要怀疑了，我们的增量备份是没有问题的！-1-4-vertica对象级备份-官网文档：-The-database-administrator-user-can-create-object-level-backups-consisting-of-one-or-more-schemas-and-tables-Object-level-backups-are-especially-useful-for-multi-tenanted-database-sites-其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）：" class="headerlink" title="看文件时间，是不是说明我们上面的推理是正确的呢~~~ 所以，不要怀疑了，我们的增量备份是没有问题的！ 1.4 vertica对象级备份 官网文档： The database administrator user can create object-level backups consisting of one or more schemas and tables. Object-level backups are especially useful for multi-tenanted database sites. 其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）："></a>看文件时间，是不是说明我们上面的推理是正确的呢~~~ 所以，不要怀疑了，我们的增量备份是没有问题的！ 1.4 vertica对象级备份 官网文档： The database administrator user can create object-level backups consisting of one or more schemas and tables. Object-level backups are especially useful for multi-tenanted database sites. 其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --setupconfigSnapshot name (backup_snapshot): backup_object_tb_serv</span><br><span class="line">Number of restore points (1): </span><br><span class="line">Specify objects (no default): tb_serv_num</span><br><span class="line">Object restore mode (coexist, createOrReplace or create) (createOrReplace): </span><br><span class="line">Vertica user name (dbadmin): </span><br><span class="line">Save password to avoid runtime prompt? (n) [y/n]: y</span><br><span class="line">Database user password to save in vbr password config file (no default):</span><br><span class="line">Node v_windy1990_node0001</span><br><span class="line">Backup host name (no default): 192.168.231.110</span><br><span class="line">Backup directory (no default): /home/dbadmin/backup</span><br><span class="line">Change advanced settings? (n) [y/n]: </span><br><span class="line">Password file name (no default): password</span><br><span class="line">Saved vbr password to password.</span><br><span class="line">Config file name (backup_object_tb_serv.ini): </span><br><span class="line">Saved vbr config to backup_object_tb_serv.ini.</span><br></pre></td></tr></table></figure>
+<h2 id="然后在执行备份命令："><a href="#然后在执行备份命令：" class="headerlink" title="然后在执行备份命令："></a>然后在执行备份命令：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file backup_object_tb_serv.ini </span><br><span class="line">Starting backup of database Windy1990.</span><br><span class="line">Objects: [&apos;tb_serv_num&apos;]</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Snapshotting database.</span><br><span class="line">Snapshot complete.</span><br><span class="line">Approximate bytes to copy: 0 of 244 total.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Copying backup metadata.</span><br><span class="line">Finalizing backup.</span><br><span class="line">Backup complete!</span><br></pre></td></tr></table></figure>
+<h2 id="已备份完成-1-5-vertica-Hard-Link-Local备份-官方文档：-A-hard-link-local-backup-is-a-full-or-object-level-backup-consisting-of-a-complete-copy-of-the-database-catalog-and-a-set-of-hard-file-links-to-corresponding-data-files-直接修改全备份的配置文件即可，加上一行："><a href="#已备份完成-1-5-vertica-Hard-Link-Local备份-官方文档：-A-hard-link-local-backup-is-a-full-or-object-level-backup-consisting-of-a-complete-copy-of-the-database-catalog-and-a-set-of-hard-file-links-to-corresponding-data-files-直接修改全备份的配置文件即可，加上一行：" class="headerlink" title="已备份完成~~ 1.5 vertica Hard Link Local备份 官方文档： A hard link local backup is a full or object-level backup consisting of a complete copy of the database catalog, and a set of hard file links to corresponding data files. 直接修改全备份的配置文件即可，加上一行："></a>已备份完成~~ 1.5 vertica Hard Link Local备份 官方文档： A hard link local backup is a full or object-level backup consisting of a complete copy of the database catalog, and a set of hard file links to corresponding data files. 直接修改全备份的配置文件即可，加上一行：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[Transmission]</span><br><span class="line">encrypt = False</span><br><span class="line">checksum = False</span><br><span class="line">port_rsync = 50000</span><br><span class="line">serviceAccessUser = None</span><br><span class="line">total_bwlimit_backup = 0</span><br><span class="line">concurrency_backup = 1</span><br><span class="line">total_bwlimit_restore = 0</span><br><span class="line">concurrency_restore = 1</span><br><span class="line">hardLinkLocal = True</span><br></pre></td></tr></table></figure>
+<h2 id="然后还是执行备份命令："><a href="#然后还是执行备份命令：" class="headerlink" title="然后还是执行备份命令："></a>然后还是执行备份命令：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task backup --config-file HardLinkLocal_backup20160505.ini</span><br><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file HardLinkLocal_backup20160505.ini </span><br><span class="line">Starting backup of database Windy1990.</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Snapshotting database.</span><br><span class="line">Snapshot complete.</span><br><span class="line">Approximate bytes to copy: 0 of 60269355 total.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Copying backup metadata.</span><br><span class="line">Finalizing backup.</span><br><span class="line">Backup complete!</span><br></pre></td></tr></table></figure>
+<h2 id="1-6-查看备份-查看备份的内容："><a href="#1-6-查看备份-查看备份的内容：" class="headerlink" title="1.6 查看备份 查看备份的内容："></a>1.6 查看备份 查看备份的内容：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task listbackup --config-file HardLinkLocal_backup20160505.ini</span><br><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task listbackup --config-file HardLinkLocal_backup20160505.ini </span><br><span class="line">backup                                epoch   objects   hosts(nodes)                            file_system_type  </span><br><span class="line">full_backup20160505_20160505_074850   16                v_windy1990_node0001(192.168.231.110)   [Linux]           </span><br><span class="line">full_backup20160505_20160505_064640   16                v_windy1990_node0001(192.168.231.110)   [Linux]</span><br></pre></td></tr></table></figure>
+<h2 id="在vertica数据库中可以查询到备份的信息："><a href="#在vertica数据库中可以查询到备份的信息：" class="headerlink" title="在vertica数据库中可以查询到备份的信息："></a>在vertica数据库中可以查询到备份的信息：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; select * from database_backups;</span><br><span class="line">       backup_timestamp        |      node_name       |     snapshot_name     | backup_epoch | node_count | file_system_type |   objects   </span><br><span class="line">-------------------------------+----------------------+-----------------------+--------------+------------+------------------+-------------</span><br><span class="line"> 2016-05-05 14:08:03.369797+08 | v_windy1990_node0001 | full_backup20160505   |           15 |          1 | [Linux]          | </span><br><span class="line"> 2016-05-05 14:36:39.496688+08 | v_windy1990_node0001 | full_backup20160505   |           15 |          1 | [Linux]          | </span><br><span class="line"> 2016-05-05 14:42:35.517465+08 | v_windy1990_node0001 | full_backup20160505   |           15 |          1 | [Linux]          | </span><br><span class="line"> 2016-05-05 14:44:43.043536+08 | v_windy1990_node0001 | full_backup20160505   |           15 |          1 | [Linux]          | </span><br><span class="line"> 2016-05-05 14:46:57.958863+08 | v_windy1990_node0001 | full_backup20160505   |           16 |          1 | [Linux]          | </span><br><span class="line"> 2016-05-05 15:03:19.580159+08 | v_windy1990_node0001 | backup_object_tb_serv |           16 |          1 | [Linux]          | tb_serv_num</span><br><span class="line"> 2016-05-05 15:50:53.143446+08 | v_windy1990_node0001 | full_backup20160505   |           16 |          1 | [Linux]          | </span><br><span class="line">(7 rows)</span><br></pre></td></tr></table></figure>
+<h2 id="2、vertica恢复"><a href="#2、vertica恢复" class="headerlink" title="2、vertica恢复"></a>2、vertica恢复</h2><h2 id="2-1-vertica恢复"><a href="#2-1-vertica恢复" class="headerlink" title="2.1 vertica恢复"></a>2.1 vertica恢复</h2><h2 id="为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据"><a href="#为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据" class="headerlink" title="为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据"></a>为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; select * from tb_rp_st_user_day ;</span><br><span class="line"> serv_number | user_name </span><br><span class="line">-------------+-----------</span><br><span class="line">(0 rows)</span><br><span class="line"></span><br><span class="line">dbadmin=&gt; drop table tb_rp_st_user_day;</span><br><span class="line">DROP TABLE</span><br><span class="line"></span><br><span class="line">dbadmin=&gt; select * from tb_serv_num where name=&apos;ss&apos;;</span><br><span class="line">  serv_num   | name </span><br><span class="line">-------------+------</span><br><span class="line"> 186371***** | ss</span><br><span class="line">(1 row)</span><br><span class="line"></span><br><span class="line">dbadmin=&gt; delete from tb_serv_num where name=&apos;ss&apos;;</span><br><span class="line"> OUTPUT </span><br><span class="line">--------</span><br><span class="line">      1</span><br><span class="line">(1 row)</span><br><span class="line"></span><br><span class="line">dbadmin=&gt; commit;</span><br><span class="line">COMMIT</span><br></pre></td></tr></table></figure>
+<h2 id="开始执行恢复命令："><a href="#开始执行恢复命令：" class="headerlink" title="开始执行恢复命令："></a>开始执行恢复命令：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task restore --config-file full_backup20160505.ini</span><br><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task restore --config-file full_backup20160505.ini Error: Full database restore requires the nodes be DOWN.</span><br><span class="line">Restore FAILED.</span><br></pre></td></tr></table></figure>
+<h2 id="报错啦-提示只有在vertica数据库down的状态下才能恢复……"><a href="#报错啦-提示只有在vertica数据库down的状态下才能恢复……" class="headerlink" title="报错啦~ 提示只有在vertica数据库down的状态下才能恢复……"></a>报错啦~ 提示只有在vertica数据库down的状态下才能恢复……</h2><h2 id="查看官方文档："><a href="#查看官方文档：" class="headerlink" title="查看官方文档："></a>查看官方文档：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">To restore a full database backup, you must ensure that:</span><br><span class="line">•	The database is down. You cannot restore a full backup when the database is running.</span><br><span class="line">•	All of the backup hosts are up and available.</span><br><span class="line">•	The backup directory exists and contains the backups from which to restore.</span><br><span class="line">•	The cluster to which you are restoring the backup has the same number of hosts as the one used to create the backup. The node names and the IP addresses must also be identical.</span><br><span class="line">•	The database you are restoring must already exist on the cluster to which you are restoring data. The database can be completely empty without any data or schema. As long as the database name matches the name in the backup, and all of the node names match the names of the nodes in the configuration file, you can restore to it.</span><br><span class="line">•	The user performing the restore is the database administrator.</span><br></pre></td></tr></table></figure>
+<h2 id="所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb-serv-num表做了对象级备份："><a href="#所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb-serv-num表做了对象级备份：" class="headerlink" title="所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb_serv_num表做了对象级备份："></a>所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb_serv_num表做了对象级备份：</h2><h2 id="执行对象级恢复："><a href="#执行对象级恢复：" class="headerlink" title="执行对象级恢复："></a>执行对象级恢复：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task restore --config-file backup_object_tb_serv.ini</span><br><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task restore --config-file backup_object_tb_serv.ini </span><br><span class="line">Starting object restore of database Windy1990.</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Objects to restore: tb_serv_num.</span><br><span class="line">Restoring from restore point: backup_object_tb_serv_20160505_070249</span><br><span class="line">Loading snapshot catalog from backup.</span><br><span class="line">Syncing data from backup to cluster nodes.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Finalizing restore.</span><br><span class="line">Restore complete!</span><br></pre></td></tr></table></figure>
+<h2 id="OK-看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。"><a href="#OK-看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。" class="headerlink" title="OK~看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。"></a>OK~看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; select * from tb_serv_num ;</span><br><span class="line">  serv_num   | name  </span><br><span class="line">-------------+-------</span><br><span class="line"> 138***** | windy</span><br><span class="line"> 186***** | ss</span><br><span class="line"> 134***** | qin**</span><br><span class="line">(3 rows)</span><br></pre></td></tr></table></figure>
+<h2 id="可以看到，数据已恢复了-，等等，刚才我们还drop了一个-表，这个表是不是恢复了呢？"><a href="#可以看到，数据已恢复了-，等等，刚才我们还drop了一个-表，这个表是不是恢复了呢？" class="headerlink" title="可以看到，数据已恢复了~，等等，刚才我们还drop了一个 表，这个表是不是恢复了呢？"></a>可以看到，数据已恢复了~，等等，刚才我们还drop了一个 表，这个表是不是恢复了呢？</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \d tb_rp_st_user_day;</span><br><span class="line">Did not find any relation.</span><br></pre></td></tr></table></figure>
+<h2 id="可以看到，表并没有恢复，为什么呢？-要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb-serv-num表的数据而已，随意恢复也只能恢复该表的所有数据。-那么我们用第三种Hard-Link-Local方式恢复数据："><a href="#可以看到，表并没有恢复，为什么呢？-要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb-serv-num表的数据而已，随意恢复也只能恢复该表的所有数据。-那么我们用第三种Hard-Link-Local方式恢复数据：" class="headerlink" title="可以看到，表并没有恢复，为什么呢？ 要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb_serv_num表的数据而已，随意恢复也只能恢复该表的所有数据。 那么我们用第三种Hard Link Local方式恢复数据："></a>可以看到，表并没有恢复，为什么呢？ 要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb_serv_num表的数据而已，随意恢复也只能恢复该表的所有数据。 那么我们用第三种Hard Link Local方式恢复数据：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vbr.py --task restore --config-file HardLinkLocal_backup20160505.ini</span><br><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task restore --config-file HardLinkLocal_backup20160505.ini </span><br><span class="line">Error: Full database restore requires the nodes be DOWN.</span><br><span class="line">Restore FAILED.</span><br></pre></td></tr></table></figure>
+<h2 id="同样看到，也需要vertica数据库为DOWN"><a href="#同样看到，也需要vertica数据库为DOWN" class="headerlink" title="同样看到，也需要vertica数据库为DOWN"></a>同样看到，也需要vertica数据库为DOWN</h2><p>看来要停掉vertica数据库了~（停掉数据库，此处略）<br>停掉vertica数据库后，再试全量恢复：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task restore --config-file full_backup20160505.ini </span><br><span class="line">Starting full restore of database Windy1990.</span><br><span class="line">Participating nodes: v_windy1990_node0001.</span><br><span class="line">Restoring from restore point: full_backup20160505_20160505_074850</span><br><span class="line">Computing the size of data to be synced from backup to cluster nodes.</span><br><span class="line">Syncing data from backup to cluster nodes.</span><br><span class="line">[==================================================] 100%</span><br><span class="line">Restoring catalog.</span><br><span class="line">Restore complete!</span><br></pre></td></tr></table></figure>
+<p>可以看到，恢复的还不错。<br>再重新启动vertica，登上vertica后查看表tb_rp_st_user_day是否恢复了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \d tb_rp_st_user_day;</span><br><span class="line">                                            List of Fields by Tables</span><br><span class="line"> Schema |       Table       |   Column    |    Type     | Size | Default | Not Null | Primary Key | Foreign Key </span><br><span class="line">--------+-------------------+-------------+-------------+------+---------+----------+-------------+-------------</span><br><span class="line"> public | tb_rp_st_user_day | serv_number | varchar(13) |   13 |         | f        | f           | </span><br><span class="line"> public | tb_rp_st_user_day | user_name   | varchar(50) |   50 |         | f        | f           | </span><br><span class="line">(2 rows)</span><br></pre></td></tr></table></figure>
+<p>可以看到，恢复成功了。</p>
+<p>以上就是vertica备份以及简单的恢复。</p>
+<h2 id="通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。"><a href="#通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。" class="headerlink" title="通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。"></a>通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。</h2>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（三）——Vertica中实现Oracle中的ws_concat功能/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（三）——Vertica中实现Oracle中的ws_concat功能/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>vertica中没有类似Oracle中的ws_concat函数功能，需要开发UDF，自己对C++不熟悉，所有只有想其他方法解决了。</strong><br>上代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">SELECT node_state,</span><br><span class="line">    MAX(DECODE(row_number, 1, a.node_name)) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 2, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 3, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 4, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 5, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 6, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 7, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 8, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 9, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 10, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 11, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 12, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 13, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 14, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 15, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 16, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 17, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 18, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 19, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 20, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 21, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 22, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 23, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 24, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 25, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 26, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 27, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 28, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 29, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 30, &apos;,&apos; || a.node_name)), &apos;&apos;) node_name</span><br><span class="line">FROM (select node_state,node_name,row_number() over (partition by node_state order by node_name) row_number from nodes) a</span><br><span class="line">group by node_state;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&gt;  UP         |</span><br><span class="line">&gt; v_csap_node0001,v_csap_node0002,v_csap_node0003,v_csap_node0004,v_csap_node0005,v_csap_node0006,v_csap_node0007,v_csap_node0008,v_csap_node0009,v_csap_node0010,v_csap_node0011,v_csap_node0012,v_csap_node0013,v_csap_node0014,v_csap_node0015,v_csap_node0016,v_csap_node0018,v_csap_node0019,v_csap_node0020,v_csap_node0021,v_csap_node0022,v_csap_node0023,v_csap_node0024,v_csap_node0025,v_csap_node0026,v_csap_node0027,v_csap_node0028,v_csap_node0029,v_csap_node0030</span><br><span class="line">&gt; STANDBY    | v_csap_node0017 (2 rows)</span><br></pre></td></tr></table></figure>
+<p>可以看到是我想要的结果。<br>有人会问了，我不知道自己要ws_concat几个类别怎么办，先运行一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select node_state,node_name,row_number() over (partition by node_state order by node_name) row_number from nodes</span><br></pre></td></tr></table></figure>
+<p>看下row_number不就行了，或者把decode中的数字多写几个。当然最好的方法还是开发自定义程序包，引入到vertica中，直接使用函数实现，C++好的童鞋可以试一下。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（七）——-关于vertica的Connection-Failover/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（七）——-关于vertica的Connection-Failover/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近在生产中发现vertica有个别节点老是宕机（又碰到的童鞋交流下），实际业务中有Python通过odbc连接vertica，还有Java通过jdbc连接vertica。假如你连接的那个节点正好是down的节点或者是standby节点，那么就会连接失败，程序就会报错，影响正常业务。其实vertica官方文档已经给出了解决方法，下面我们来看一下如何实现。</p>
+<p><a href="https://my.vertica.com/docs/7.2.x/HTML/index.htm#Authoring/ConnectingToHPVertica/ClientODBC/ODBCConnectionFailover.htm?Highlight=ODBC%20Connection%20Failover" target="_blank" rel="noopener">ODBC Connection Failover</a></p>
+<p>官方给出的代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[VMartBadNode]</span><br><span class="line">Description=VMart Vertica Database</span><br><span class="line">Driver=/opt/vertica/lib64/libverticaodbc.so</span><br><span class="line">Database=VMart</span><br><span class="line">Servername=badnode.example.com</span><br><span class="line">BackupServerNode=node02.example.com,node03.example.com</span><br></pre></td></tr></table></figure>
+<p>其中上面的BackupServerNode就是备用的IP</p>
+<p><a href="https://my.vertica.com/docs/7.2.x/HTML/index.htm#Authoring/ConnectingToHPVertica/ClientJDBC/JDBCConnectionFailover.htm?Highlight=ODBC%20Connection%20Failover" target="_blank" rel="noopener">JDBC Connection Failover</a></p>
+<p>代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">import java.sql.*;</span><br><span class="line">import java.util.Properties;</span><br><span class="line"></span><br><span class="line">public class ConnectionFailoverExample &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        // Assume using JDBC 4.0 driver on JVM 6+. No driver loading needed.</span><br><span class="line">        Properties myProp = new Properties();</span><br><span class="line">        myProp.put(&quot;user&quot;, &quot;dbadmin&quot;);</span><br><span class="line">        myProp.put(&quot;password&quot;, &quot;vertica&quot;);</span><br><span class="line">        // Set two backup hosts to be used if connecting to the first host</span><br><span class="line">        // fails. All of these hosts will be tried in order until the connection</span><br><span class="line">        // succeeds or all of the connections fail.</span><br><span class="line">        myProp.put(&quot;BackupServerNode&quot;, &quot;VerticaHost02,VerticaHost03&quot;);</span><br><span class="line">        Connection conn;</span><br><span class="line">        try &#123;</span><br><span class="line">            // The connection string is set to try to connect to a known</span><br><span class="line">            // bnad host (in this case, a host that never existed). </span><br><span class="line">            conn = DriverManager.getConnection(</span><br><span class="line">                    &quot;jdbc:vertica://BadVerticaHost:5433/vmart&quot;, myProp);</span><br><span class="line">            System.out.println(&quot;Connected!&quot;);</span><br><span class="line">            // Query system to table to see what node we are connected to. </span><br><span class="line">            // Assume a single row in response set.            </span><br><span class="line">            Statement stmt = conn.createStatement();</span><br><span class="line">            ResultSet rs = stmt.executeQuery(</span><br><span class="line">                    &quot;SELECT node_name FROM v_monitor.current_session;&quot;);      </span><br><span class="line">            rs.next();</span><br><span class="line">            System.out.println(&quot;Connected to node &quot; + rs.getString(1).trim());</span><br><span class="line">            // Done with connection.</span><br><span class="line">            conn.close();</span><br><span class="line">        &#125; catch (SQLException e) &#123;</span><br><span class="line">            // Catch-all for other exceptions</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>另外也可以通过jdbc连接串来实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:vertica://192.168.000.00:5433/DBname?ConnectionLoadBalance=1&amp;BackupServerNode=192.168.000.01:5433,192.168.000.02:5433</span><br></pre></td></tr></table></figure>
+<p>其中ConnectionLoadBalance是vertica的负载均衡，如果在库中没有开启该功能的话，此时是没有作用的，不影响。<br>开启ConnectionLoadBalance的话，需要管理员账户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT SET_LOAD_BALANCE_POLICY(&apos;ROUNDROBIN&apos;);</span><br></pre></td></tr></table></figure>
+<p>取消该功能：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT SET_LOAD_BALANCE_POLICY(&apos;NONE&apos;);</span><br></pre></td></tr></table></figure>
+<p>查询是否开启：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT GET_LOAD_BALANCE_POLICY();</span><br></pre></td></tr></table></figure>
+<p>通过这次设置，加了几个备用连接节点，确保业务正常。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（六）——-vertica中group-by-和join-语句的优化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（六）——-vertica中group-by-和join-语句的优化/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>vertica group by优化语句，先对语句进行explain 操作查看预执行计划，其中group by 分为 GROUPBY PIPELINED 和 GROUPBY HASH，通过执行计划可以清楚的看到vertica到底采用的那种执行方式，优化一般就是吧GROUPBY HASH优化为GROUPBY PIPELINED<br>下面讲一下官网举得例子</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE sortopt (</span><br><span class="line">    a INT NOT NULL, </span><br><span class="line">    b INT NOT NULL,</span><br><span class="line">    c INT,</span><br><span class="line">    d INT</span><br><span class="line">);</span><br><span class="line">CREATE PROJECTION sortopt_p (</span><br><span class="line">   a_proj,</span><br><span class="line">   b_proj,</span><br><span class="line">   c_proj,</span><br><span class="line">   d_proj )</span><br><span class="line">AS SELECT * FROM sortopt</span><br><span class="line">ORDER BY a,b,c </span><br><span class="line">UNSEGMENTED ALL NODES;</span><br><span class="line">INSERT INTO sortopt VALUES(5,2,13,84);</span><br><span class="line">INSERT INTO sortopt VALUES(14,22,8,115);</span><br><span class="line">INSERT INTO sortopt VALUES(79,9,401,33);</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>第一种情况</strong></li>
+<li>GROUP BY a<br>GROUP BY a,b<br>GROUP BY b,a<br>GROUP BY a,b,c<br>GROUP BY c,a,b<br>如果是按照上面的这种group by 则使用的是GROUPBY PIPELINED，因为group by 后的字段全部在projection中预排序</li>
+<li>GROUP BY a,b,c,d</li>
+<li><p>这种情况则是采用的GROUPBY HASH 不建议~</p>
+</li>
+<li><p><strong>第二种情况</strong><br>GROUP BY a,c<br>执行 按照GROUPBY HASH  因为a,c字段没有相邻，如果是<br>GROUP BY a,c或者GROUP BY b,c则会按照GROUPBY PIPELINED 执行</p>
+</li>
+<li><p><strong>第三种情况</strong></p>
+</li>
+<li>group by 之前有 where条件时</li>
+</ul>
+<blockquote>
+<p> SELECT a FROM tab WHERE a = 10 GROUP BY b  此时按照 GROUPBY PIPELINED</p>
+<p>SELECT a FROM tab WHERE a = 10 GROUP BY c 此时按照 GROUPBY HASH 以为按照c排序的<br>处理的所有的 Projectionn 列的列未出现在  where  子句等值条件中，如果上如改为SELECT a FROM tab<br>WHERE a = 10 and b=10 GROUP BY c 则会按照GROUPBY PIPELINED 执行</p>
+</blockquote>
+<p>通过以上3中情况的介绍，希望大家对vertica的group by有一定的理解。</p>
+<p>**&gt; 关于join vertica会有两种执行方式 Merge Join 和Hash join ，建议关联是要走Merge join</p>
+<blockquote>
+<p>执行Merge  join的必要条件就是 关联的字段要在两个表中预排序，也就是要是两个表的order by 字段**</p>
+</blockquote>
+<p>可以参考官网<a href="https://my.vertica.com/docs/7.2.x/HTML/index.htm#Authoring/AnalyzingData/SQLAnalytics/AvoidingGROUPBYHASHWithProjectionDesign.htm?TocPath=Analyzing%2520Data%7COptimizing%2520Query%2520Performance%7CGROUP%2520BY%2520Queries%7C_____1" target="_blank" rel="noopener">Avoiding GROUP BY HASH with Projection Design</a></p>
 
           
         
@@ -351,6 +1631,10 @@
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -394,7 +1678,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
