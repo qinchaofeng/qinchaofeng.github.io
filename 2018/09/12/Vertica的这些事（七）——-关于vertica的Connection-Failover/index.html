@@ -82,14 +82,14 @@
 <meta name="description" content="最近在生产中发现vertica有个别节点老是宕机（又碰到的童鞋交流下），实际业务中有Python通过odbc连接vertica，还有Java通过jdbc连接vertica。假如你连接的那个节点正好是down的节点或者是standby节点，那么就会连接失败，程序就会报错，影响正常业务。其实vertica官方文档已经给出了解决方法，下面我们来看一下如何实现。 ODBC Connection Failo">
 <meta name="keywords" content="vertica">
 <meta property="og:type" content="article">
-<meta property="og:title" content="qinchaofeng的博客">
+<meta property="og:title" content="Vertica的这些事（七）——-关于vertica的Connection-Failover">
 <meta property="og:url" content="http://yoursite.com/2018/09/12/Vertica的这些事（七）——-关于vertica的Connection-Failover/index.html">
 <meta property="og:site_name" content="qinchaofeng的博客">
 <meta property="og:description" content="最近在生产中发现vertica有个别节点老是宕机（又碰到的童鞋交流下），实际业务中有Python通过odbc连接vertica，还有Java通过jdbc连接vertica。假如你连接的那个节点正好是down的节点或者是standby节点，那么就会连接失败，程序就会报错，影响正常业务。其实vertica官方文档已经给出了解决方法，下面我们来看一下如何实现。 ODBC Connection Failo">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-12T04:34:02.000Z">
+<meta property="og:updated_time" content="2018-09-12T04:53:14.350Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="qinchaofeng的博客">
+<meta name="twitter:title" content="Vertica的这些事（七）——-关于vertica的Connection-Failover">
 <meta name="twitter:description" content="最近在生产中发现vertica有个别节点老是宕机（又碰到的童鞋交流下），实际业务中有Python通过odbc连接vertica，还有Java通过jdbc连接vertica。假如你连接的那个节点正好是down的节点或者是standby节点，那么就会连接失败，程序就会报错，影响正常业务。其实vertica官方文档已经给出了解决方法，下面我们来看一下如何实现。 ODBC Connection Failo">
 
 
@@ -126,7 +126,7 @@
 
 
 
-  <title> | qinchaofeng的博客</title>
+  <title>Vertica的这些事（七）——-关于vertica的Connection-Failover | qinchaofeng的博客</title>
   
 
 
@@ -250,7 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"></h1>
+          <h1 class="post-title" itemprop="name headline">Vertica的这些事（七）——-关于vertica的Connection-Failover</h1>
         
 
         <div class="post-meta">
@@ -262,7 +262,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:49:32+08:00">
                 2018-09-12
               </time>
             
@@ -341,8 +341,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/12/Vertica的这些事（六）——-vertica中group-by-和join-语句的优化/" rel="next" title="">
-                <i class="fa fa-chevron-left"></i> 
+              <a href="/2018/09/12/Vertica的这些事（六）——-vertica中group-by-和join-语句的优化/" rel="next" title="Vertica的这些事（六）——-vertica中group-by-和join-语句的优化">
+                <i class="fa fa-chevron-left"></i> Vertica的这些事（六）——-vertica中group-by-和join-语句的优化
               </a>
             
           </div>
@@ -351,8 +351,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/09/12/Vertica的这些事（三）——Vertica中实现Oracle中的ws_concat功能/" rel="prev" title="">
-                 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/09/12/Vertica的这些事（八）——-Vertica-管理/" rel="prev" title="Vertica的这些事（八）——-Vertica-管理">
+                Vertica的这些事（八）——-Vertica-管理 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -421,7 +421,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

@@ -233,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（九）——-vertica存储统计信息/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（四）——-vertica加密数据/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="qinchaofeng">
@@ -252,7 +252,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（九）——-vertica存储统计信息/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（四）——-vertica加密数据/" itemprop="url">Vertica的这些事（四）——-vertica加密数据</a></h1>
         
 
         <div class="post-meta">
@@ -264,7 +264,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:48:53+08:00">
                 2018-09-12
               </time>
             
@@ -304,19 +304,138 @@
       
         
           
-            <p><strong>vertica存储统计信息：</strong></p>
-<p>表数量： </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(distinct table_name)  FROM tables;</span><br></pre></td></tr></table></figure>
-<p>分区表数量：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(distinct table_name) from PARTITION_COLUMNS;</span><br></pre></td></tr></table></figure>
-<p>总表占大小：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT sum(used_bytes)/1024/1024/1024 FROM projection_storage ;</span><br></pre></td></tr></table></figure>
-<p>分区表总大小：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select sum(disk_space_bytes)/1024/1024/1024 from PARTITION_COLUMNS;</span><br><span class="line">SELECT sum(used_bytes)/1024/1024/1024 FROM projection_storage where anchor_table_name in (select distinct table_name from PARTITION_COLUMNS);</span><br></pre></td></tr></table></figure>
-<p>分区表大小（前10）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select table_name,sum(disk_space_bytes)/1024/1024/1024 size from PARTITION_COLUMNS group by table_name order by size desc limit 10;</span><br></pre></td></tr></table></figure>
-<p>分区表每个分区的大小（前20）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select partition_key,sum(disk_space_bytes)/1024/1024/1024 size from PARTITION_COLUMNS group by partition_key order by size desc limit 20;</span><br></pre></td></tr></table></figure>
+            <p>通过创建 Secure Access Policies可以对vertica中的某一列数据进行加密：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CREATE ACCESS POLICY ON [schema][tablename]</span><br><span class="line">FOR COLUMN columnname</span><br><span class="line">expression</span><br><span class="line">[ENABLE/DISABLE];</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE ACCESS POLICY ON customers_table</span><br><span class="line">FOR COLUMN SSN</span><br><span class="line">CASE</span><br><span class="line">WHEN ENABLED_ROLE(&apos;manager&apos;) THEN SSN</span><br><span class="line">WHEN ENABLED_ROLE(&apos;operator&apos;) THEN SUBSTR(SSN, 8, 4)</span><br><span class="line">ELSE NULL</span><br><span class="line">END</span><br><span class="line">ENABLE;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ALTER ACCESS POLICY</span><br><span class="line">ALTER ACCESS POLICY ON tablename</span><br><span class="line"></span><br><span class="line">.. .FOR COLUMN columnname</span><br><span class="line">... expression</span><br><span class="line">... [ENABLE | DISABLE];</span><br><span class="line">... | FOR COLUMN columname</span><br><span class="line">...   COPY TO tablename;</span><br><span class="line"></span><br><span class="line">DROP ACCESS POLICY</span><br><span class="line">DROP ACCESS POLICY ON tablename</span><br><span class="line">FOR COLUMN columnname;</span><br></pre></td></tr></table></figure>
+<p>如果表中存在策略的话，那么drop table 时会报错：<br> <img src="http://upload-images.jianshu.io/upload_images/4579636-e86ec5139ce973ad?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（三）——Vertica中实现Oracle中的ws-concat功能/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qinchaofeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qinchaofeng的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（三）——Vertica中实现Oracle中的ws-concat功能/" itemprop="url">Vertica的这些事（三）——Vertica中实现Oracle中的ws_concat功能</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:48:41+08:00">
+                2018-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>vertica中没有类似Oracle中的ws_concat函数功能，需要开发UDF，自己对C++不熟悉，所有只有想其他方法解决了。</strong><br>上代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">SELECT node_state,</span><br><span class="line">    MAX(DECODE(row_number, 1, a.node_name)) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 2, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 3, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 4, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 5, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 6, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 7, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 8, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 9, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 10, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 11, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 12, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 13, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 14, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 15, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 16, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 17, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 18, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 19, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 20, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 21, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 22, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 23, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 24, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 25, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 26, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 27, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 28, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 29, &apos;,&apos; || a.node_name)), &apos;&apos;) ||</span><br><span class="line">    NVL(MAX(DECODE(row_number, 30, &apos;,&apos; || a.node_name)), &apos;&apos;) node_name</span><br><span class="line">FROM (select node_state,node_name,row_number() over (partition by node_state order by node_name) row_number from nodes) a</span><br><span class="line">group by node_state;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&gt;  UP         |</span><br><span class="line">&gt; v_csap_node0001,v_csap_node0002,v_csap_node0003,v_csap_node0004,v_csap_node0005,v_csap_node0006,v_csap_node0007,v_csap_node0008,v_csap_node0009,v_csap_node0010,v_csap_node0011,v_csap_node0012,v_csap_node0013,v_csap_node0014,v_csap_node0015,v_csap_node0016,v_csap_node0018,v_csap_node0019,v_csap_node0020,v_csap_node0021,v_csap_node0022,v_csap_node0023,v_csap_node0024,v_csap_node0025,v_csap_node0026,v_csap_node0027,v_csap_node0028,v_csap_node0029,v_csap_node0030</span><br><span class="line">&gt; STANDBY    | v_csap_node0017 (2 rows)</span><br></pre></td></tr></table></figure>
+<p>可以看到是我想要的结果。<br>有人会问了，我不知道自己要ws_concat几个类别怎么办，先运行一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select node_state,node_name,row_number() over (partition by node_state order by node_name) row_number from nodes</span><br></pre></td></tr></table></figure>
+<p>看下row_number不就行了，或者把decode中的数字多写几个。当然最好的方法还是开发自定义程序包，引入到vertica中，直接使用函数实现，C++好的童鞋可以试一下。</p>
 
           
         
@@ -384,7 +503,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比/" itemprop="url">Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比</a></h1>
         
 
         <div class="post-meta">
@@ -396,7 +515,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:48:08+08:00">
                 2018-09-12
               </time>
             
@@ -618,7 +737,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（八）——-Vertica-管理/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Vertica的这些事（一）——VSQL常用命令/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="qinchaofeng">
@@ -637,7 +756,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（八）——-Vertica-管理/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/09/12/Vertica的这些事（一）——VSQL常用命令/" itemprop="url">Vertica的这些事（一）——VSQL常用命令</a></h1>
         
 
         <div class="post-meta">
@@ -649,7 +768,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:35:04+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T12:44:36+08:00">
                 2018-09-12
               </time>
             
@@ -689,16 +808,30 @@
       
         
           
-            <p>1、版本信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; SELECT version();</span><br><span class="line">              version               </span><br><span class="line">------------------------------------</span><br><span class="line"> Vertica Analytic Database v7.2.3-7</span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
-<p>2、license信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; SELECT DISPLAY_LICENSE();</span><br><span class="line">              DISPLAY_LICENSE              </span><br><span class="line">-------------------------------------------</span><br><span class="line"> HPE Vertica</span><br><span class="line">2/16/2016</span><br><span class="line">Perpetual</span><br><span class="line">3</span><br><span class="line">2 TB</span><br><span class="line"></span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
-<p>3、各节点硬盘使用情况</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SELECT /*+label(diag_disk_space_utilization)*/ </span><br><span class="line">       host_name, </span><br><span class="line">       ( disk_space_free_mb / 1024 )  AS disk_space_free_gb, </span><br><span class="line">       ( disk_space_used_mb / 1024 )  AS disk_space_used_gb, </span><br><span class="line">       ( disk_space_total_mb / 1024 ) AS disk_space_total_gb </span><br><span class="line">FROM   v_monitor.host_resources;</span><br></pre></td></tr></table></figure>
-<p>4、各节点内存使用情况</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SELECT /*+label(diag_memory_info)*/ </span><br><span class="line">       host_name, </span><br><span class="line">       total_memory_bytes / ( 1024^3 )           AS total_memory_gb, </span><br><span class="line">       total_memory_free_bytes / ( 1024^3 )      AS total_memory_free_gb, </span><br><span class="line">       total_swap_memory_bytes / ( 1024^3 )      AS total_swap_memory_gb, </span><br><span class="line">       total_swap_memory_free_bytes / ( 1024^3 ) AS total_swap_memory_free_gb </span><br><span class="line">FROM   v_monitor.host_resources;</span><br></pre></td></tr></table></figure>
-<p>5、每个scheme 数据使用情况</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">SELECT /*+label(diag_schema_space_utilization)*/ </span><br><span class="line">       pj.anchor_table_schema, </span><br><span class="line">       pj.used_compressed_gb, </span><br><span class="line">       pj.used_compressed_gb * la.ratio AS raw_estimate_gb </span><br><span class="line">FROM   (SELECT ps.anchor_table_schema, </span><br><span class="line">               SUM(used_bytes) / ( 1024^3 ) AS used_compressed_gb </span><br><span class="line">        FROM   v_catalog.projections p </span><br><span class="line">               JOIN v_monitor.projection_storage ps </span><br><span class="line">                 ON ps.projection_id = p.projection_id </span><br><span class="line">        WHERE  p.is_super_projection = &apos;t&apos; </span><br><span class="line">        GROUP  BY ps.anchor_table_schema) pj </span><br><span class="line">       CROSS JOIN (SELECT (SELECT database_size_bytes </span><br><span class="line">                           FROM   v_catalog.license_audits </span><br><span class="line">                           ORDER  BY audit_start_timestamp DESC </span><br><span class="line">                           LIMIT  1) / (SELECT SUM(used_bytes) </span><br><span class="line">                                        FROM   v_monitor.projection_storage) AS ratio) la </span><br><span class="line">ORDER  BY pj.used_compressed_gb DESC;</span><br></pre></td></tr></table></figure>
+            <p><strong>Linux环境下，一般都是使用vsql客户端连接vertica来执行命令的，下面就介绍一下vsql常用的命令有哪些。</strong></p>
+<p><strong>导出数据</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vsql -U $usr -p 5433 -h 172.17.12.208 -w $pwd -At -o /home/zyzx/20160809.dat -c &quot;select * from tb_test;&quot;</span><br></pre></td></tr></table></figure>
+<p>默认是以‘|’分割的，指定分隔符如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/vertica/bin/vsql -U $usr -p 5433 -h 172.17.12.208 -w $pwd -F $&apos;\t&apos;  -At -o /home/zyzx/20160809.dat -c &quot;select * from tb_test;&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>切换路径 ：\cd</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \!pwd</span><br><span class="line">/home/zyzx</span><br><span class="line">dbadmin=&gt; \cd /tmp</span><br><span class="line">dbadmin=&gt; \!pwd</span><br><span class="line">/tmp</span><br></pre></td></tr></table></figure>
+<p><strong>列出多有表：\d</strong><br><strong>列出多有函数：\df</strong><br><strong>列出所有projection：\dj</strong><br><strong>列出所有的schema：\dn</strong><br><strong>列出所有的序列：\ds</strong><br><strong>列出所有的系统字典表：\dS</strong><br><strong>列出所有支持的类型：\dT</strong><br><strong>列出所有的视图：\dv</strong><br><strong>编辑sql：\e</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此时会进入编辑模式，输入需要执行的sql脚本，然后保存，就可以执行了（可以同时执行多个sql语句）</span><br></pre></td></tr></table></figure>
+<p><strong>执行缓存的sql：\g</strong><br><strong>输出HTML格式的结果：\H</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \H</span><br><span class="line">Output format is html.</span><br><span class="line">dbadmin=&gt; select * from nodes limit 1;</span><br><span class="line">&lt;table border=&quot;1&quot;&gt;</span><br><span class="line">  &lt;tr&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_name&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_id&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_state&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_address&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_address_family&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;export_address&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;export_address_family&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;catalog_path&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_type&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;is_ephemeral&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;standing_in_for&lt;/th&gt;</span><br><span class="line">    &lt;th align=&quot;center&quot;&gt;node_down_since&lt;/th&gt;</span><br><span class="line">  &lt;/tr&gt;</span><br><span class="line">  &lt;tr valign=&quot;top&quot;&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;v_csap_node0001&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;right&quot;&gt;45035996273704980&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;UP&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;172.17.12.208&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;ipv4&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;172.17.12.208&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;ipv4&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;/data/CSAP/v_csap_node0001_catalog/Catalog&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;PERMANENT&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;f&lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;&amp;nbsp; &lt;/td&gt;</span><br><span class="line">    &lt;td align=&quot;left&quot;&gt;&amp;nbsp; &lt;/td&gt;</span><br><span class="line">  &lt;/tr&gt;</span><br><span class="line">&lt;/table&gt;</span><br><span class="line">&lt;p&gt;(1 row)&lt;br /&gt;</span><br><span class="line">&lt;/p&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>查看当前缓存buffer里的内容：\p</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \p</span><br><span class="line">select * from nodes limit 1;</span><br></pre></td></tr></table></figure>
+<p><strong>修改密码：\password [ USER ]</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \password test</span><br><span class="line">Changing password for &quot;test&quot;</span><br><span class="line">New password:</span><br></pre></td></tr></table></figure>
+<p><strong>情况当前buffer：\r</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dbadmin=&gt; \r</span><br><span class="line">Query buffer reset (cleared).</span><br><span class="line">dbadmin=&gt; \p</span><br><span class="line">Query buffer is empty.</span><br></pre></td></tr></table></figure>
+<p><strong>历史命令查看保存为file：\s [ FILE ]</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\s history.log</span><br></pre></td></tr></table></figure>
+<p><strong>查看所有表的权限：\dp 或者\z</strong></p>
+<p><strong>copy:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vsql -U username -w passwd -d vmart -c &quot;COPY store.store_sales_fact FROM STDIN DELIMITER &apos;|&apos;;&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>直接copyHDFS的文件到vertica</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">COPY testTable SOURCE Hdfs(url=&apos;http://hadoop:50070/webhdfs/v1/tmp/test.txt&apos;,</span><br><span class="line">   username=&apos;hadoopUser&apos;);</span><br></pre></td></tr></table></figure>
 
           
         
@@ -784,7 +917,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
