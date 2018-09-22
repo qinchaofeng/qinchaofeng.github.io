@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="如何找到本年已过天数和剩余天数 Vertica其实没有直接的函数，返回本年的已过天数和剩余天数。但是你需利用日期函数可以巧妙的完成上述功能，下面我们来看下如何实现吧~  dbadmin=&amp;gt; SELECT sysdate                                                                 &amp;quot;Today&amp;quot;, dbad">
+<meta name="description" content="如何找到本年已过天数和剩余天数 Vertica其实没有直接的函数，返回本年的已过天数和剩余天数。但是你需利用日期函数可以巧妙的完成上述功能，下面我们来看下如何实现吧~  dbadmin=&amp;gt; SELECT sysdate                                                                 &amp;quot;Today&amp;quot;,">
 <meta name="keywords" content="vertica">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何找到本年已过天数和剩余天数">
 <meta property="og:url" content="http://yoursite.com/2018/09/22/如何找到本年已过天数和剩余天数/index.html">
 <meta property="og:site_name" content="qinchaofeng的博客">
-<meta property="og:description" content="如何找到本年已过天数和剩余天数 Vertica其实没有直接的函数，返回本年的已过天数和剩余天数。但是你需利用日期函数可以巧妙的完成上述功能，下面我们来看下如何实现吧~  dbadmin=&amp;gt; SELECT sysdate                                                                 &amp;quot;Today&amp;quot;, dbad">
+<meta property="og:description" content="如何找到本年已过天数和剩余天数 Vertica其实没有直接的函数，返回本年的已过天数和剩余天数。但是你需利用日期函数可以巧妙的完成上述功能，下面我们来看下如何实现吧~  dbadmin=&amp;gt; SELECT sysdate                                                                 &amp;quot;Today&amp;quot;,">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-22T07:26:38.726Z">
+<meta property="og:updated_time" content="2018-09-22T07:31:58.712Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何找到本年已过天数和剩余天数">
-<meta name="twitter:description" content="如何找到本年已过天数和剩余天数 Vertica其实没有直接的函数，返回本年的已过天数和剩余天数。但是你需利用日期函数可以巧妙的完成上述功能，下面我们来看下如何实现吧~  dbadmin=&amp;gt; SELECT sysdate                                                                 &amp;quot;Today&amp;quot;, dbad">
+<meta name="twitter:description" content="如何找到本年已过天数和剩余天数 Vertica其实没有直接的函数，返回本年的已过天数和剩余天数。但是你需利用日期函数可以巧妙的完成上述功能，下面我们来看下如何实现吧~  dbadmin=&amp;gt; SELECT sysdate                                                                 &amp;quot;Today&amp;quot;,">
 
 
 
@@ -294,7 +294,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  354 字
+                  385 字
                 </span>
               
 
@@ -310,7 +310,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1 分钟
+                  2 分钟
                 </span>
               
             </div>
@@ -335,15 +335,42 @@
 <p>Vertica其实没有直接的函数，返回本年的已过天数和剩余天数。但是你需利用日期函数可以巧妙的完成上述功能，下面我们来看下如何实现吧~</p>
 </blockquote>
 <pre><code>dbadmin=&gt; SELECT sysdate                                                                 &quot;Today&quot;,
-</code></pre><p>dbadmin-&gt;        DATEDIFF(day, TRUNC(sysdate, ‘YY’), TRUNC(sysdate))                     “# of days that have passed in current year”,<br>dbadmin-&gt;        DATEDIFF(day, TRUNC(sysdate), (ADD_MONTHS(TRUNC(sysdate, ‘YY’), 12)-1)) “# of days remaining in current year”;<br>           Today            | # of days that have passed in current year | # of days remaining in current year<br>—————————-+——————————————–+————————————-<br> 2018-08-06 11:56:03.111593 |                                        217 |                                 147<br>(1 row)</p>
-<blockquote>
+    dbadmin-&gt;        DATEDIFF(day, TRUNC(sysdate, &apos;YY&apos;), TRUNC(sysdate))                     &quot;# of days that have passed in current year&quot;,
+    dbadmin-&gt;        DATEDIFF(day, TRUNC(sysdate), (ADD_MONTHS(TRUNC(sysdate, &apos;YY&apos;), 12)-1)) &quot;# of days remaining in current year&quot;;
+               Today            | # of days that have passed in current year | # of days remaining in current year
+    ----------------------------+--------------------------------------------+-------------------------------------
+     2018-08-06 11:56:03.111593 |                                        217 |                                 147
+    (1 row)
+</code></pre><blockquote>
 <p>另外，你也可以将此功能写成一个函数，工其他开发人员调用。代码如下：</p>
 </blockquote>
-<pre><code>dbadmin=&gt; CREATE OR REPLACE FUNCTION days_passed_current_year (x TIMESTAMP) RETURN INT AS
-</code></pre><p>dbadmin-&gt; BEGIN<br>dbadmin-&gt;   RETURN DATEDIFF(day, TRUNC(x, ‘YY’), TRUNC(x));<br>dbadmin-&gt; END;<br>CREATE FUNCTION</p>
-<p>dbadmin=&gt; CREATE OR REPLACE FUNCTION days_remaining_current_year (x TIMESTAMP) RETURN INT AS<br>dbadmin-&gt; BEGIN<br>dbadmin-&gt;   RETURN DATEDIFF(day, TRUNC(x), (ADD_MONTHS(TRUNC(x, ‘YY’), 12)-1));<br>dbadmin-&gt; END;<br>CREATE FUNCTION</p>
-<p>dbadmin=&gt; SELECT x                              AS “Some Date”,<br>dbadmin-&gt;        days_passed_current_year(x)    AS “# of days that have passed in the relative year”,<br>dbadmin-&gt;        days_remaining_current_year(x) AS “# of days remaining in the relative year”<br>dbadmin-&gt;   FROM (SELECT ‘2018-JAN-01 08:00’::TIMESTAMP AS x<br>dbadmin(&gt;          UNION ALL<br>dbadmin(&gt;         SELECT ‘2018-DEC-31 08:00’::TIMESTAMP<br>dbadmin(&gt;          UNION ALL<br>dbadmin(&gt;         SELECT ‘2017-SEP-19 08:00’::TIMESTAMP) foo;<br>      Some Date      | # of days that have passed in the relative year | # of days remaining in the relative year<br>———————+————————————————-+——————————————<br> 2018-01-01 08:00:00 |                                               0 |                                      364<br> 2018-12-31 08:00:00 |                                             364 |                                        0<br> 2017-09-19 08:00:00 |                                             261 |                                      103<br>(3 rows)</p>
-<h2 id="是不是很简单，赶快自己试试吧！"><a href="#是不是很简单，赶快自己试试吧！" class="headerlink" title="是不是很简单，赶快自己试试吧！"></a>是不是很简单，赶快自己试试吧！</h2>
+<pre><code> dbadmin=&gt; CREATE OR REPLACE FUNCTION days_passed_current_year (x TIMESTAMP) RETURN INT AS
+dbadmin-&gt; BEGIN
+dbadmin-&gt;   RETURN DATEDIFF(day, TRUNC(x, &apos;YY&apos;), TRUNC(x));
+dbadmin-&gt; END;
+CREATE FUNCTION
+
+dbadmin=&gt; CREATE OR REPLACE FUNCTION days_remaining_current_year (x TIMESTAMP) RETURN INT AS
+dbadmin-&gt; BEGIN
+dbadmin-&gt;   RETURN DATEDIFF(day, TRUNC(x), (ADD_MONTHS(TRUNC(x, &apos;YY&apos;), 12)-1));
+dbadmin-&gt; END;
+CREATE FUNCTION
+
+dbadmin=&gt; SELECT x                              AS &quot;Some Date&quot;,
+dbadmin-&gt;        days_passed_current_year(x)    AS &quot;# of days that have passed in the relative year&quot;,
+dbadmin-&gt;        days_remaining_current_year(x) AS &quot;# of days remaining in the relative year&quot;
+dbadmin-&gt;   FROM (SELECT &apos;2018-JAN-01 08:00&apos;::TIMESTAMP AS x
+dbadmin(&gt;          UNION ALL
+dbadmin(&gt;         SELECT &apos;2018-DEC-31 08:00&apos;::TIMESTAMP
+dbadmin(&gt;          UNION ALL
+dbadmin(&gt;         SELECT &apos;2017-SEP-19 08:00&apos;::TIMESTAMP) foo;
+      Some Date      | # of days that have passed in the relative year | # of days remaining in the relative year
+---------------------+-------------------------------------------------+------------------------------------------
+ 2018-01-01 08:00:00 |                                               0 |                                      364
+ 2018-12-31 08:00:00 |                                             364 |                                        0
+ 2017-09-19 08:00:00 |                                             261 |                                      103
+(3 rows)
+</code></pre><h2 id="是不是很简单，赶快自己试试吧！"><a href="#是不是很简单，赶快自己试试吧！" class="headerlink" title="是不是很简单，赶快自己试试吧！"></a>是不是很简单，赶快自己试试吧！</h2>
       
     </div>
     
