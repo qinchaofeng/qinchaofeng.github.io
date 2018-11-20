@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="vertica," />
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="浅谈用户行为分析（一）标签（空格分隔）： 数据仓库 用户行为分析  关于用户行为分析，很多互联网公司都有相关的需求，虽然业务不同，但是关于用户行为分析的方法和技术实现都是基本相同的。作者在两家公司都了用户行为分析的相关事项，分享一下自己的一些经验。 一. 简介用户行为分析可以概括如下：哪个用户在什么时候做了什么操作在哪里做了什么操作，为什么要做这些操作，通过什么方式，用了多长时间等问题，总结出来就">
+<meta name="description" content="最近在用Vertica的时候碰到一个问题，Vertica在运行了一段时间后总是出现类似下面的错误12java.sql.SQLException: [Vertica][VJDBC](5065) ERROR: Too many ROS containers exist for the following projections:&amp;lt;projection&amp;gt; (limit = 18078, R">
 <meta name="keywords" content="vertica">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浅谈用户行为分析（一）">
-<meta property="og:url" content="http://yoursite.com/2018/10/16/浅谈用户行为分析（一）/index.html">
+<meta property="og:title" content="Vertica的这些事（十五）——Vertica报错TM">
+<meta property="og:url" content="http://yoursite.com/2018/11/20/Vertica的这些事（十五）——Vertica报错TM/index.html">
 <meta property="og:site_name" content="qinchaofeng的博客">
-<meta property="og:description" content="浅谈用户行为分析（一）标签（空格分隔）： 数据仓库 用户行为分析  关于用户行为分析，很多互联网公司都有相关的需求，虽然业务不同，但是关于用户行为分析的方法和技术实现都是基本相同的。作者在两家公司都了用户行为分析的相关事项，分享一下自己的一些经验。 一. 简介用户行为分析可以概括如下：哪个用户在什么时候做了什么操作在哪里做了什么操作，为什么要做这些操作，通过什么方式，用了多长时间等问题，总结出来就">
+<meta property="og:description" content="最近在用Vertica的时候碰到一个问题，Vertica在运行了一段时间后总是出现类似下面的错误12java.sql.SQLException: [Vertica][VJDBC](5065) ERROR: Too many ROS containers exist for the following projections:&amp;lt;projection&amp;gt; (limit = 18078, R">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-16T01:47:21.839Z">
+<meta property="og:updated_time" content="2018-11-20T12:58:55.529Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="浅谈用户行为分析（一）">
-<meta name="twitter:description" content="浅谈用户行为分析（一）标签（空格分隔）： 数据仓库 用户行为分析  关于用户行为分析，很多互联网公司都有相关的需求，虽然业务不同，但是关于用户行为分析的方法和技术实现都是基本相同的。作者在两家公司都了用户行为分析的相关事项，分享一下自己的一些经验。 一. 简介用户行为分析可以概括如下：哪个用户在什么时候做了什么操作在哪里做了什么操作，为什么要做这些操作，通过什么方式，用了多长时间等问题，总结出来就">
+<meta name="twitter:title" content="Vertica的这些事（十五）——Vertica报错TM">
+<meta name="twitter:description" content="最近在用Vertica的时候碰到一个问题，Vertica在运行了一段时间后总是出现类似下面的错误12java.sql.SQLException: [Vertica][VJDBC](5065) ERROR: Too many ROS containers exist for the following projections:&amp;lt;projection&amp;gt; (limit = 18078, R">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/10/16/浅谈用户行为分析（一）/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/11/20/Vertica的这些事（十五）——Vertica报错TM/"/>
 
 
 
 
 
-  <title>浅谈用户行为分析（一） | qinchaofeng的博客</title>
+  <title>Vertica的这些事（十五）——Vertica报错TM | qinchaofeng的博客</title>
   
 
 
@@ -233,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/16/浅谈用户行为分析（一）/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/20/Vertica的这些事（十五）——Vertica报错TM/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="qinchaofeng">
@@ -250,7 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">浅谈用户行为分析（一）</h1>
+          <h1 class="post-title" itemprop="name headline">Vertica的这些事（十五）——Vertica报错TM</h1>
         
 
         <div class="post-meta">
@@ -262,8 +262,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-16T09:45:12+08:00">
-                2018-10-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-20T20:57:28+08:00">
+                2018-11-20
               </time>
             
 
@@ -294,7 +294,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1k 字
+                  550 字
                 </span>
               
 
@@ -310,7 +310,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3 分钟
+                  2 分钟
                 </span>
               
             </div>
@@ -331,13 +331,33 @@
       
 
       
-        <h1 id="浅谈用户行为分析（一）"><a href="#浅谈用户行为分析（一）" class="headerlink" title="浅谈用户行为分析（一）"></a>浅谈用户行为分析（一）</h1><p>标签（空格分隔）： 数据仓库 用户行为分析</p>
-<hr>
-<p>关于用户行为分析，很多互联网公司都有相关的需求，虽然业务不同，但是关于用户行为分析的方法和技术实现都是基本相同的。作者在两家公司都了用户行为分析的相关事项，分享一下自己的一些经验。</p>
-<h2 id="一-简介"><a href="#一-简介" class="headerlink" title="一. 简介"></a>一. 简介</h2><p>用户行为分析可以概括如下：哪个用户在什么时候做了什么操作在哪里做了什么操作，为什么要做这些操作，通过什么方式，用了多长时间等问题，总结出来就是WHO，WHEN，WHERE，WHAT，WHY以及HOW，HOW TIME。</p>
-<h2 id="二-基础数据"><a href="#二-基础数据" class="headerlink" title="二.基础数据"></a>二.基础数据</h2><p>根据以上5个W和2H，我们来讨论下们如何实现。<br>WHO，首先需要x获取登陆用户个人的信息。用户名称，角色等<br>WHEN，获取用户访问页面每个模块的时间，开始时间，结束时间等<br>WHAT，获取用户登陆页面后都做了什么操作，点击了哪些页面以及模块等<br>WHY，分析用户点击这些模块的目的是什么<br>HOW，用户通过什么方式访问的系统，web,APP,小程序等<br>HOW TIME，用户访问每个模块，浏览某个页面多长时间等<br>以上都是我们要获取的数据，获取到相关数据我们才能接着分析用户的行为。</p>
-<h2 id="三-技术实现"><a href="#三-技术实现" class="headerlink" title="三.技术实现"></a>三.技术实现</h2><p>有了上面的思路，下面我们来说下实现的相关技术问题，如何落地用户行为分析。<br>a).首先是获取用户行为数据，目前比较多的方法有两种，一种是埋点，一种是插码（业内称无埋点技术）。先说下两种方式，第一埋点，埋点能够针对特定的页面位置获取用户的访问数据，能够更加精确的获取用户的访问动作等信息，没有其他杂乱数据，我们需要什么数据，就在页面对应的位置埋点就行。第二是插码，第一次听说这个技术是当时看到GrowingIO提出来的，个人认为这种技术其实是全埋点，也就是，你从登陆访问的所有信息都会被收集到，数据很多，也常常会遇到数据丢失的问题。（个人不是擅长前端，可能有更好的方法解决）。<br>b).获取到的用户的访问日志数据，是否就能用了呢？不行，这样收集到的数据很不规范，日志很乱，所以此时需要后端和前端定义好数据的保存格式，也就是保存哪些字段内容，需要把埋点数据按照约定的格式统一封装，以便于存储分析。<br>c).数据封装好后如何存储呢，我们知道对于互联网公司来说，用户的访问日志是非常大的，所以需要用户大数据存储技术，比如存储到HDFS上就是一个不错的选择。用户的访问日志都是实时产生的，如何落地到HDFS上呢？第一，埋点数据可以先落到磁盘，然后通过FLUME监听对应的磁盘目录，进行转发到HDFS，推荐使用kafka channel。第二，可以将用户访问的数据转发的一个特定的端口，使用FLUME监听对应的端口号，进行转发落地到HDFS。（期间，需要给FLUME足够的资源，注意进行心跳监控）。数据落地HDFS后，离线可以使用Hive SQL或者Spark SQL 进行分析。<br>对于离线分析，上述步骤，可以获取数据分析，对于个别实时需求，计算时则不需要进行落地HDFS，直接利用Storm，Spark Streaming，Flink等计算引擎消费Flume中转的kafka数据即可。</p>
-<p>后面会讲解一下用户行为分析的一些指标怎么做……</p>
+        <blockquote>
+<p>最近在用Vertica的时候碰到一个问题，Vertica在运行了一段时间后总是出现类似下面的错误<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java.sql.SQLException: [Vertica][VJDBC](5065) ERROR: Too many ROS containers exist for the following projections:</span><br><span class="line">&lt;projection&gt; (limit = 18078, ROS files = 12088, DV files = 5992, new files = 10)</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<blockquote>
+<p>碰到找个问题就不得不说说Vertica的存储机制了。Vertica在默认情况下会把新写入的数据写入到WOS（写优化）中，然后根据一定的条件（比如说一定的时间周期）再把WOS中的数据写入到ROS（读优化）中，这时ROS有可能很多都是很小数据块的碎片，这是Vertica会在一定的时间周期后把这些ROS数据块合并成大的ROS文件。<br>这里把数据从WOS写入到ROS的过程Vertica管它叫MoveOut操作，而把零散的ROS合并成大的ROS的过程Vertica管它叫MergeOut操作。</p>
+</blockquote>
+<p>######好了，现在来看看我们的问题吧。错误里报的是ROS太多，那可能的原因是:</p>
+<blockquote>
+<ol>
+<li>WOS写ROS太多，这个原因的原因很大的可能是每次insert/update的数据集太小，导致生成的碎片太多。</li>
+<li>ROS太多，而配置的MoveOut和MergeOut的时间间隔太长，导致来不及做MoveOut和MergeOut。</li>
+</ol>
+</blockquote>
+<p>#####好吧来看看我的应用吧</p>
+<blockquote>
+<ol>
+<li>针对第一个可能的原因，确实是我们的应用的需求的问题，这个目前来说我们没法改变。</li>
+<li>对于第二个可能的原因，我们查了一下Vertica的资料，在Vertica中默认的MergeOutInterval是600，MoveOutInterval是300。这两个参数可以通过下面的命令来查看<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1	SELECT GET_CONFIG_PARAMETER(&apos;MoveOutInterval&apos;);</span><br><span class="line">2	SELECT GET_CONFIG_PARAMETER(&apos;MergeOutInterval&apos;);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>由于我们的应用本身会产生很多的ROS碎片，所以我们想到了是不是可以通过减小MoveOut和MergeOut的Interval来让Vertica尽快的做MoveOut和MergeOut。因此我们修改了Vertica的参数:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1	SELECT SET_CONFIG_PARAMETER(&apos;MoveOutInterval&apos;, 60);</span><br><span class="line">2	SELECT SET_CONFIG_PARAMETER(&apos;MergeOutInterval&apos;, 30);</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<blockquote>
+<p>在修改了这两个参数以后，我们的应用确实在运行了很长时间后都没有再出现上面的问题了。<br>其实关于这个问题，还有几个参数可以调节，具体资料可以参考<br><a href="http://my.vertica.com/docs/7.0.x/HTML/index.htm#Authoring/AdministratorsGuide/ConfiguringTheDB/TupleMoverParameters.htm%3FTocPath%3DAdministrator%27s%20Guide|Configuring%20the%20Database|Configuration%20Parameters|Configuring%20HP%20Vertica%20At%20the%20Command%20Line|_____2" title="Vertica Tuple Mover Parameters" target="_blank" rel="noopener">Vertica Tuple Mover Parameters</a></p>
+</blockquote>
 
       
     </div>
@@ -376,7 +396,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://yoursite.com/2018/10/16/浅谈用户行为分析（一）/" title="浅谈用户行为分析（一）">http://yoursite.com/2018/10/16/浅谈用户行为分析（一）/</a>
+    <a href="http://yoursite.com/2018/11/20/Vertica的这些事（十五）——Vertica报错TM/" title="Vertica的这些事（十五）——Vertica报错TM">http://yoursite.com/2018/11/20/Vertica的这些事（十五）——Vertica报错TM/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -389,6 +409,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/vertica/" rel="tag"># vertica</a>
+          
+        </div>
+      
 
       
       
@@ -398,8 +424,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/22/如何找到本年已过天数和剩余天数/" rel="next" title="如何找到本年已过天数和剩余天数">
-                <i class="fa fa-chevron-left"></i> 如何找到本年已过天数和剩余天数
+              <a href="/2018/11/10/Flink的这些事（二）——Flink开发环境搭建/" rel="next" title="Flink的这些事（二）——Flink开发环境搭建">
+                <i class="fa fa-chevron-left"></i> Flink的这些事（二）——Flink开发环境搭建
               </a>
             
           </div>
@@ -408,8 +434,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/11/09/Flink的这些事（一）——Flink部署/" rel="prev" title="Flink的这些事（一）——Flink部署">
-                Flink的这些事（一）——Flink部署 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/11/20/Vertica的这些事（十六）——Vertica如何建表/" rel="prev" title="Vertica的这些事（十六）——Vertica如何建表">
+                Vertica的这些事（十六）——Vertica如何建表 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -462,17 +488,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -557,22 +574,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#浅谈用户行为分析（一）"><span class="nav-number">1.</span> <span class="nav-text">浅谈用户行为分析（一）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-简介"><span class="nav-number">1.1.</span> <span class="nav-text">一. 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-基础数据"><span class="nav-number">1.2.</span> <span class="nav-text">二.基础数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-技术实现"><span class="nav-number">1.3.</span> <span class="nav-text">三.技术实现</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
