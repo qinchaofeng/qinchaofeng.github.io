@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="vertica," />
+  <meta name="keywords" content="greenplum," />
 
 
 
@@ -79,20 +79,18 @@
 
 
 
-<meta name="description" content="大家看到题目可能会想，建表谁不会呀，还用讲嘛？但是如何建表能使你的应用查询更加快呢？  ####Anatomy of a ProjectionThe [CREATE PROJECTION]statement defines the individual elements of a projection, as the following graphic shows.The previous exa">
-<meta name="keywords" content="vertica">
+<meta name="description" content="上文我们介绍了GPDB的常用管理操作，今天我们来说下它的增删改查。这是对于一个数据库最基本的功能了，然而GPDB有它自己的特性，我们一起来看下。 插入数据按列插入数据： gptest=# create table products (name varchar(20),price numeric(10,2),product_no bigint)  distributed by  (product_n">
+<meta name="keywords" content="greenplum">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Vertica的这些事（十六）——Vertica如何建表">
-<meta property="og:url" content="http://yoursite.com/2018/11/20/Vertica的这些事（十六）——Vertica如何建表/index.html">
+<meta property="og:title" content="GreenPlum的那些事《四》——增删改查">
+<meta property="og:url" content="http://yoursite.com/2019/01/24/GreenPlum的那些事《四》——增删改查/index.html">
 <meta property="og:site_name" content="qinchaofeng的博客">
-<meta property="og:description" content="大家看到题目可能会想，建表谁不会呀，还用讲嘛？但是如何建表能使你的应用查询更加快呢？  ####Anatomy of a ProjectionThe [CREATE PROJECTION]statement defines the individual elements of a projection, as the following graphic shows.The previous exa">
+<meta property="og:description" content="上文我们介绍了GPDB的常用管理操作，今天我们来说下它的增删改查。这是对于一个数据库最基本的功能了，然而GPDB有它自己的特性，我们一起来看下。 插入数据按列插入数据： gptest=# create table products (name varchar(20),price numeric(10,2),product_no bigint)  distributed by  (product_n">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/4579636-796c4929d698d573.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2018-11-20T12:59:22.897Z">
+<meta property="og:updated_time" content="2019-01-24T12:55:53.106Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vertica的这些事（十六）——Vertica如何建表">
-<meta name="twitter:description" content="大家看到题目可能会想，建表谁不会呀，还用讲嘛？但是如何建表能使你的应用查询更加快呢？  ####Anatomy of a ProjectionThe [CREATE PROJECTION]statement defines the individual elements of a projection, as the following graphic shows.The previous exa">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/4579636-796c4929d698d573.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:title" content="GreenPlum的那些事《四》——增删改查">
+<meta name="twitter:description" content="上文我们介绍了GPDB的常用管理操作，今天我们来说下它的增删改查。这是对于一个数据库最基本的功能了，然而GPDB有它自己的特性，我们一起来看下。 插入数据按列插入数据： gptest=# create table products (name varchar(20),price numeric(10,2),product_no bigint)  distributed by  (product_n">
 
 
 
@@ -122,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/11/20/Vertica的这些事（十六）——Vertica如何建表/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/01/24/GreenPlum的那些事《四》——增删改查/"/>
 
 
 
 
 
-  <title>Vertica的这些事（十六）——Vertica如何建表 | qinchaofeng的博客</title>
+  <title>GreenPlum的那些事《四》——增删改查 | qinchaofeng的博客</title>
   
 
 
@@ -235,7 +233,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/20/Vertica的这些事（十六）——Vertica如何建表/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/24/GreenPlum的那些事《四》——增删改查/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="qinchaofeng">
@@ -252,7 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Vertica的这些事（十六）——Vertica如何建表</h1>
+          <h1 class="post-title" itemprop="name headline">GreenPlum的那些事《四》——增删改查</h1>
         
 
         <div class="post-meta">
@@ -264,8 +262,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-20T20:57:41+08:00">
-                2018-11-20
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-24T20:55:18+08:00">
+                2019-01-24
               </time>
             
 
@@ -296,7 +294,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  644 字
+                  491 字
                 </span>
               
 
@@ -312,7 +310,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3 分钟
+                  2 分钟
                 </span>
               
             </div>
@@ -333,19 +331,60 @@
       
 
       
-        <p>大家看到题目可能会想，建表谁不会呀，还用讲嘛？但是如何建表能使你的应用查询更加快呢？</p>
-<blockquote>
-<p>####Anatomy of a Projection<br>The [CREATE PROJECTION]statement defines the individual elements of a projection, as the following graphic shows.<br><img src="https://upload-images.jianshu.io/upload_images/4579636-796c4929d698d573.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png">The previous example contains the following significant elements:</p>
-<p>####Column List and Encoding<br>Lists every column in the projection and defines the encoding for each column. Unlike traditional database architectures, HP Vertica operates on encoded data representations. Therefore, HP recommends that you use data encoding because it results in less disk I/O.</p>
-<p>####Base Query<br>Identifies all the columns to incorporate in the projection through column name and table name references. The base query for large table projections can contain PK/FK joins to smaller tables.</p>
-<p>####Sort Order<br>The sort order optimizes for a specific query or commonalities in a class of queries based on the query predicate. The best sort orders are determined by the WHERE clauses. For example, if a projection’s sort order is (x, y), and the query’s WHERE clause specifies (x=1 AND y=2), all of the needed data is found together in the sort order, so the query runs almost instantaneously.<br>You can also optimize a query by matching the projection’s sort order to the query’s GROUP BY clause. If you do not specify a sort order, HP Vertica uses the order in which columns are specified in the column definition as the projection’s sort order.<br>The ORDER BY clause specifies a projection’s sort order, which localizes logically grouped values so that a disk read can pick up many results at once. For maximum performance, do not sort projections on LONG VARBINARY and LONG VARCHAR columns.</p>
-<p>####Segmentation<br>The segmentation clause determines whether a projection is segmented across nodes within the database. Segmentation distributes contiguous pieces of projections, calledsegments, for large and medium tables across database nodes. Segmentation maximizes database performance by distributing the load. Use SEGMENTED BY HASH to segment large table projections.<br>For small tables, use the UNSEGMENTED keyword to direct HP Vertica to replicate these tables, rather than segment them. Replication creates and stores identical copies of projections for small tables across all nodes in the cluster. Replication ensures high availability and recovery.<br>For maximum performance, do not segment projections on LONG VARBINARY and LONG VARCHAR columns.</p>
-</blockquote>
-<p>####以上来自官网，理解如下：</p>
-<p>#####Projection的解析</p>
-<p>#####Sort Order<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1、	order by 后表中插入的数据是有序的，所以order by 的列就源自于你在查询语句时使用的where 字句的内容。例如，如果字句查询中有where x=1 and y=2,那么建立projection时order by (x, y)查询的时候就会迅速定位到符合条件的数据</span><br><span class="line">2、	group by 后面的字段，出现在order by 中也可以优化查询。</span><br><span class="line">3、	order by 不要建立在LONG VARBINARY and LONG VARCHAR的列</span><br></pre></td></tr></table></figure></p>
-<p>#####Segmentation<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1、	Segmentation by hash()就是按照某一列，打散数据，把数据均匀的分布在各个节点上，对于大表，要记得使用。所以 hash里的列是主键最好，也就是说该列数据不重复的值越多，越适合做hash.</span><br><span class="line">2、	Segmentation by 的列不要用LONG VARBINARY and LONG VARCHAR columns.</span><br><span class="line">`</span><br></pre></td></tr></table></figure></p>
-<p>根据以上规则建表，可以更大程度优化你的查询性能。</p>
+        <p>上文我们介绍了GPDB的常用管理操作，今天我们来说下它的增删改查。这是对于一个数据库最基本的功能了，然而GPDB有它自己的特性，我们一起来看下。</p>
+<h2 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h2><p>按列插入数据：</p>
+<pre><code>gptest=# create table products (name varchar(20),price numeric(10,2),product_no bigint)  distributed by  (product_no);                     
+CREATE TABLE
+gptest=# INSERT INTO products (name, price, product_no) VALUES (&apos;Cheese&apos;, 9.99, 1);
+INSERT 0 1
+gptest=# select * from products;
+  name  | price | product_no 
+--------+-------+------------
+ Cheese |  9.99 |          1
+(1 row)
+</code></pre><p>同事插入多列：</p>
+<pre><code>gptest=# INSERT INTO products (product_no, name, price) VALUES
+gptest-#     (1, &apos;Cheese&apos;, 9.99),
+gptest-#     (2, &apos;Bread&apos;, 1.99),
+gptest-#     (3, &apos;Milk&apos;, 2.99);
+INSERT 0 3
+gptest=# select * from products;                                                                                                            name  | price | product_no 
+--------+-------+------------
+ Cheese |  9.99 |          1
+ Cheese |  9.99 |          1
+ Bread  |  1.99 |          2
+ Milk   |  2.99 |          3
+(4 rows)
+</code></pre><p><strong>我们看到了GPDB插入数据和普通数据库一样，那么是否可以像传统的DBMS一样用作OLTP系统呢。不是的！GPDB官方文档指出对于append表最大127个并发实务操作，所以你不能把它用作生产业务系统数据库，对于高并发并不合适！</strong>对于频繁的数据插入操作，我们通常不用insert操作，用copy命令，后面我们会介绍。<br>更新数据：</p>
+<pre><code>gptest=# UPDATE products SET price = 10 WHERE price = 9.99;
+UPDATE 2
+gptest=# select * from products;
+  name  | price | product_no 
+--------+-------+------------
+ Bread  |  1.99 |          2
+ Cheese | 10.00 |          1
+ Cheese | 10.00 |          1
+ Milk   |  2.99 |          3
+(4 rows)
+</code></pre><p>删除数据：</p>
+<pre><code>gptest=# DELETE FROM products WHERE price = 10;
+DELETE 2
+gptest=# select * from products;
+ name  | price | product_no 
+-------+-------+------------
+ Milk  |  2.99 |          3
+ Bread |  1.99 |          2
+(2 rows)
+</code></pre><p>清空表数据：</p>
+<pre><code>gptest=# truncate table products;
+TRUNCATE TABLE
+gptest=# select * from products; 
+ name | price | product_no 
+------+-------+------------
+(0 rows)
+</code></pre><p>GPDB的删除和更新操作，并不是直接物理删除数据，而是对数据打了一个标志，select查询的时候看不到而已，GPDB会定时自动清空这些数据，回收空间。当然你也可以手动运行<strong><em>VACUUM</em></strong> 命令来手动回收空间。</p>
+<pre><code>VACUUM products
+</code></pre><p>删除数据后，最好运行一下VACUUM，<strong>对于大表，不要轻易做VACUUM！</strong></p>
 
       
     </div>
@@ -384,7 +423,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://yoursite.com/2018/11/20/Vertica的这些事（十六）——Vertica如何建表/" title="Vertica的这些事（十六）——Vertica如何建表">http://yoursite.com/2018/11/20/Vertica的这些事（十六）——Vertica如何建表/</a>
+    <a href="http://yoursite.com/2019/01/24/GreenPlum的那些事《四》——增删改查/" title="GreenPlum的那些事《四》——增删改查">http://yoursite.com/2019/01/24/GreenPlum的那些事《四》——增删改查/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -399,7 +438,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/vertica/" rel="tag"># vertica</a>
+            <a href="/tags/greenplum/" rel="tag"># greenplum</a>
           
         </div>
       
@@ -412,8 +451,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/11/20/Vertica的这些事（十五）——Vertica报错TM/" rel="next" title="Vertica的这些事（十五）——Vertica报错TM">
-                <i class="fa fa-chevron-left"></i> Vertica的这些事（十五）——Vertica报错TM
+              <a href="/2019/01/23/GreenPlum的那些事《三》——常用操作/" rel="next" title="GreenPlum的那些事《三》——常用操作">
+                <i class="fa fa-chevron-left"></i> GreenPlum的那些事《三》——常用操作
               </a>
             
           </div>
@@ -421,10 +460,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/11/20/Vertica的这些事（十七）——Vertica消费kafka答疑/" rel="prev" title="Vertica的这些事（十七）——Vertica消费kafka答疑">
-                Vertica的这些事（十七）——Vertica消费kafka答疑 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -476,8 +511,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -562,6 +606,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#插入数据"><span class="nav-number">1.</span> <span class="nav-text">插入数据</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
