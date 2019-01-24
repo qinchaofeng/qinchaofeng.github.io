@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="qinchaofeng的博客">
 <meta property="og:description" content="上文我们介绍了GPDB的常用管理操作，今天我们来说下它的增删改查。这是对于一个数据库最基本的功能了，然而GPDB有它自己的特性，我们一起来看下。 插入数据按列插入数据： gptest=# create table products (name varchar(20),price numeric(10,2),product_no bigint)  distributed by  (product_n">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-24T12:55:53.106Z">
+<meta property="og:updated_time" content="2019-01-24T12:59:11.451Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GreenPlum的那些事《四》——增删改查">
 <meta name="twitter:description" content="上文我们介绍了GPDB的常用管理操作，今天我们来说下它的增删改查。这是对于一个数据库最基本的功能了，然而GPDB有它自己的特性，我们一起来看下。 插入数据按列插入数据： gptest=# create table products (name varchar(20),price numeric(10,2),product_no bigint)  distributed by  (product_n">
@@ -355,8 +355,8 @@ gptest=# select * from products;                                                
  Bread  |  1.99 |          2
  Milk   |  2.99 |          3
 (4 rows)
-</code></pre><p><strong>我们看到了GPDB插入数据和普通数据库一样，那么是否可以像传统的DBMS一样用作OLTP系统呢。不是的！GPDB官方文档指出对于append表最大127个并发实务操作，所以你不能把它用作生产业务系统数据库，对于高并发并不合适！</strong>对于频繁的数据插入操作，我们通常不用insert操作，用copy命令，后面我们会介绍。<br>更新数据：</p>
-<pre><code>gptest=# UPDATE products SET price = 10 WHERE price = 9.99;
+</code></pre><p><strong>我们看到了GPDB插入数据和普通数据库一样，那么是否可以像传统的DBMS一样用作OLTP系统呢。不是的！GPDB官方文档指出对于append表最大127个并发实务操作，所以你不能把它用作生产业务系统数据库，对于高并发并不合适！</strong>对于频繁的数据插入操作，我们通常不用insert操作，用copy命令，后面我们会介绍。</p>
+<h2 id="更新数据"><a href="#更新数据" class="headerlink" title="更新数据"></a>更新数据</h2><pre><code>gptest=# UPDATE products SET price = 10 WHERE price = 9.99;
 UPDATE 2
 gptest=# select * from products;
   name  | price | product_no 
@@ -366,8 +366,7 @@ gptest=# select * from products;
  Cheese | 10.00 |          1
  Milk   |  2.99 |          3
 (4 rows)
-</code></pre><p>删除数据：</p>
-<pre><code>gptest=# DELETE FROM products WHERE price = 10;
+</code></pre><h2 id="删除数据"><a href="#删除数据" class="headerlink" title="删除数据"></a>删除数据</h2><pre><code>gptest=# DELETE FROM products WHERE price = 10;
 DELETE 2
 gptest=# select * from products;
  name  | price | product_no 
@@ -375,8 +374,7 @@ gptest=# select * from products;
  Milk  |  2.99 |          3
  Bread |  1.99 |          2
 (2 rows)
-</code></pre><p>清空表数据：</p>
-<pre><code>gptest=# truncate table products;
+</code></pre><h2 id="清空表数据"><a href="#清空表数据" class="headerlink" title="清空表数据"></a>清空表数据</h2><pre><code>gptest=# truncate table products;
 TRUNCATE TABLE
 gptest=# select * from products; 
  name | price | product_no 
@@ -616,7 +614,7 @@ gptest=# select * from products;
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#插入数据"><span class="nav-number">1.</span> <span class="nav-text">插入数据</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#插入数据"><span class="nav-number">1.</span> <span class="nav-text">插入数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更新数据"><span class="nav-number">2.</span> <span class="nav-text">更新数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除数据"><span class="nav-number">3.</span> <span class="nav-text">删除数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#清空表数据"><span class="nav-number">4.</span> <span class="nav-text">清空表数据</span></a></li></ol></div>
             
 
           </div>
