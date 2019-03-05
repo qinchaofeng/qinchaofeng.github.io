@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="spark," />
+  <meta name="keywords" content="数据中台," />
 
 
 
@@ -79,18 +79,20 @@
 
 
 
-<meta name="description" content="1、SparkContext [经常简称为 sc] 1spark app 的起点和入口，一般用来加载数据集，生成第一个 rdd。 2、定义一个 spark 应用程序所需要的三大步骤的逻辑：加载数据集，处理数据，结果展示。  加载数据集  123加载数据集，这里的数据集大概分为两组:    - 一种是不变的，静态数据集，大多数场景都是从数据库，文件系统上面加载进来    - 另一种是动态的数据集，一">
-<meta name="keywords" content="spark">
+<meta name="description" content="一、什么是数据中台数据中台的概念最是阿里提出来的是为了实现数据的分层和水平解耦，提供数据服务能力。看了那么多中台的概念，对中台也有些自己的理解。笔者认为中台主要是为了提供全域的数据服务。主要包括以下4部分：数据资产、数据治理、数据模型、数据服务。打通数据建模对全域数据进行沉淀形成数据资产，从而提供统一的数据服务功能。 二、如何建立数据中台建设数据中台主要就是从数据模型、数据资产、数据治理、数据服">
+<meta name="keywords" content="数据中台">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spark的这些事（二）——几个概念">
-<meta property="og:url" content="http://yoursite.com/2018/09/12/Spark的这些事（二）——几个概念/index.html">
+<meta property="og:title" content="浅谈数据中台">
+<meta property="og:url" content="http://yoursite.com/2019/03/05/浅谈数据中台/index.html">
 <meta property="og:site_name" content="qinchaofeng的博客">
-<meta property="og:description" content="1、SparkContext [经常简称为 sc] 1spark app 的起点和入口，一般用来加载数据集，生成第一个 rdd。 2、定义一个 spark 应用程序所需要的三大步骤的逻辑：加载数据集，处理数据，结果展示。  加载数据集  123加载数据集，这里的数据集大概分为两组:    - 一种是不变的，静态数据集，大多数场景都是从数据库，文件系统上面加载进来    - 另一种是动态的数据集，一">
+<meta property="og:description" content="一、什么是数据中台数据中台的概念最是阿里提出来的是为了实现数据的分层和水平解耦，提供数据服务能力。看了那么多中台的概念，对中台也有些自己的理解。笔者认为中台主要是为了提供全域的数据服务。主要包括以下4部分：数据资产、数据治理、数据模型、数据服务。打通数据建模对全域数据进行沉淀形成数据资产，从而提供统一的数据服务功能。 二、如何建立数据中台建设数据中台主要就是从数据模型、数据资产、数据治理、数据服">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-11-20T13:04:58.521Z">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190226204152675.jpg">
+<meta property="og:updated_time" content="2019-03-05T12:40:58.726Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spark的这些事（二）——几个概念">
-<meta name="twitter:description" content="1、SparkContext [经常简称为 sc] 1spark app 的起点和入口，一般用来加载数据集，生成第一个 rdd。 2、定义一个 spark 应用程序所需要的三大步骤的逻辑：加载数据集，处理数据，结果展示。  加载数据集  123加载数据集，这里的数据集大概分为两组:    - 一种是不变的，静态数据集，大多数场景都是从数据库，文件系统上面加载进来    - 另一种是动态的数据集，一">
+<meta name="twitter:title" content="浅谈数据中台">
+<meta name="twitter:description" content="一、什么是数据中台数据中台的概念最是阿里提出来的是为了实现数据的分层和水平解耦，提供数据服务能力。看了那么多中台的概念，对中台也有些自己的理解。笔者认为中台主要是为了提供全域的数据服务。主要包括以下4部分：数据资产、数据治理、数据模型、数据服务。打通数据建模对全域数据进行沉淀形成数据资产，从而提供统一的数据服务功能。 二、如何建立数据中台建设数据中台主要就是从数据模型、数据资产、数据治理、数据服">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190226204152675.jpg">
 
 
 
@@ -120,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/09/12/Spark的这些事（二）——几个概念/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/03/05/浅谈数据中台/"/>
 
 
 
 
 
-  <title>Spark的这些事（二）——几个概念 | qinchaofeng的博客</title>
+  <title>浅谈数据中台 | qinchaofeng的博客</title>
   
 
 
@@ -233,7 +235,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/12/Spark的这些事（二）——几个概念/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/05/浅谈数据中台/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="qinchaofeng">
@@ -250,7 +252,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Spark的这些事（二）——几个概念</h1>
+          <h1 class="post-title" itemprop="name headline">浅谈数据中台</h1>
         
 
         <div class="post-meta">
@@ -262,8 +264,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T18:17:14+08:00">
-                2018-09-12
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-05T20:40:05+08:00">
+                2019-03-05
               </time>
             
 
@@ -294,7 +296,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  486 字
+                  660 字
                 </span>
               
 
@@ -310,7 +312,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1 分钟
+                  2 分钟
                 </span>
               
             </div>
@@ -331,25 +333,15 @@
       
 
       
-        <p>1、SparkContext [经常简称为 sc]</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spark app 的起点和入口，一般用来加载数据集，生成第一个 rdd。</span><br></pre></td></tr></table></figure>
-<p>2、定义一个 spark 应用程序所需要的三大步骤的逻辑：加载数据集，处理数据，结果展示。</p>
-<ul>
-<li>加载数据集</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">加载数据集，这里的数据集大概分为两组:</span><br><span class="line">    - 一种是不变的，静态数据集，大多数场景都是从数据库，文件系统上面加载进来</span><br><span class="line">    - 另一种是动态的数据集，一般做 streaming 应用的时候用到，大多数场景是通过 socket 来加载数据，复杂场景可以通过文件系统，akka actors，kafka，kinesis 和 一些第三方提供的 streaming api [twitter 等] 来作为数据源加载数据</span><br></pre></td></tr></table></figure>
-<ul>
-<li>处理数据</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">处理数据，这是重点中的重点，不过不外乎都是从三个方面来完成这里的数据清理，逻辑运算等:</span><br><span class="line">    - 自定义的一些复杂处理函数或者第三方包 [下面我们称为函数集]</span><br><span class="line">    - 通过 RDD 的 transform，action 和函数集来完成整个处理，计算流程</span><br><span class="line">    - 通过 RDD 提供的 cache，persist，checkpoint 方法把一些处理流程中的重要处理节点和常用数据缓存和备份，以加速处理，计算速度</span><br></pre></td></tr></table></figure>
-<ul>
-<li>结果展示</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">结果展示，这里一般情况都是使用 RDD 的 collect，take，first，top 等方法把结果取出来，更常用的是先把结果取出来，放到一个数据库或文件系统上，然后再提供给专门展示结果的另一个 application 使用。</span><br></pre></td></tr></table></figure>
-<p>3、有向无环图（DGA）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">有向无环图，有向即有方向，无环即不可逆，其实更详细的说是一个时间上的先来后到，即祖先与子孙的关系，是不可逆的。</span><br></pre></td></tr></table></figure>
-<p><a href="http://baike.baidu.com/link?url=tzBdpDUcmMp-xu2Tf-dRatmMo3-B1yVMG5Jg9vM6FK5VB2lWBsbaqKUJhilj8D7N" target="_blank" rel="noopener">有向无环图（百度百科）</a></p>
-<p>4、RDD<br><a href="http://shiyanjun.cn/archives/744.html" target="_blank" rel="noopener">关于RDD的一篇论文翻译</a></p>
+        <hr>
+<h1 id="一、什么是数据中台"><a href="#一、什么是数据中台" class="headerlink" title="一、什么是数据中台"></a>一、什么是数据中台</h1><p>数据中台的概念最是阿里提出来的是为了实现数据的分层和水平解耦，提供数据服务能力。看了那么多中台的概念，对中台也有些自己的理解。笔者认为中台主要是为了提供全域的数据服务。主要包括以下4部分：数据资产、数据治理、数据模型、数据服务。<br><img src="https://img-blog.csdnimg.cn/20190226204152675.jpg" alt="此处输入图片的描述"><br>打通数据建模对全域数据进行沉淀形成数据资产，从而提供统一的数据服务功能。</p>
+<h1 id="二、如何建立数据中台"><a href="#二、如何建立数据中台" class="headerlink" title="二、如何建立数据中台"></a>二、如何建立数据中台</h1><p>建设数据中台主要就是从数据模型、数据资产、数据治理、数据服务四部分出发。</p>
+<h2 id="1、数据模型"><a href="#1、数据模型" class="headerlink" title="1、数据模型"></a>1、数据模型</h2><p>数据模型，就是我们熟悉的数据仓库中的模型，按照数据仓库规范分层开发模型，实现数据的标准化，多采用维度建模。还有一些挖掘模型，如果用的多了，也可以沉淀到数据中台中。我们可以看出数据中台中的模型具有通用性。</p>
+<h2 id="2、数据资产"><a href="#2、数据资产" class="headerlink" title="2、数据资产"></a>2、数据资产</h2><p>在数据仓库中我们已经建立了一些模型，但是只有打通数据孤岛后才可以称为资产。需要开发一些指标库，这些指标可以组合处理满足外部人员个性化的指标。需求。还包括一些元数据，比如模型信息、血缘关系、数据存储以及访问情况等。</p>
+<h2 id="3、数据治理"><a href="#3、数据治理" class="headerlink" title="3、数据治理"></a>3、数据治理</h2><p>数据治理主要是为了保障数据资产的完整性、准确性、一致性、及时性。根据指定的规范开发模型、校验模型、管理模型。</p>
+<h2 id="4、数据服务"><a href="#4、数据服务" class="headerlink" title="4、数据服务"></a>4、数据服务</h2><p>数据中台最重要的就是要对外提供统一的服务能力。数据服务包括提供给开发者，让开发者能够快速、简单的访问数据服务；对于业务分析人员可以让他们轻松的进行算法分析，包括模型管理、可视化编排流程，算法模型发布等功能。</p>
+<h1 id="三、数据中台和数据仓库有什么不同"><a href="#三、数据中台和数据仓库有什么不同" class="headerlink" title="三、数据中台和数据仓库有什么不同"></a>三、数据中台和数据仓库有什么不同</h1><p>很多人对数据中台和数据仓库两个概念可能不是很清楚，笔者认为最主要的是思维理念不同，数据仓库是“管理数据”，数据中台是“经营数据”，数据中台是为了提供服务而生（也有说是为了前台而生）。</p>
+<p>参考资料：《<a href="https://yq.aliyun.com/articles/297782" target="_blank" rel="noopener">数据中台-阿里巴巴的数据整合、价值发掘、社会赋能之道</a>》</p>
 
       
     </div>
@@ -388,7 +380,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://yoursite.com/2018/09/12/Spark的这些事（二）——几个概念/" title="Spark的这些事（二）——几个概念">http://yoursite.com/2018/09/12/Spark的这些事（二）——几个概念/</a>
+    <a href="http://yoursite.com/2019/03/05/浅谈数据中台/" title="浅谈数据中台">http://yoursite.com/2019/03/05/浅谈数据中台/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -403,7 +395,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/spark/" rel="tag"># spark</a>
+            <a href="/tags/数据中台/" rel="tag"># 数据中台</a>
           
         </div>
       
@@ -416,8 +408,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/09/12/Spark的这些事（一）——Windows下spark开发环境搭建/" rel="next" title="Spark的这些事（一）——Windows下spark开发环境搭建">
-                <i class="fa fa-chevron-left"></i> Spark的这些事（一）——Windows下spark开发环境搭建
+              <a href="/2019/02/24/GreenPlum的那些事《五》——浅谈GPDB中的资源队列/" rel="next" title="GreenPlum的那些事《五》——浅谈GPDB中的资源队列">
+                <i class="fa fa-chevron-left"></i> GreenPlum的那些事《五》——浅谈GPDB中的资源队列
               </a>
             
           </div>
@@ -425,10 +417,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/12/Spark的这些事（三）——spark常用的Transformations-和Actions/" rel="prev" title="Spark的这些事（三）——spark常用的Transformations-和Actions">
-                Spark的这些事（三）——spark常用的Transformations-和Actions <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -480,8 +468,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -566,6 +563,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、什么是数据中台"><span class="nav-number">1.</span> <span class="nav-text">一、什么是数据中台</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、如何建立数据中台"><span class="nav-number">2.</span> <span class="nav-text">二、如何建立数据中台</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、数据模型"><span class="nav-number">2.1.</span> <span class="nav-text">1、数据模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、数据资产"><span class="nav-number">2.2.</span> <span class="nav-text">2、数据资产</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、数据治理"><span class="nav-number">2.3.</span> <span class="nav-text">3、数据治理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、数据服务"><span class="nav-number">2.4.</span> <span class="nav-text">4、数据服务</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、数据中台和数据仓库有什么不同"><span class="nav-number">3.</span> <span class="nav-text">三、数据中台和数据仓库有什么不同</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
