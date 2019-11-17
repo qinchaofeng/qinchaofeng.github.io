@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="数据分析," />
 
 
 
@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="标签（空格分隔）： 数据分析  CART 创建决策树做分类# encoding=utf-8 from sklearn.model_selection import train_test_split from sklearn.metrics import accuracy_score from sklearn.tree import DecisionTreeClassifier from sklea">
-<meta name="keywords" content="vertica">
+<meta name="description" content="标签（空格分隔）： 数据分析  CART 创建决策树做分类123456789101112131415161718192021222324252627282930313233# encoding=utf-8from sklearn.model_selection import train_test_splitfrom sklearn.metrics import accuracy_scorefrom">
+<meta name="keywords" content="数据分析">
 <meta property="og:type" content="article">
-<meta property="og:title" content="qinchaofeng的博客">
+<meta property="og:title" content="数据分析03---决策树">
 <meta property="og:url" content="http://yoursite.com/2019/11/17/数据分析03-决策树/index.html">
 <meta property="og:site_name" content="qinchaofeng的博客">
-<meta property="og:description" content="标签（空格分隔）： 数据分析  CART 创建决策树做分类# encoding=utf-8 from sklearn.model_selection import train_test_split from sklearn.metrics import accuracy_score from sklearn.tree import DecisionTreeClassifier from sklea">
+<meta property="og:description" content="标签（空格分隔）： 数据分析  CART 创建决策树做分类123456789101112131415161718192021222324252627282930313233# encoding=utf-8from sklearn.model_selection import train_test_splitfrom sklearn.metrics import accuracy_scorefrom">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/4579636-8a8304dce82fd083.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-11-17T01:47:01.000Z">
+<meta property="og:updated_time" content="2019-11-17T01:59:31.315Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="qinchaofeng的博客">
-<meta name="twitter:description" content="标签（空格分隔）： 数据分析  CART 创建决策树做分类# encoding=utf-8 from sklearn.model_selection import train_test_split from sklearn.metrics import accuracy_score from sklearn.tree import DecisionTreeClassifier from sklea">
+<meta name="twitter:title" content="数据分析03---决策树">
+<meta name="twitter:description" content="标签（空格分隔）： 数据分析  CART 创建决策树做分类123456789101112131415161718192021222324252627282930313233# encoding=utf-8from sklearn.model_selection import train_test_splitfrom sklearn.metrics import accuracy_scorefrom">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/4579636-8a8304dce82fd083.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -128,7 +128,7 @@
 
 
 
-  <title> | qinchaofeng的博客</title>
+  <title>数据分析03---决策树 | qinchaofeng的博客</title>
   
 
 
@@ -252,7 +252,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"></h1>
+          <h1 class="post-title" itemprop="name headline">数据分析03---决策树</h1>
         
 
         <div class="post-meta">
@@ -264,7 +264,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-17T09:50:42+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-17T09:57:08+08:00">
                 2019-11-17
               </time>
             
@@ -296,7 +296,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  402 字
+                  385 字
                 </span>
               
 
@@ -335,72 +335,12 @@
       
         <p>标签（空格分隔）： 数据分析</p>
 <hr>
-<h4 id="CART-创建决策树做分类"><a href="#CART-创建决策树做分类" class="headerlink" title="CART 创建决策树做分类"></a>CART 创建决策树做分类</h4><pre><code># encoding=utf-8
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.datasets import load_iris
-import graphviz
-from sklearn import tree
-import os
-os.environ[&quot;PATH&quot;] += os.pathsep + &apos;C:\\Users\\qincf\\AppData\\Local\\Continuum\\anaconda3\Library\\bin\\graphviz&apos;
+<h4 id="CART-创建决策树做分类"><a href="#CART-创建决策树做分类" class="headerlink" title="CART 创建决策树做分类"></a>CART 创建决策树做分类</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"># encoding=utf-8</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.metrics import accuracy_score</span><br><span class="line">from sklearn.tree import DecisionTreeClassifier</span><br><span class="line">from sklearn.datasets import load_iris</span><br><span class="line">import graphviz</span><br><span class="line">from sklearn import tree</span><br><span class="line">import os</span><br><span class="line">os.environ[&quot;PATH&quot;] += os.pathsep + &apos;C:\\Users\\qincf\\AppData\\Local\\Continuum\\anaconda3\Library\\bin\\graphviz&apos;</span><br><span class="line"></span><br><span class="line"># 准备数据集</span><br><span class="line">iris=load_iris()</span><br><span class="line"># 获取特征集和分类标识</span><br><span class="line">features = iris.data</span><br><span class="line">labels = iris.target</span><br><span class="line"># 随机抽取 33% 的数据作为测试集，其余为训练集</span><br><span class="line">train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size=0.33, random_state=0)</span><br><span class="line"># 创建 CART 分类树</span><br><span class="line">clf = DecisionTreeClassifier(criterion=&apos;gini&apos;)</span><br><span class="line"># 拟合构造 CART 分类树</span><br><span class="line">clf = clf.fit(train_features, train_labels)</span><br><span class="line"># 用 CART 分类树做预测</span><br><span class="line">test_predict = clf.predict(test_features)</span><br><span class="line">print(test_predict)</span><br><span class="line"># 预测结果与测试集结果作比对</span><br><span class="line">score = accuracy_score(test_labels, test_predict)</span><br><span class="line">print(&quot;CART 分类树准确率 %.4lf&quot; % score)</span><br><span class="line"></span><br><span class="line">##打印CART</span><br><span class="line">dot_data = tree.export_graphviz(clf,out_file=None)</span><br><span class="line">graph = graphviz.Source(dot_data)</span><br><span class="line">graph</span><br><span class="line">print(graph.view())</span><br></pre></td></tr></table></figure>
+<h4 id="分类树如下："><a href="#分类树如下：" class="headerlink" title="分类树如下："></a>分类树如下：</h4><p><img src="https://upload-images.jianshu.io/upload_images/4579636-8a8304dce82fd083.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h4 id="CART-回归树做预测"><a href="#CART-回归树做预测" class="headerlink" title="CART 回归树做预测"></a>CART 回归树做预测</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># encoding=utf-8</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">from sklearn.metrics import mean_squared_error,mean_absolute_error</span><br><span class="line"></span><br><span class="line">from sklearn.tree import DecisionTreeRegressor</span><br><span class="line">from sklearn.datasets import load_boston</span><br><span class="line">import graphviz</span><br><span class="line">from sklearn import tree</span><br><span class="line">import os</span><br><span class="line">os.environ[&quot;PATH&quot;] += os.pathsep + &apos;C:\\Users\\qincf\\AppData\\Local\\Continuum\\anaconda3\Library\\bin\\graphviz&apos;</span><br></pre></td></tr></table></figure>
+<p>​    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># 准备数据集</span><br><span class="line">boston=load_boston()</span><br><span class="line"># 探索数据</span><br><span class="line">print(boston.feature_names)</span><br><span class="line"># 获取特征集和房价</span><br><span class="line">features = boston.data</span><br><span class="line">prices = boston.target</span><br><span class="line"># 随机抽取 33% 的数据作为测试集，其余为训练集</span><br><span class="line">train_features, test_features, train_price, test_price = train_test_split(features, prices, test_size=0.33)</span><br><span class="line"># 创建 CART 回归树</span><br><span class="line">dtr=DecisionTreeRegressor()</span><br><span class="line"># 拟合构造 CART 回归树</span><br><span class="line">dtr.fit(train_features, train_price)</span><br><span class="line"># 预测测试集中的房价</span><br><span class="line">predict_price = dtr.predict(test_features)</span><br><span class="line">print(test_features)</span><br><span class="line"># 测试集的结果评价</span><br><span class="line">print(&apos;回归树二乘偏差均值:&apos;, mean_squared_error(test_price, predict_price))</span><br><span class="line">print(&apos;回归树绝对值偏差均值:&apos;, mean_absolute_error(test_price, predict_price))</span><br></pre></td></tr></table></figure>
 
-# 准备数据集
-iris=load_iris()
-# 获取特征集和分类标识
-features = iris.data
-labels = iris.target
-# 随机抽取 33% 的数据作为测试集，其余为训练集
-train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size=0.33, random_state=0)
-# 创建 CART 分类树
-clf = DecisionTreeClassifier(criterion=&apos;gini&apos;)
-# 拟合构造 CART 分类树
-clf = clf.fit(train_features, train_labels)
-# 用 CART 分类树做预测
-test_predict = clf.predict(test_features)
-print(test_predict)
-# 预测结果与测试集结果作比对
-score = accuracy_score(test_labels, test_predict)
-print(&quot;CART 分类树准确率 %.4lf&quot; % score)
-
-##打印CART
-dot_data = tree.export_graphviz(clf,out_file=None)
-graph = graphviz.Source(dot_data)
-graph
-print(graph.view())
-</code></pre><h4 id="分类树如下："><a href="#分类树如下：" class="headerlink" title="分类树如下："></a>分类树如下：</h4><p><img src="https://upload-images.jianshu.io/upload_images/4579636-8a8304dce82fd083.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h4 id="CART-回归树做预测"><a href="#CART-回归树做预测" class="headerlink" title="CART 回归树做预测"></a>CART 回归树做预测</h4><pre><code># encoding=utf-8
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error,mean_absolute_error
-
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.datasets import load_boston
-import graphviz
-from sklearn import tree
-import os
-os.environ[&quot;PATH&quot;] += os.pathsep + &apos;C:\\Users\\qincf\\AppData\\Local\\Continuum\\anaconda3\Library\\bin\\graphviz&apos;
-
-
-# 准备数据集
-boston=load_boston()
-# 探索数据
-print(boston.feature_names)
-# 获取特征集和房价
-features = boston.data
-prices = boston.target
-# 随机抽取 33% 的数据作为测试集，其余为训练集
-train_features, test_features, train_price, test_price = train_test_split(features, prices, test_size=0.33)
-# 创建 CART 回归树
-dtr=DecisionTreeRegressor()
-# 拟合构造 CART 回归树
-dtr.fit(train_features, train_price)
-# 预测测试集中的房价
-predict_price = dtr.predict(test_features)
-print(test_features)
-# 测试集的结果评价
-print(&apos;回归树二乘偏差均值:&apos;, mean_squared_error(test_price, predict_price))
-print(&apos;回归树绝对值偏差均值:&apos;, mean_absolute_error(test_price, predict_price))
-</code></pre>
       
     </div>
     
@@ -438,7 +378,7 @@ print(&apos;回归树绝对值偏差均值:&apos;, mean_absolute_error(test_pric
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://yoursite.com/2019/11/17/数据分析03-决策树/" title="">http://yoursite.com/2019/11/17/数据分析03-决策树/</a>
+    <a href="http://yoursite.com/2019/11/17/数据分析03-决策树/" title="数据分析03---决策树">http://yoursite.com/2019/11/17/数据分析03-决策树/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -451,6 +391,12 @@ print(&apos;回归树绝对值偏差均值:&apos;, mean_absolute_error(test_pric
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/数据分析/" rel="tag"># 数据分析</a>
+          
+        </div>
+      
 
       
       
@@ -460,8 +406,8 @@ print(&apos;回归树绝对值偏差均值:&apos;, mean_absolute_error(test_pric
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/11/17/数据分析02-线性回归/" rel="next" title="">
-                <i class="fa fa-chevron-left"></i> 
+              <a href="/2019/11/17/数据分析04-朴素贝叶斯/" rel="next" title="数据分析04---朴素贝叶斯">
+                <i class="fa fa-chevron-left"></i> 数据分析04---朴素贝叶斯
               </a>
             
           </div>
@@ -470,8 +416,8 @@ print(&apos;回归树绝对值偏差均值:&apos;, mean_absolute_error(test_pric
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/11/17/数据分析04-朴素贝叶斯/" rel="prev" title="">
-                 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/11/17/数据分析02-线性回归/" rel="prev" title="数据分析02---线性回归">
+                数据分析02---线性回归 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -566,7 +512,7 @@ print(&apos;回归树绝对值偏差均值:&apos;, mean_absolute_error(test_pric
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/tags.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
