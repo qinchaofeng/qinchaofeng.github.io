@@ -1,0 +1,486 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  
+    <meta name="description" content="大数据实践的那些事，专注MPP数据库研究、流处理计算、数据仓库架构和数据分析">
+  
+  <meta name="author" content="数据一哥">
+  <meta name="keywords" content="大数据">
+  
+  <title>Vertica的这些事（十二）——-vertica备份与恢复 - 数据社</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css">
+  <link rel="stylesheet" href="/lib/hint/hint.min.css">
+
+  
+    
+    
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css">
+    
+  
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","version":"1.8.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+</head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>数据社</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Vertica的这些事（十二）——-vertica备份与恢复">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2018-09-12 12:50" pubdate>
+        2018年9月12日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.7k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      42
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Vertica的这些事（十二）——-vertica备份与恢复</h1>
+            
+            <div class="markdown-body">
+              <h2 id="最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复-以下是整理的过程，分享给大家，如有问题欢迎大家指正-可加QQ群交流：412191494"><a href="#最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复-以下是整理的过程，分享给大家，如有问题欢迎大家指正-可加QQ群交流：412191494" class="headerlink" title="最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复 以下是整理的过程，分享给大家，如有问题欢迎大家指正~ 可加QQ群交流：412191494"></a>最近在使用vertica，上网找了很多资料都没有，只有自己看官方文档动手搞一下了，今天搞了vertica的备份与恢复 以下是整理的过程，分享给大家，如有问题欢迎大家指正~ 可加QQ群交流：412191494</h2><h2 id="1、vertica备份"><a href="#1、vertica备份" class="headerlink" title="1、vertica备份"></a>1、vertica备份</h2><h2 id="1-1-vertica备份配置"><a href="#1-1-vertica备份配置" class="headerlink" title="1.1 vertica备份配置:"></a>1.1 vertica备份配置:</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py  --setupconfig<br>Snapshot name (backup_snapshot): full_backup20160505<br>Number of restore points (1): 1<br>Specify objects (<span class="hljs-literal">no</span> default): <br>Object restore mode (coexist, createOrReplace <span class="hljs-keyword">or</span> create) (createOrReplace): <br>Vertica<span class="hljs-built_in"> user </span>name (dbadmin): dbadmin<br>Save password <span class="hljs-keyword">to</span> avoid runtime prompt? (n) [y/n]: y<br>Database<span class="hljs-built_in"> user </span>password <span class="hljs-keyword">to</span> save <span class="hljs-keyword">in</span> vbr password<span class="hljs-built_in"> config </span>file (<span class="hljs-literal">no</span> default):<br>Node v_windy1990_node0001<br>Backup host name (<span class="hljs-literal">no</span> default): 192.168.231.110<br>Backup directory (<span class="hljs-literal">no</span> default): /home/dbadmin/backup<br>Change advanced settings? (n) [y/n]: y<br>Temp directory (/tmp/vbr): <br>Number of times <span class="hljs-keyword">to</span> retry (2): <br>Seconds between retry attempts (1): <br>Encrypt data during transmission? (n) [y/n]: <br>Use checksum <span class="hljs-keyword">for</span> data integrity (<span class="hljs-keyword">not</span> file data <span class="hljs-keyword">and</span> size)? (n) [y/n]: <span class="hljs-built_in"><br>Port </span>number <span class="hljs-keyword">for</span> rsync daemon (50000): <span class="hljs-built_in"><br>User </span>name <span class="hljs-keyword">to</span> access rsync daemon (<span class="hljs-literal">no</span> default): <br>Password of the<span class="hljs-built_in"> user </span>who accesses rsync daemon:<br>Backup transfer bandwidth limit <span class="hljs-keyword">in</span> KBps <span class="hljs-keyword">or</span> 0 <span class="hljs-keyword">for</span> unlimited (0): <br>Number of concurrency <span class="hljs-keyword">for</span> backup (1): <br>Restore transfer bandwidth limit <span class="hljs-keyword">in</span> KBps <span class="hljs-keyword">or</span> 0 <span class="hljs-keyword">for</span> unlimited (0): <br>Number of concurrency <span class="hljs-keyword">for</span> restore (1): <br>Password file name (<span class="hljs-literal">no</span> default): password<br>Saved vbr password <span class="hljs-keyword">to</span> password.<span class="hljs-built_in"><br>Config </span>file name (full_backup20160505.ini): <br>Saved vbr<span class="hljs-built_in"> config </span><span class="hljs-keyword">to</span> full_backup20160505.ini.<br></code></pre></td></tr></table></figure>
+<h2 id="备份成功后查看备份的文件内容如下："><a href="#备份成功后查看备份的文件内容如下：" class="headerlink" title="备份成功后查看备份的文件内容如下："></a>备份成功后查看备份的文件内容如下：</h2><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ more full_backup20160505.ini <br>[Misc]<br>snapshotName = full_backup20160505<br>restorePointLimit = 1<br>objectRestoreMode = createOrReplace<br>tempDir = /tmp/vbr<br>retryCount = 2<br>retryDelay = 1<br>passwordFile = password<br><br>[Database]<br>dbName = Windy1990<br>dbUser = dbadmin<br><br>[Transmission]<br>encrypt = False<br>checksum = False<br>port_rsync = 50000<br>serviceAccessUser = None<br>total_bwlimit_backup = 0<br>concurrency_backup = 1<br>total_bwlimit_restore = 0<br>concurrency_restore = 1<br><br>[Mapping]<br>v_windy1990_node0001 = 192.168.231.110:/home/dbadmin/backup<br></code></pre></td></tr></table></figure>
+<h2 id="备份中我选了一个文件保存密码："><a href="#备份中我选了一个文件保存密码：" class="headerlink" title="备份中我选了一个文件保存密码："></a>备份中我选了一个文件保存密码：</h2><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined">/<span class="hljs-built_in">home</span>/dbadmin/password<br></code></pre></td></tr></table></figure>
+<h2 id="里面存有数据路的密码："><a href="#里面存有数据路的密码：" class="headerlink" title="里面存有数据路的密码："></a>里面存有数据路的密码：</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ more password <br>[Passwords]<br>dbPassword = dbadmin<br>1.2 vertica 全备份<br>官方文档：<br>A full <span class="hljs-keyword">backup</span> <span class="hljs-keyword">is</span> a <span class="hljs-keyword">complete</span> copy <span class="hljs-keyword">of</span> the <span class="hljs-keyword">database</span> <span class="hljs-keyword">catalog</span>, its schemas, <span class="hljs-keyword">tables</span>, <span class="hljs-keyword">and</span> other objects. It <span class="hljs-keyword">is</span> a <span class="hljs-keyword">consistent</span> image <span class="hljs-keyword">of</span> the <span class="hljs-keyword">database</span> <span class="hljs-keyword">at</span> the <span class="hljs-keyword">time</span> the <span class="hljs-keyword">backup</span> occurred. You can <span class="hljs-keyword">use</span> a <span class="hljs-keyword">full</span> <span class="hljs-keyword">backup</span> <span class="hljs-keyword">for</span> disaster <span class="hljs-keyword">recovery</span> <span class="hljs-keyword">to</span> <span class="hljs-keyword">restore</span> a damaged <span class="hljs-keyword">or</span> incomplete database.<br></code></pre></td></tr></table></figure>
+<h2 id="执行备份命令："><a href="#执行备份命令：" class="headerlink" title="执行备份命令："></a>执行备份命令：</h2><figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file full_backup20160505.ini<br><span class="hljs-keyword">Error: </span>Manifest not found at rsync://[192.168.231.110]:50000/home/dbadmin/backup/ -- is the backup location initialized? Hint: Execute '--task init' first.<br>Backup FAILED.<br></code></pre></td></tr></table></figure>
+<h2 id="发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）"><a href="#发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）" class="headerlink" title="发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）"></a>发现报错了，根据提示，必须先初始化路径（个人理解的就是先声明路径）</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ <span class="hljs-regexp">/opt/</span>vertica<span class="hljs-regexp">/bin/</span>vbr.py --<span class="hljs-keyword">task</span> init --config-<span class="hljs-keyword">file</span> full_backup20160505.ini<br>Initializing backup locations.<br>Backup locations initialized.<br></code></pre></td></tr></table></figure>
+<h2 id="路径声明成功！-查看该备份路径下多了一个文件。"><a href="#路径声明成功！-查看该备份路径下多了一个文件。" class="headerlink" title="路径声明成功！ 查看该备份路径下多了一个文件。"></a>路径声明成功！ 查看该备份路径下多了一个文件。</h2><figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost backup]$ ls -l<br>total 4<br>-rw-r--r--.<span class="hljs-number"> 1 </span>dbadmin verticadba<span class="hljs-number"> 22 </span>May <span class="hljs-number"> 5 </span>13:47 backup_manifest<br></code></pre></td></tr></table></figure>
+<h2 id="然后再次执行备份命令："><a href="#然后再次执行备份命令：" class="headerlink" title="然后再次执行备份命令："></a>然后再次执行备份命令：</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-regexp">/opt/</span>vertica<span class="hljs-regexp">/bin/</span>vbr.py --<span class="hljs-keyword">task</span> backup --config-<span class="hljs-keyword">file</span> full_backup20160505.ini<br></code></pre></td></tr></table></figure>
+<h2 id="可以看到这次可以备份成功了："><a href="#可以看到这次可以备份成功了：" class="headerlink" title="可以看到这次可以备份成功了："></a>可以看到这次可以备份成功了：</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py <span class="hljs-comment">--task backup --config-file full_backup20160505.ini</span><br>Starting <span class="hljs-keyword">backup</span> <span class="hljs-keyword">of</span> <span class="hljs-keyword">database</span> Windy1990.<br>Participating nodes: v_windy1990_node0001.<br>Snapshotting database.<br><span class="hljs-keyword">Snapshot</span> complete.<br>Approximate <span class="hljs-keyword">bytes</span> <span class="hljs-keyword">to</span> copy: <span class="hljs-number">60269241</span> <span class="hljs-keyword">of</span> <span class="hljs-number">60269241</span> total.<br>[==================================================] <span class="hljs-number">100</span>%<br>Copying <span class="hljs-keyword">backup</span> metadata.<br>Finalizing backup.<br><span class="hljs-keyword">Backup</span> <span class="hljs-keyword">complete</span>!<br></code></pre></td></tr></table></figure>
+<h2 id="我们可以看到，已经完全备份了vertica数据库。-此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径-home-dbamin-backup下："><a href="#我们可以看到，已经完全备份了vertica数据库。-此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径-home-dbamin-backup下：" class="headerlink" title="我们可以看到，已经完全备份了vertica数据库。 此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径/home/dbamin/backup下："></a>我们可以看到，已经完全备份了vertica数据库。 此时我们应该可以猜到，备份的数据存在我们刚刚声明的路径/home/dbamin/backup下：</h2><figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost backup]$ ll<br>total 12<br>-rw-r--r--.<span class="hljs-number"> 1 </span>dbadmin verticadba<span class="hljs-number"> 1044 </span>May <span class="hljs-number"> 5 </span>14:08 backup_manifest<br>drwxr-xr-x.<span class="hljs-number"> 8 </span>dbadmin verticadba<span class="hljs-number"> 4096 </span>May <span class="hljs-number"> 5 </span>14:07 Objects<br>drwxr-xr-x.<span class="hljs-number"> 3 </span>dbadmin verticadba<span class="hljs-number"> 4096 </span>May <span class="hljs-number"> 5 </span>14:08 Snapshots<br></code></pre></td></tr></table></figure>
+<h2 id="可以看到多了2个文件夹-Objects-Snapshots-我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。-home-dbadmin-backup-Snapshots-full-backup20160505-20160505-060600-v-windy1990-node0001目录下存放着我们备份的原vertica数据库的一下信息。"><a href="#可以看到多了2个文件夹-Objects-Snapshots-我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。-home-dbadmin-backup-Snapshots-full-backup20160505-20160505-060600-v-windy1990-node0001目录下存放着我们备份的原vertica数据库的一下信息。" class="headerlink" title="可以看到多了2个文件夹 /Objects / Snapshots 我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。 /home/dbadmin/backup/Snapshots/full_backup20160505_20160505_060600/v_windy1990_node0001目录下存放着我们备份的原vertica数据库的一下信息。"></a>可以看到多了2个文件夹 /Objects / Snapshots 我们打开Objects文件夹可以看到，我们的vertica数据库文件就在该目录下。 /home/dbadmin/backup/Snapshots/full_backup20160505_20160505_060600/v_windy1990_node0001目录下存放着我们备份的原vertica数据库的一下信息。</h2><h2 id="检查每个节点的数据流："><a href="#检查每个节点的数据流：" class="headerlink" title="检查每个节点的数据流："></a>检查每个节点的数据流：</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined">select node_name,sum(used_bytes) as size_in_bytes <span class="hljs-keyword">from</span> v_monitor.storage_containers<span class="hljs-built_in"> group </span>by node_name;<br></code></pre></td></tr></table></figure>
+<h2 id="1-3-vertica的增量备份-官方文档上是把全量和增量一起介绍的，称为Full-and-Incremental-Backups，在这里我把增量单独列了出来。-restorePointLimit控制着增量备份集的数量-我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit-1-再次执行1-2中的全备份命令即可实现增量备份"><a href="#1-3-vertica的增量备份-官方文档上是把全量和增量一起介绍的，称为Full-and-Incremental-Backups，在这里我把增量单独列了出来。-restorePointLimit控制着增量备份集的数量-我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit-1-再次执行1-2中的全备份命令即可实现增量备份" class="headerlink" title="1.3 vertica的增量备份 官方文档上是把全量和增量一起介绍的，称为Full and Incremental Backups，在这里我把增量单独列了出来。 restorePointLimit控制着增量备份集的数量 我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit = 1 再次执行1.2中的全备份命令即可实现增量备份~"></a>1.3 vertica的增量备份 官方文档上是把全量和增量一起介绍的，称为Full and Incremental Backups，在这里我把增量单独列了出来。 restorePointLimit控制着增量备份集的数量 我这只有一个节点，刚在配置备份文件的时候设置restorePointLimit = 1 再次执行1.2中的全备份命令即可实现增量备份~</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py <span class="hljs-comment">--task backup --config-file full_backup20160505.ini</span><br>Starting <span class="hljs-keyword">backup</span> <span class="hljs-keyword">of</span> <span class="hljs-keyword">database</span> Windy1990.<br>Participating nodes: v_windy1990_node0001.<br>Snapshotting database.<br><span class="hljs-keyword">Snapshot</span> complete.<br>Approximate <span class="hljs-keyword">bytes</span> <span class="hljs-keyword">to</span> copy: <span class="hljs-number">0</span> <span class="hljs-keyword">of</span> <span class="hljs-number">60269241</span> total.<br>[==================================================] <span class="hljs-number">100</span>%<br>Copying <span class="hljs-keyword">backup</span> metadata.<br>Finalizing backup.<br><span class="hljs-keyword">Backup</span> <span class="hljs-keyword">complete</span>!<br></code></pre></td></tr></table></figure>
+<h2 id="有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？-这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到："><a href="#有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？-这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到：" class="headerlink" title="有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？ 这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到："></a>有人会问，我怎么知道这样就是增量备份而不是全量备份的呢？？ 这个问题很好，我备份的时候也在想，备份完成后，我再次打开了backup文件夹，看到：</h2><figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ cd backup/<br>[dbadmin@localhost backup]$ ll<br>total 12<br>-rw-r--r--.<span class="hljs-number"> 1 </span>dbadmin verticadba<span class="hljs-number"> 1103 </span>May <span class="hljs-number"> 5 </span>14:36 backup_manifest<br>drwxr-xr-x.<span class="hljs-number"> 8 </span>dbadmin verticadba<span class="hljs-number"> 4096 </span>May <span class="hljs-number"> 5 </span>14:07 Objects<br>drwxr-xr-x.<span class="hljs-number"> 4 </span>dbadmin verticadba<span class="hljs-number"> 4096 </span>May <span class="hljs-number"> 5 </span>14:36 Snapshots<br></code></pre></td></tr></table></figure>
+<h2 id="大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。-所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。-我插入一条手机号："><a href="#大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。-所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。-我插入一条手机号：" class="headerlink" title="大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。 所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。 我插入一条手机号："></a>大家看Objects目录的时间，因为在此过程中我没有对vertica数据库进行操作，所以vertica数据库文件还是原来的就没有更新。 所以想要知道上面我们操作的是增量的其实很简单，我在vertica数据库中的任意一张表中插入一条数据，然后我再执行上面的备份脚本。 我插入一条手机号：</h2><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs undefined">dbadmin=&gt; insert into tb<span class="hljs-emphasis">_serv_</span>num values(<span class="hljs-emphasis">'13488888888'</span>,<span class="hljs-emphasis">'qin**'</span>);<br><span class="hljs-section"> OUTPUT <br>--------</span><br><span class="hljs-code">      1</span><br>(1 row)<br><br>dbadmin=&gt; commit;<br>COMMIT<br>dbadmin=&gt; \q<br></code></pre></td></tr></table></figure>
+<h2 id="然后重新执行备份语句，执行后查看backup文件下的内容："><a href="#然后重新执行备份语句，执行后查看backup文件下的内容：" class="headerlink" title="然后重新执行备份语句，执行后查看backup文件下的内容："></a>然后重新执行备份语句，执行后查看backup文件下的内容：</h2><figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ cd backup/<br>[dbadmin@localhost backup]$ ll<br>total 12<br>-rw-r--r--.<span class="hljs-number"> 1 </span>dbadmin verticadba<span class="hljs-number"> 1171 </span>May <span class="hljs-number"> 5 </span>14:46 backup_manifest<br>drwxr-xr-x.<span class="hljs-number"> 9 </span>dbadmin verticadba<span class="hljs-number"> 4096 </span>May <span class="hljs-number"> 5 </span>14:46 Objects<br>drwxr-xr-x.<span class="hljs-number"> 4 </span>dbadmin verticadba<span class="hljs-number"> 4096 </span>May <span class="hljs-number"> 5 </span>14:46 Snapshots<br></code></pre></td></tr></table></figure>
+<h2 id="看文件时间，是不是说明我们上面的推理是正确的呢-所以，不要怀疑了，我们的增量备份是没有问题的！-1-4-vertica对象级备份-官网文档：-The-database-administrator-user-can-create-object-level-backups-consisting-of-one-or-more-schemas-and-tables-Object-level-backups-are-especially-useful-for-multi-tenanted-database-sites-其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）："><a href="#看文件时间，是不是说明我们上面的推理是正确的呢-所以，不要怀疑了，我们的增量备份是没有问题的！-1-4-vertica对象级备份-官网文档：-The-database-administrator-user-can-create-object-level-backups-consisting-of-one-or-more-schemas-and-tables-Object-level-backups-are-especially-useful-for-multi-tenanted-database-sites-其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）：" class="headerlink" title="看文件时间，是不是说明我们上面的推理是正确的呢~~~ 所以，不要怀疑了，我们的增量备份是没有问题的！ 1.4 vertica对象级备份 官网文档： The database administrator user can create object-level backups consisting of one or more schemas and tables. Object-level backups are especially useful for multi-tenanted database sites. 其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）："></a>看文件时间，是不是说明我们上面的推理是正确的呢~~~ 所以，不要怀疑了，我们的增量备份是没有问题的！ 1.4 vertica对象级备份 官网文档： The database administrator user can create object-level backups consisting of one or more schemas and tables. Object-level backups are especially useful for multi-tenanted database sites. 其实对象级备份和全量备份差不多，知识在生成备份配置文件时有所不同（注意不同之处）：</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --setupconfigSnapshot name (backup_snapshot): backup_object_tb_serv<br>Number of restore points (1): <br>Specify objects (<span class="hljs-literal">no</span> default): tb_serv_num<br>Object restore mode (coexist, createOrReplace <span class="hljs-keyword">or</span> create) (createOrReplace): <br>Vertica<span class="hljs-built_in"> user </span>name (dbadmin): <br>Save password <span class="hljs-keyword">to</span> avoid runtime prompt? (n) [y/n]: y<br>Database<span class="hljs-built_in"> user </span>password <span class="hljs-keyword">to</span> save <span class="hljs-keyword">in</span> vbr password<span class="hljs-built_in"> config </span>file (<span class="hljs-literal">no</span> default):<br>Node v_windy1990_node0001<br>Backup host name (<span class="hljs-literal">no</span> default): 192.168.231.110<br>Backup directory (<span class="hljs-literal">no</span> default): /home/dbadmin/backup<br>Change advanced settings? (n) [y/n]: <br>Password file name (<span class="hljs-literal">no</span> default): password<br>Saved vbr password <span class="hljs-keyword">to</span> password.<span class="hljs-built_in"><br>Config </span>file name (backup_object_tb_serv.ini): <br>Saved vbr<span class="hljs-built_in"> config </span><span class="hljs-keyword">to</span> backup_object_tb_serv.ini.<br></code></pre></td></tr></table></figure>
+<h2 id="然后在执行备份命令："><a href="#然后在执行备份命令：" class="headerlink" title="然后在执行备份命令："></a>然后在执行备份命令：</h2><figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task backup --config-file backup_object_tb_serv.ini <br><span class="hljs-symbol">Starting</span> backup of database <span class="hljs-symbol">Windy1990</span>.<br><span class="hljs-symbol">Objects</span>: [<span class="hljs-string">'tb_serv_num'</span>]<br><span class="hljs-symbol">Participating</span> nodes: v_windy1990_node0001.<br><span class="hljs-symbol">Snapshotting</span> database.<br><span class="hljs-symbol">Snapshot</span> complete.<br><span class="hljs-symbol">Approximate</span> bytes to copy: <span class="hljs-number">0</span> of <span class="hljs-number">244</span> total.<br>[==================================================] <span class="hljs-number">100</span><span class="hljs-comment">%</span><br><span class="hljs-symbol">Copying</span> backup metadata.<br><span class="hljs-symbol">Finalizing</span> backup.<br><span class="hljs-symbol">Backup</span> complete!<br></code></pre></td></tr></table></figure>
+<h2 id="已备份完成-1-5-vertica-Hard-Link-Local备份-官方文档：-A-hard-link-local-backup-is-a-full-or-object-level-backup-consisting-of-a-complete-copy-of-the-database-catalog-and-a-set-of-hard-file-links-to-corresponding-data-files-直接修改全备份的配置文件即可，加上一行："><a href="#已备份完成-1-5-vertica-Hard-Link-Local备份-官方文档：-A-hard-link-local-backup-is-a-full-or-object-level-backup-consisting-of-a-complete-copy-of-the-database-catalog-and-a-set-of-hard-file-links-to-corresponding-data-files-直接修改全备份的配置文件即可，加上一行：" class="headerlink" title="已备份完成~~ 1.5 vertica Hard Link Local备份 官方文档： A hard link local backup is a full or object-level backup consisting of a complete copy of the database catalog, and a set of hard file links to corresponding data files. 直接修改全备份的配置文件即可，加上一行："></a>已备份完成~~ 1.5 vertica Hard Link Local备份 官方文档： A hard link local backup is a full or object-level backup consisting of a complete copy of the database catalog, and a set of hard file links to corresponding data files. 直接修改全备份的配置文件即可，加上一行：</h2><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-section">[Transmission]</span><br><span class="hljs-attr">encrypt</span> = <span class="hljs-literal">False</span><br><span class="hljs-attr">checksum</span> = <span class="hljs-literal">False</span><br><span class="hljs-attr">port_rsync</span> = <span class="hljs-number">50000</span><br><span class="hljs-attr">serviceAccessUser</span> = None<br><span class="hljs-attr">total_bwlimit_backup</span> = <span class="hljs-number">0</span><br><span class="hljs-attr">concurrency_backup</span> = <span class="hljs-number">1</span><br><span class="hljs-attr">total_bwlimit_restore</span> = <span class="hljs-number">0</span><br><span class="hljs-attr">concurrency_restore</span> = <span class="hljs-number">1</span><br><span class="hljs-attr">hardLinkLocal</span> = <span class="hljs-literal">True</span><br></code></pre></td></tr></table></figure>
+<h2 id="然后还是执行备份命令："><a href="#然后还是执行备份命令：" class="headerlink" title="然后还是执行备份命令："></a>然后还是执行备份命令：</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs undefined">/opt/vertica/bin/vbr.py <span class="hljs-comment">--task backup --config-file HardLinkLocal_backup20160505.ini</span><br>[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py <span class="hljs-comment">--task backup --config-file HardLinkLocal_backup20160505.ini </span><br>Starting <span class="hljs-keyword">backup</span> <span class="hljs-keyword">of</span> <span class="hljs-keyword">database</span> Windy1990.<br>Participating nodes: v_windy1990_node0001.<br>Snapshotting database.<br><span class="hljs-keyword">Snapshot</span> complete.<br>Approximate <span class="hljs-keyword">bytes</span> <span class="hljs-keyword">to</span> copy: <span class="hljs-number">0</span> <span class="hljs-keyword">of</span> <span class="hljs-number">60269355</span> total.<br>[==================================================] <span class="hljs-number">100</span>%<br>Copying <span class="hljs-keyword">backup</span> metadata.<br>Finalizing backup.<br><span class="hljs-keyword">Backup</span> <span class="hljs-keyword">complete</span>!<br></code></pre></td></tr></table></figure>
+<h2 id="1-6-查看备份-查看备份的内容："><a href="#1-6-查看备份-查看备份的内容：" class="headerlink" title="1.6 查看备份 查看备份的内容："></a>1.6 查看备份 查看备份的内容：</h2><figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs undefined">/opt/vertica/bin/vbr.py --task listbackup --config-file HardLinkLocal_backup<span class="hljs-number">20160505</span>.ini<br>[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task listbackup --config-file HardLinkLocal_backup<span class="hljs-number">20160505</span>.ini <br>backup                                epoch   objects   hosts(nodes)                            file_system_type  <br>full_backup20160505_201605<span class="hljs-number">05_074850</span>   <span class="hljs-number">16</span>                v_windy1990_node<span class="hljs-number">0001(192.168</span>.<span class="hljs-number">231.110</span>)   [Linux]           <br>full_backup20160505_201605<span class="hljs-number">05_064640</span>   <span class="hljs-number">16</span>                v_windy1990_node<span class="hljs-number">0001(192.168</span>.<span class="hljs-number">231.110</span>)   [Linux]<br></code></pre></td></tr></table></figure>
+<h2 id="在vertica数据库中可以查询到备份的信息："><a href="#在vertica数据库中可以查询到备份的信息：" class="headerlink" title="在vertica数据库中可以查询到备份的信息："></a>在vertica数据库中可以查询到备份的信息：</h2><figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs undefined">dbadmin=&gt; select * from database_backups;<br>       backup_timestamp        |      <span class="hljs-type">node_name</span>       |     <span class="hljs-type">snapshot_name</span>     | <span class="hljs-type">backup_epoch</span> | <span class="hljs-type">node_count</span> | <span class="hljs-type">file_system_type</span> |   <span class="hljs-type">objects</span>   <br>-------------------------------+----------------------+-----------------------+--------------+------------+------------------+-------------<br> <span class="hljs-number">2016</span><span class="hljs-number">-05</span><span class="hljs-number">-05</span> <span class="hljs-number">14</span>:<span class="hljs-number">08</span>:<span class="hljs-number">03.369797</span>+<span class="hljs-number">08</span> | <span class="hljs-type">v_windy1990_node0001</span> | <span class="hljs-type">full_backup20160505</span>   |           <span class="hljs-type">15</span> |          <span class="hljs-type">1</span> | <span class="hljs-type">[Linux</span>]          | <br> <span class="hljs-type">2016</span><span class="hljs-number">-05</span><span class="hljs-number">-05</span> <span class="hljs-number">14</span>:<span class="hljs-number">36</span>:<span class="hljs-number">39.496688</span>+<span class="hljs-number">08</span> | <span class="hljs-type">v_windy1990_node0001</span> | <span class="hljs-type">full_backup20160505</span>   |           <span class="hljs-type">15</span> |          <span class="hljs-type">1</span> | <span class="hljs-type">[Linux</span>]          | <br> <span class="hljs-type">2016</span><span class="hljs-number">-05</span><span class="hljs-number">-05</span> <span class="hljs-number">14</span>:<span class="hljs-number">42</span>:<span class="hljs-number">35.517465</span>+<span class="hljs-number">08</span> | <span class="hljs-type">v_windy1990_node0001</span> | <span class="hljs-type">full_backup20160505</span>   |           <span class="hljs-type">15</span> |          <span class="hljs-type">1</span> | <span class="hljs-type">[Linux</span>]          | <br> <span class="hljs-type">2016</span><span class="hljs-number">-05</span><span class="hljs-number">-05</span> <span class="hljs-number">14</span>:<span class="hljs-number">44</span>:<span class="hljs-number">43.043536</span>+<span class="hljs-number">08</span> | <span class="hljs-type">v_windy1990_node0001</span> | <span class="hljs-type">full_backup20160505</span>   |           <span class="hljs-type">15</span> |          <span class="hljs-type">1</span> | <span class="hljs-type">[Linux</span>]          | <br> <span class="hljs-type">2016</span><span class="hljs-number">-05</span><span class="hljs-number">-05</span> <span class="hljs-number">14</span>:<span class="hljs-number">46</span>:<span class="hljs-number">57.958863</span>+<span class="hljs-number">08</span> | <span class="hljs-type">v_windy1990_node0001</span> | <span class="hljs-type">full_backup20160505</span>   |           <span class="hljs-type">16</span> |          <span class="hljs-type">1</span> | <span class="hljs-type">[Linux</span>]          | <br> <span class="hljs-type">2016</span><span class="hljs-number">-05</span><span class="hljs-number">-05</span> <span class="hljs-number">15</span>:<span class="hljs-number">03</span>:<span class="hljs-number">19.580159</span>+<span class="hljs-number">08</span> | <span class="hljs-type">v_windy1990_node0001</span> | <span class="hljs-type">backup_object_tb_serv</span> |           <span class="hljs-type">16</span> |          <span class="hljs-type">1</span> | <span class="hljs-type">[Linux</span>]          | <span class="hljs-type">tb_serv_num</span><br> <span class="hljs-number">2016</span><span class="hljs-number">-05</span><span class="hljs-number">-05</span> <span class="hljs-number">15</span>:<span class="hljs-number">50</span>:<span class="hljs-number">53.143446</span>+<span class="hljs-number">08</span> | <span class="hljs-type">v_windy1990_node0001</span> | <span class="hljs-type">full_backup20160505</span>   |           <span class="hljs-type">16</span> |          <span class="hljs-type">1</span> | <span class="hljs-type">[Linux</span>]          | <br><span class="hljs-type">(7</span> rows)<br></code></pre></td></tr></table></figure>
+<h2 id="2、vertica恢复"><a href="#2、vertica恢复" class="headerlink" title="2、vertica恢复"></a>2、vertica恢复</h2><h2 id="2-1-vertica恢复"><a href="#2-1-vertica恢复" class="headerlink" title="2.1 vertica恢复"></a>2.1 vertica恢复</h2><h2 id="为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据"><a href="#为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据" class="headerlink" title="为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据"></a>为了看到是恢复是有用的，再次我破坏一下数据，drop一个表，删除一条数据</h2><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs undefined">dbadmin=&gt; select * from tb<span class="hljs-emphasis">_rp_</span>st<span class="hljs-emphasis">_user_</span>day ;<br><span class="hljs-section"> serv_number | user_name <br>-------------+-----------</span><br>(0 rows)<br><br>dbadmin=&gt; drop table tb<span class="hljs-emphasis">_rp_</span>st<span class="hljs-emphasis">_user_</span>day;<br>DROP TABLE<br><br>dbadmin=&gt; select * from tb<span class="hljs-emphasis">_serv_</span>num where name=<span class="hljs-emphasis">'ss'</span>;<br><span class="hljs-section">  serv_num   | name <br>-------------+------</span><br><span class="hljs-code"> 186371***** | ss</span><br>(1 row)<br><br>dbadmin=&gt; delete from tb<span class="hljs-emphasis">_serv_</span>num where name=<span class="hljs-emphasis">'ss'</span>;<br><span class="hljs-section"> OUTPUT <br>--------</span><br><span class="hljs-code">      1</span><br>(1 row)<br><br>dbadmin=&gt; commit;<br>COMMIT<br></code></pre></td></tr></table></figure>
+<h2 id="开始执行恢复命令："><a href="#开始执行恢复命令：" class="headerlink" title="开始执行恢复命令："></a>开始执行恢复命令：</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-regexp">/opt/</span>vertica<span class="hljs-regexp">/bin/</span>vbr.py --<span class="hljs-keyword">task</span> restore --config-<span class="hljs-keyword">file</span> full_backup20160505.ini<br>[dbadmin@localhost ~]$ <span class="hljs-regexp">/opt/</span>vertica<span class="hljs-regexp">/bin/</span>vbr.py --<span class="hljs-keyword">task</span> restore --config-<span class="hljs-keyword">file</span> full_backup20160505.ini Error: Full database restore requires the nodes be DOWN.<br>Restore FAILED.<br></code></pre></td></tr></table></figure>
+<h2 id="报错啦-提示只有在vertica数据库down的状态下才能恢复……"><a href="#报错啦-提示只有在vertica数据库down的状态下才能恢复……" class="headerlink" title="报错啦~ 提示只有在vertica数据库down的状态下才能恢复……"></a>报错啦~ 提示只有在vertica数据库down的状态下才能恢复……</h2><h2 id="查看官方文档："><a href="#查看官方文档：" class="headerlink" title="查看官方文档："></a>查看官方文档：</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">To <span class="hljs-keyword">restore</span> a <span class="hljs-keyword">full</span> <span class="hljs-keyword">database</span> <span class="hljs-keyword">backup</span>, you must ensure that:<br>•	The <span class="hljs-keyword">database</span> <span class="hljs-keyword">is</span> down. You cannot <span class="hljs-keyword">restore</span> a <span class="hljs-keyword">full</span> <span class="hljs-keyword">backup</span> <span class="hljs-keyword">when</span> the <span class="hljs-keyword">database</span> <span class="hljs-keyword">is</span> running.<br>•	All <span class="hljs-keyword">of</span> the <span class="hljs-keyword">backup</span> <span class="hljs-keyword">hosts</span> <span class="hljs-keyword">are</span> up <span class="hljs-keyword">and</span> available.<br>•	The <span class="hljs-keyword">backup</span> <span class="hljs-keyword">directory</span> <span class="hljs-keyword">exists</span> <span class="hljs-keyword">and</span> contains the backups <span class="hljs-keyword">from</span> which <span class="hljs-keyword">to</span> restore.<br>•	The cluster <span class="hljs-keyword">to</span> which you <span class="hljs-keyword">are</span> restoring the <span class="hljs-keyword">backup</span> has the same <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> <span class="hljs-keyword">hosts</span> <span class="hljs-keyword">as</span> the one used <span class="hljs-keyword">to</span> <span class="hljs-keyword">create</span> the backup. The node <span class="hljs-keyword">names</span> <span class="hljs-keyword">and</span> the IP addresses must also be identical.<br>•	The <span class="hljs-keyword">database</span> you <span class="hljs-keyword">are</span> restoring must already exist <span class="hljs-keyword">on</span> the cluster <span class="hljs-keyword">to</span> which you <span class="hljs-keyword">are</span> restoring data. The <span class="hljs-keyword">database</span> can be completely <span class="hljs-keyword">empty</span> <span class="hljs-keyword">without</span> <span class="hljs-keyword">any</span> <span class="hljs-keyword">data</span> <span class="hljs-keyword">or</span> schema. <span class="hljs-keyword">As</span> <span class="hljs-keyword">long</span> <span class="hljs-keyword">as</span> the <span class="hljs-keyword">database</span> <span class="hljs-keyword">name</span> matches the <span class="hljs-keyword">name</span> <span class="hljs-keyword">in</span> the <span class="hljs-keyword">backup</span>, <span class="hljs-keyword">and</span> all <span class="hljs-keyword">of</span> the node <span class="hljs-keyword">names</span> <span class="hljs-keyword">match</span> the <span class="hljs-keyword">names</span> <span class="hljs-keyword">of</span> the nodes <span class="hljs-keyword">in</span> the configuration <span class="hljs-keyword">file</span>, you can <span class="hljs-keyword">restore</span> <span class="hljs-keyword">to</span> it.<br>•	The <span class="hljs-keyword">user</span> performing the <span class="hljs-keyword">restore</span> <span class="hljs-keyword">is</span> the <span class="hljs-keyword">database</span> administrator.<br></code></pre></td></tr></table></figure>
+<h2 id="所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb-serv-num表做了对象级备份："><a href="#所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb-serv-num表做了对象级备份：" class="headerlink" title="所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb_serv_num表做了对象级备份："></a>所以此处，我们先尝试第二种恢复方式（对象级恢复）来恢复数据，刚刚我们同时对tb_serv_num表做了对象级备份：</h2><h2 id="执行对象级恢复："><a href="#执行对象级恢复：" class="headerlink" title="执行对象级恢复："></a>执行对象级恢复：</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs undefined">/opt/vertica/bin/vbr.py <span class="hljs-comment">--task restore --config-file backup_object_tb_serv.ini</span><br>[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py <span class="hljs-comment">--task restore --config-file backup_object_tb_serv.ini </span><br>Starting object <span class="hljs-keyword">restore</span> <span class="hljs-keyword">of</span> <span class="hljs-keyword">database</span> Windy1990.<br>Participating nodes: v_windy1990_node0001.<br>Objects <span class="hljs-keyword">to</span> <span class="hljs-keyword">restore</span>: tb_serv_num.<br>Restoring <span class="hljs-keyword">from</span> <span class="hljs-keyword">restore</span> point: backup_object_tb_serv_20160505_070249<br>Loading <span class="hljs-keyword">snapshot</span> <span class="hljs-keyword">catalog</span> <span class="hljs-keyword">from</span> backup.<br>Syncing <span class="hljs-keyword">data</span> <span class="hljs-keyword">from</span> <span class="hljs-keyword">backup</span> <span class="hljs-keyword">to</span> cluster nodes.<br>[==================================================] <span class="hljs-number">100</span>%<br>Finalizing restore.<br><span class="hljs-keyword">Restore</span> <span class="hljs-keyword">complete</span>!<br></code></pre></td></tr></table></figure>
+<h2 id="OK-看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。"><a href="#OK-看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。" class="headerlink" title="OK~看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。"></a>OK~看到上面我们已经恢复成功了，那就登上vertica数据库验证一下数据是否恢复了。</h2><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">dbadmin=&gt; select * from tb<span class="hljs-emphasis">_serv_</span>num ;<br><span class="hljs-section">  serv_num   | name  <br>-------------+-------</span><br><span class="hljs-code"> 138***** | windy</span><br><span class="hljs-code"> 186***** | ss</span><br><span class="hljs-code"> 134***** | qin**</span><br>(3 rows)<br></code></pre></td></tr></table></figure>
+<h2 id="可以看到，数据已恢复了-，等等，刚才我们还drop了一个-表，这个表是不是恢复了呢？"><a href="#可以看到，数据已恢复了-，等等，刚才我们还drop了一个-表，这个表是不是恢复了呢？" class="headerlink" title="可以看到，数据已恢复了~，等等，刚才我们还drop了一个 表，这个表是不是恢复了呢？"></a>可以看到，数据已恢复了~，等等，刚才我们还drop了一个 表，这个表是不是恢复了呢？</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-attribute">dbadmin</span>=&gt; \d tb_rp_st_user_day;<br>Did <span class="hljs-keyword">not</span> <span class="hljs-builtin-name">find</span> any relation.<br></code></pre></td></tr></table></figure>
+<h2 id="可以看到，表并没有恢复，为什么呢？-要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb-serv-num表的数据而已，随意恢复也只能恢复该表的所有数据。-那么我们用第三种Hard-Link-Local方式恢复数据："><a href="#可以看到，表并没有恢复，为什么呢？-要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb-serv-num表的数据而已，随意恢复也只能恢复该表的所有数据。-那么我们用第三种Hard-Link-Local方式恢复数据：" class="headerlink" title="可以看到，表并没有恢复，为什么呢？ 要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb_serv_num表的数据而已，随意恢复也只能恢复该表的所有数据。 那么我们用第三种Hard Link Local方式恢复数据："></a>可以看到，表并没有恢复，为什么呢？ 要知道我们此次恢复为对象级恢复，我们对象级备份是只备份了tb_serv_num表的数据而已，随意恢复也只能恢复该表的所有数据。 那么我们用第三种Hard Link Local方式恢复数据：</h2><figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs undefined">/opt/vertica/bin/vbr.py --task restore --config-file HardLinkLocal_backup20160505.ini<br>[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py --task restore --config-file HardLinkLocal_backup20160505.ini <br><span class="hljs-keyword">Error: </span>Full database restore requires the nodes be DOWN.<br>Restore FAILED.<br></code></pre></td></tr></table></figure>
+<h2 id="同样看到，也需要vertica数据库为DOWN"><a href="#同样看到，也需要vertica数据库为DOWN" class="headerlink" title="同样看到，也需要vertica数据库为DOWN"></a>同样看到，也需要vertica数据库为DOWN</h2><p>看来要停掉vertica数据库了~（停掉数据库，此处略）<br>停掉vertica数据库后，再试全量恢复：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs undefined">[dbadmin@localhost ~]$ /opt/vertica/bin/vbr.py <span class="hljs-comment">--task restore --config-file full_backup20160505.ini </span><br>Starting full <span class="hljs-keyword">restore</span> <span class="hljs-keyword">of</span> <span class="hljs-keyword">database</span> Windy1990.<br>Participating nodes: v_windy1990_node0001.<br>Restoring <span class="hljs-keyword">from</span> <span class="hljs-keyword">restore</span> point: full_backup20160505_20160505_074850<br>Computing the <span class="hljs-keyword">size</span> <span class="hljs-keyword">of</span> <span class="hljs-keyword">data</span> <span class="hljs-keyword">to</span> be synced <span class="hljs-keyword">from</span> <span class="hljs-keyword">backup</span> <span class="hljs-keyword">to</span> cluster nodes.<br>Syncing <span class="hljs-keyword">data</span> <span class="hljs-keyword">from</span> <span class="hljs-keyword">backup</span> <span class="hljs-keyword">to</span> cluster nodes.<br>[==================================================] <span class="hljs-number">100</span>%<br>Restoring catalog.<br><span class="hljs-keyword">Restore</span> <span class="hljs-keyword">complete</span>!<br></code></pre></td></tr></table></figure>
+<p>可以看到，恢复的还不错。<br>再重新启动vertica，登上vertica后查看表tb_rp_st_user_day是否恢复了：</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">dbadmin=&gt; \d tb_rp_st_user_day;<br>                                            List of <span class="hljs-keyword">Fields</span> <span class="hljs-built_in">by</span> <span class="hljs-keyword">Tables</span><br> Schema |       <span class="hljs-type">Table</span>       |   <span class="hljs-type">Column</span>    |    <span class="hljs-type">Type</span>     | <span class="hljs-type">Size</span> | <span class="hljs-type">Default</span> | <span class="hljs-type">Not</span> Null | <span class="hljs-type">Primary</span> Key | <span class="hljs-type">Foreign</span> Key <br>--------+-------------------+-------------+-------------+------+---------+----------+-------------+-------------<br> public | <span class="hljs-type">tb_rp_st_user_day</span> | <span class="hljs-type">serv_number</span> | <span class="hljs-type">varchar</span>(<span class="hljs-number">13</span>) |   <span class="hljs-type">13</span> |         <span class="hljs-type">| f</span>        | <span class="hljs-type">f</span>           | <br> <span class="hljs-type">public</span> | <span class="hljs-type">tb_rp_st_user_day</span> | <span class="hljs-type">user_name</span>   | <span class="hljs-type">varchar</span>(<span class="hljs-number">50</span>) |   <span class="hljs-type">50</span> |         <span class="hljs-type">| f</span>        | <span class="hljs-type">f</span>           | <br><span class="hljs-type">(2</span> rows)<br></code></pre></td></tr></table></figure>
+<p>可以看到，恢复成功了。</p>
+<p>以上就是vertica备份以及简单的恢复。</p>
+<h2 id="通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。"><a href="#通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。" class="headerlink" title="通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。"></a>通过此次vertica恢复可以看到，很多问题可以在官方文档中找到解决方法，在停掉vertica和启动时，遇到了一点问题，不过根据错误提示可以看出解决方法的。</h2>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/vertica/">vertica</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/09/12/Vertica的这些事（十三）——Vertica备份元数据信息/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Vertica的这些事（十三）——Vertica备份元数据信息</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/09/12/Vertica的这些事（十一）——-Vertica备份元数据信息/">
+                        <span class="hidden-mobile">Vertica的这些事（十一）——-Vertica备份元数据信息</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      $('#local-search-input').on('click', function() {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      });
+      $('#modalSearch').on('shown.bs.modal', function() {
+        $('#local-search-input').focus();
+      });
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

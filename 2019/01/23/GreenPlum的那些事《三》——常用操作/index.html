@@ -1,0 +1,608 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  
+    <meta name="description" content="大数据实践的那些事，专注MPP数据库研究、流处理计算、数据仓库架构和数据分析">
+  
+  <meta name="author" content="数据一哥">
+  <meta name="keywords" content="大数据">
+  
+  <title>GreenPlum的那些事《三》——常用操作 - 数据社</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css">
+  <link rel="stylesheet" href="/lib/hint/hint.min.css">
+
+  
+    
+    
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css">
+    
+  
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","version":"1.8.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+</head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>数据社</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="GreenPlum的那些事《三》——常用操作">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-01-23 20:45" pubdate>
+        2019年1月23日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.6k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      19
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">GreenPlum的那些事《三》——常用操作</h1>
+            
+            <div class="markdown-body">
+              <p>我们前面已经说了，GPDB是一个列式数据库，数据库都有什么特性呢？都能做什么呢？熟悉MySQL，Oracle的同学可能就比较清楚关系型数据库的管理，下面我们就来说下GPDB的一些管理和常用操作。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/4579636-a5851a0738b231e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" srcset="/img/loading.gif" alt="数据库常用操作"><br>数据库常用操作分为:创建数据库、创建schema、创建资源池、创建角色、创建用户、创建表。下面我们一一来说下GPDB这些常用操作，和关系型数据库MYSQL有什么不同呢？</p>
+<ol>
+<li><p>创建数据库</p>
+<p>gp_sydb=# CREATE DATABASE GPTEST;<br>CREATE DATABASE</p>
+<p>删除数据库</p>
+<p>gp_sydb=# DROP DATABASE GPTEST;<br>DROP DATABASE</p>
+<p>你也可以通过 createdb  创建数据库</p>
+<p> [gpadmin@mpp01 ~]$ createdb -h mpp01 -p 5432 GPTEST </p>
+</li>
+</ol>
+<p>查看创建的数据库：</p>
+<pre><code>gp_sydb=# \l
+                  List of databases
+   Name    |  Owner  | Encoding |  Access privileges  
+-----------+---------+----------+---------------------
+ GPTEST    | gpadmin | UTF8     | 
+ gp_sydb   | gpadmin | UTF8     | 
+ postgres  | gpadmin | UTF8     | 
+ template0 | gpadmin | UTF8     | =c/gpadmin          
+                                : gpadmin=CTc/gpadmin
+ template1 | gpadmin | UTF8     | =c/gpadmin          
+                                : gpadmin=CTc/gpadmin
+(5 rows)
+</code></pre><ol start="2">
+<li><p>创建schema</p>
+<p>创建schema</p>
+<p>GPTEST=# CREATE SCHEMA bdp;<br>CREATE SCHEMA</p>
+</li>
+</ol>
+<p>查看schema</p>
+<pre><code>GPTEST=# \dn
+       List of schemas
+        Name        |  Owner  
+--------------------+---------
+ bdp                | gpadmin
+ gp_toolkit         | gpadmin
+ information_schema | gpadmin
+ pg_aoseg           | gpadmin
+ pg_bitmapindex     | gpadmin
+ pg_catalog         | gpadmin
+ pg_toast           | gpadmin
+ public             | gpadmin
+(8 rows)
+</code></pre><p>查看当前的schema</p>
+<pre><code>GPTEST=# SELECT current_schema();
+ current_schema 
+----------------
+ public
+(1 row)
+</code></pre><p>可以看到当前schema是public，这是创建用户的时候，我们没有给它分配schema，那就是用默认的schema public。<br>把新建的schema赋给数据库gptest</p>
+<pre><code>gptest=# \dn
+       List of schemas
+        Name        |  Owner  
+--------------------+---------
+ bdp                | gpadmin
+ gp_toolkit         | gpadmin
+ information_schema | gpadmin
+ pg_aoseg           | gpadmin
+ pg_bitmapindex     | gpadmin
+ pg_catalog         | gpadmin
+ pg_toast           | gpadmin
+ public             | gpadmin
+(8 rows)
+
+gptest=# ALTER DATABASE GPTEST SET search_path TO bdp,                                                                                                    public, pg_catalog;
+ALTER DATABASE
+gptest=# SELECT current_schema();
+ current_schema 
+----------------
+ bdp
+(1 row)
+</code></pre><p>可以看到赋了新的schema。</p>
+<ol start="3">
+<li>创建角色</li>
+</ol>
+<p>创建角色，如果有很多用户对于一批表都有一样的权限，这时候可以创建一个角色，把这些权限先赋给角色，然后把角色赋权给各个用户。</p>
+<pre><code>gptest=# create role selectbdp;
+CREATE ROLE
+gptest=# \du
+                                                                      List of roles
+ Role name |                                                           Attributes                                                            | Member of 
+-----------+---------------------------------------------------------------------------------------------------------------------------------+-----------
+ bdp01     |                                                                                                                                 | {}
+ gpadmin   | Superuser, Create role, Create DB, Ext gpfdist Table, Wri Ext gpfdist Table, Ext http Table, Ext hdfs Table, Wri Ext hdfs Table | {}
+ selectbdp | Cannot login                                                                                                                    | {}
+
+gptest=# 
+</code></pre><p>可以看到角色已经创建成功。<br>赋权角色。</p>
+<pre><code>gptest=# grant selectbdp to gpadmin;     
+GRANT ROLE
+</code></pre><p>角色其实就是一个用户组。</p>
+<ol start="4">
+<li>创建用户：</li>
+</ol>
+<pre><code>gptest=# create user bdp01 WITH PASSWORD &apos;passwd123&apos;;
+NOTICE:  resource queue required -- using default resource queue &quot;pg_default&quot;
+CREATE ROLE
+gptest=# 
+</code></pre><p>使用用户登录：</p>
+<pre><code>psql -Ubdp01 -d gptest -w &apos;passwd123&apos;
+</code></pre><p>发现报错了：</p>
+<pre><code>[gpadmin@mpp01 gpseg-1]$ psql -Ubdp01 -d gptest -w &apos;passwd123&apos;
+Password for user bdp01: 
+psql: FATAL:  no pg_hba.conf entry for host &quot;[local]&quot;, user &quot;bdp01&quot;, database &quot;gptest&quot;, SSL off
+</code></pre><p>GPDB登录需要在pg_hba.conf文件中添加信任的用户：</p>
+<pre><code>local    all         bdp01      trust
+</code></pre><p>添加后，使配置文件生效，再次登录：</p>
+<pre><code>[gpadmin@mpp01 gpseg-1]$ psql -Ubdp01 -d gptest -w &apos;passwd123&apos;
+psql: warning: extra command-line argument &quot;passwd123&quot; ignored
+psql (8.3.23)
+Type &quot;help&quot; for help.
+
+gptest=&gt; 
+</code></pre><p>登录成功！</p>
+<ol start="5">
+<li>创建资源队列</li>
+</ol>
+<p>为什么要创建资源队列呢？我们知道一个数据库肯定不是给一个用户使用的，通常是有ETL用户，进行数据加载，数据清洗。还有WEB端用户进行查询，还有个人用户进行开发查询使用等等。这么多用户，如果不进行资源队列管控，那么就会出现资源争抢现象，影响线上应用功能。比如一个新手开发人员写了一个比较菜的查询语句，占用了大量资源，此时数据库的其他查询用户都需要排队等待了。再比如加载数据是需要使用大量资源，那么也会影响查询性能，以上你会发现，你需要把不同类型的操作进行资源隔离，这就是为什么要有资源队列了。<br>查看已有的资源队列：</p>
+<pre><code>gptest=&gt; SELECT rolname, rsqname FROM pg_roles, gp_toolkit.gp_resqueue_status
+gptest-&gt; WHERE pg_roles.rolresqueue=gp_toolkit.gp_resqueue_status.queueid;
+  rolname  |  rsqname   
+-----------+------------
+ bdp01     | pg_default
+ selectbdp | pg_default
+ gpadmin   | pg_default
+(3 rows)
+</code></pre><p>创建一个新的资源队列：</p>
+<pre><code>gptest=#  create resource queue load_queue with (active_statements=3,MEMORY_LIMIT=&apos;1024MB&apos;,PRIORITY=LOW);                                                 CREATE QUEUE
+</code></pre><p>把创建的资源队列赋权给刚才创建的用户bdp01:</p>
+<pre><code>gptest=# ALTER USER bdp01  resource queue load_queue;                                              
+ALTER ROLE
+</code></pre><p>再次查询资源池分配情况：</p>
+<pre><code>gptest=# SELECT rolname, rsqname FROM pg_roles, gp_toolkit.gp_resqueue_status                                                                             WHERE pg_roles.rolresqueue=gp_toolkit.gp_resqueue_status.queueid;
+  rolname  |  rsqname   
+-----------+------------
+ bdp01     | load_queue
+ selectbdp | pg_default
+ gpadmin   | pg_default
+(3 rows)
+</code></pre><p>可以看到bpd01已经使用了新的资源池了。</p>
+<ul>
+<li>创建表<br>简单的建表语句，此处不在讲解了，来说两个地方，一个是分区，一个是分布键。</li>
+<li>分区：<br>来看下分区的数据结构</li>
+</ul>
+<p><img src="http://docs.greenplum.org/5150/admin_guide/graphics/partitions.jpg" srcset="/img/loading.gif" alt="分区数据结构"></p>
+<ul>
+<li></li>
+</ul>
+<blockquote>
+<p>分区是把一张大表按照适合的维度进行分割，通过表的继承，规则，约束实现。<br>并不是每个表都适合分区，只有很大的表才适合分区，应为分区多了会增加表的元数据信息，特别是多级分区。如果一个表被按照日和城市划分并且有1000个日以及1000个城市，那么分区的总数就是一百万。列存表会把每一列存在一个物理表中，因此如果这个表有100个列，系统就需要为该表管理一亿个文件。一方面Linux的iNode可能不会有这么大，就会出现文件查询报错等，分区过多了，对于数据库停止和恢复也会造成很大影响的。所以建立分区表的时候，对分区进行自动的创建和删除，以保障合适的数据周期很重要。</p>
+<ul>
+<li>分布键  在MPP架构中，一个查询是需要从所有segment获取数据然后在master汇总得到结果的。那么这样，影响查询性能的就有两个问题，查询最慢的segment和网络带宽。分布键就是为了解决第一个问题，让数据尽可能均匀的分布在每个segment上，从而避免数据倾斜导致的查询效率问题。第二个网络问题，MPP数据集群搭建要求集群内部为万兆网连接，并且机器配置一样，从而避免影响。<br><strong>分布键一般选择主键，比如手机号等。</strong><br><strong>尽量选择经常需要 JOIN 的列，当关联键和分布键均一致时，可以在 Segment 中完成 JOIN，不需要重分布或者广播小表。</strong></li>
+</ul>
+</blockquote>
+<p>以上就是GPDB简单的管理流程，后面我们会再介绍更深入的查询优化和管理知识。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/greenplum/">greenplum</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/01/24/GreenPlum的那些事《四》——增删改查/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">GreenPlum的那些事《四》——增删改查</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/01/22/GreenPlum的那些事《二》——GreenPlun启动报错/">
+                        <span class="hidden-mobile">GreenPlum的那些事《二》——GreenPlun启动报错</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      $('#local-search-input').on('click', function() {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      });
+      $('#modalSearch').on('shown.bs.modal', function() {
+        $('#local-search-input').focus();
+      });
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

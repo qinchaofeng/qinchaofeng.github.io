@@ -1,0 +1,586 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  
+    <meta name="description" content="大数据实践的那些事，专注MPP数据库研究、流处理计算、数据仓库架构和数据分析">
+  
+  <meta name="author" content="数据一哥">
+  <meta name="keywords" content="大数据">
+  
+  <title>Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比 - 数据社</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css">
+  <link rel="stylesheet" href="/lib/hint/hint.min.css">
+
+  
+    
+    
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css">
+    
+  
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","version":"1.8.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+</head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>数据社</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2018-09-12 12:48" pubdate>
+        2018年9月12日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.3k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      22
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Vertica的这些事（二）——SQL-Server、Oracle、MySQL和Vertica数据库常用函数对比</h1>
+            
+            <div class="markdown-body">
+              <p>SQL Server、Oracle、MySQL和Vertica数据库常用函数对比<br>Vertica数据库是HP公司新收购的用于BI方面的数据库。</p>
+<ol>
+<li>绝对值</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-built_in">abs</span>(<span class="hljs-number">-1</span>) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-built_in">abs</span>(<span class="hljs-number">-1</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-built_in">abs</span>(<span class="hljs-number">-1</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-built_in">abs</span>(<span class="hljs-number">-1</span>)<br></code></pre></td></tr></table></figure>
+<ol start="2">
+<li>向上取整</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-keyword">ceiling</span>(<span class="hljs-number">-1.001</span>) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-keyword">ceil</span>(<span class="hljs-number">-1.001</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-keyword">ceil</span>(<span class="hljs-number">-1.001</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-keyword">ceil</span>(<span class="hljs-number">-1.001</span>)<br></code></pre></td></tr></table></figure>
+<ol start="3">
+<li>向下取整</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-built_in">floor</span>(<span class="hljs-number">-1.001</span>) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-built_in">floor</span>(<span class="hljs-number">-1.001</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-built_in">floor</span>(<span class="hljs-number">-1.001</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-built_in">floor</span>(<span class="hljs-number">-1.001</span>)<br></code></pre></td></tr></table></figure>
+<ol start="4">
+<li>取整（截取）</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-keyword">cast</span>(<span class="hljs-number">-1.002</span> <span class="hljs-keyword">as</span> int) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-built_in">trunc</span>(<span class="hljs-number">-1.002</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-built_in">trunc</span>(<span class="hljs-number">-1.002</span>)<br></code></pre></td></tr></table></figure>
+<ol start="5">
+<li>四舍五入</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-built_in">round</span>(<span class="hljs-number">1.23456</span>,<span class="hljs-number">4</span>) <span class="hljs-keyword">value</span> <span class="hljs-number">1.23460</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-built_in">round</span>(<span class="hljs-number">1.23456</span>,<span class="hljs-number">4</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">1.2346</span><br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-built_in">round</span>(<span class="hljs-number">1.23456</span>,<span class="hljs-number">4</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">1.2346</span><br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-built_in">round</span>(<span class="hljs-number">1.23456</span>,<span class="hljs-number">4.0</span>)<br></code></pre></td></tr></table></figure>
+<ol start="6">
+<li>e为底的幂</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-built_in">Exp</span>(<span class="hljs-number">1</span>) <span class="hljs-keyword">value</span> <span class="hljs-number">2.71828182845905</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-built_in">Exp</span>(<span class="hljs-number">1</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">2.71828182</span><br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-built_in">Exp</span>(<span class="hljs-number">1</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">2.718281828459045</span><br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-built_in">Exp</span>(<span class="hljs-number">1.0</span>) <span class="hljs-number">2.71828182845905</span><br></code></pre></td></tr></table></figure>
+<ol start="7">
+<li>取e为底的对数</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-built_in">log</span>(<span class="hljs-number">2.7182818284590451</span>) <span class="hljs-keyword">value</span> <span class="hljs-number">1</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-built_in">ln</span>(<span class="hljs-number">2.7182818284590451</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual; 1<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-built_in">ln</span>(<span class="hljs-number">2.7182818284590451</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual; 1<br><br>V: <span class="hljs-keyword">select</span> <span class="hljs-built_in">ln</span>(<span class="hljs-number">2.7182818284590451</span>) <span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+<ol start="8">
+<li>取10为底对数</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-keyword">log10</span>(<span class="hljs-number">10</span>) <span class="hljs-keyword">value</span> <span class="hljs-number">1</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-keyword">log</span>(<span class="hljs-number">10</span>,<span class="hljs-number">10</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual; 1<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-keyword">log</span>(<span class="hljs-number">10</span>,<span class="hljs-number">10</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual; 1<br><br>M: <span class="hljs-keyword">select</span> <span class="hljs-keyword">log</span>(<span class="hljs-number">10</span>,<span class="hljs-number">10</span>) <span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+<ol start="9">
+<li>取平方</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-keyword">SQUARE</span>(<span class="hljs-number">4</span>) <span class="hljs-keyword">value</span> <span class="hljs-number">16</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-keyword">power</span>(<span class="hljs-number">4</span>,<span class="hljs-number">2</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">16</span><br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-keyword">power</span>(<span class="hljs-number">4</span>,<span class="hljs-number">2</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">16</span><br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-keyword">power</span>(<span class="hljs-number">4</span>,<span class="hljs-number">2</span>) <span class="hljs-number">16</span><br></code></pre></td></tr></table></figure>
+<ol start="10">
+<li>取平方根</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-built_in">SQRT</span>(<span class="hljs-number">4</span>) <span class="hljs-keyword">value</span> <span class="hljs-number">2</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-built_in">SQRT</span>(<span class="hljs-number">4</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">2</span><br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-built_in">SQRT</span>(<span class="hljs-number">4</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">2</span><br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-built_in">SQRT</span>(<span class="hljs-number">4</span>) <span class="hljs-number">2</span><br></code></pre></td></tr></table></figure>
+<ol start="11">
+<li>求任意数为底的幂</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-built_in">power</span>(<span class="hljs-number">3</span>,<span class="hljs-number">4</span>) <span class="hljs-keyword">value</span> <span class="hljs-number">81</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-built_in">power</span>(<span class="hljs-number">3</span>,<span class="hljs-number">4</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">81</span><br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-built_in">power</span>(<span class="hljs-number">3</span>,<span class="hljs-number">4</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">81</span><br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-built_in">power</span>(<span class="hljs-number">3</span>,<span class="hljs-number">4</span>) <span class="hljs-number">81</span><br></code></pre></td></tr></table></figure>
+<ol start="12">
+<li>取随机数</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> rand() <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> sys.dbms_random.<span class="hljs-keyword">value</span>(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual;<br><br>M:<span class="hljs-keyword">select</span> rand() <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual;<br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-built_in">random</span>()<br></code></pre></td></tr></table></figure>
+<ol start="13">
+<li>取符号</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-built_in">sign</span>(<span class="hljs-number">-8</span>) <span class="hljs-keyword">value</span> <span class="hljs-number">-1</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-built_in">sign</span>(<span class="hljs-number">-8</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">-1</span><br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-built_in">sign</span>(<span class="hljs-number">-8</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual <span class="hljs-number">-1</span><br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-built_in">sign</span>(<span class="hljs-number">-8</span>) <span class="hljs-number">-1</span><br></code></pre></td></tr></table></figure>
+<ol start="14">
+<li>圆周率</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">SELECT</span> <span class="hljs-built_in">PI</span>() <span class="hljs-keyword">value</span> <span class="hljs-number">3.14159265358979</span><br><br>O: <span class="hljs-keyword">SELECT</span> <span class="hljs-built_in">ACOS</span>(<span class="hljs-number">-1</span>) <span class="hljs-keyword">FROM</span> DUAL;<br><br>M: <span class="hljs-keyword">SELECT</span> <span class="hljs-built_in">ACOS</span>(<span class="hljs-number">-1</span>) <span class="hljs-keyword">FROM</span> DUAL; 3.141592653589793<br><br>V: <span class="hljs-keyword">SELECT</span> <span class="hljs-built_in">PI</span>() <span class="hljs-number">3.14159265358979</span><br></code></pre></td></tr></table></figure>
+<p>数值间比较</p>
+<ol start="15">
+<li>求集合最大值</li>
+</ol>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-symbol">S:</span><span class="hljs-keyword">select</span> max(value) value from<br><br>(<span class="hljs-keyword">select</span> <span class="hljs-number">1</span> value<br><br><span class="hljs-class"><span class="hljs-keyword">union</span></span><br><br><span class="hljs-keyword">select</span> -<span class="hljs-number">2</span> value<br><br><span class="hljs-class"><span class="hljs-keyword">union</span></span><br><br><span class="hljs-keyword">select</span> <span class="hljs-number">4</span> value<br><br><span class="hljs-class"><span class="hljs-keyword">union</span></span><br><br><span class="hljs-keyword">select</span> <span class="hljs-number">3</span> value)a<br><br><span class="hljs-symbol">O:</span><span class="hljs-keyword">select</span> greatest(<span class="hljs-number">1</span>,-<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">3</span>) value from dual<br><br><span class="hljs-symbol">M:</span><span class="hljs-keyword">select</span> greatest(<span class="hljs-number">1</span>,-<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">3</span>) value from dual<br><br><span class="hljs-symbol">V:</span><span class="hljs-keyword">select</span> greatest(<span class="hljs-number">1</span>,-<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">3</span>)<br></code></pre></td></tr></table></figure>
+<ol start="16">
+<li>求集合最小值</li>
+</ol>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-symbol">S:</span><span class="hljs-keyword">select</span> min(value) value from<br><br>(<span class="hljs-keyword">select</span> <span class="hljs-number">1</span> value<br><br>Union<br><br><span class="hljs-keyword">select</span> -<span class="hljs-number">2</span> value<br><br><span class="hljs-class"><span class="hljs-keyword">union</span></span><br><br><span class="hljs-keyword">select</span> <span class="hljs-number">4</span> value<br><br><span class="hljs-class"><span class="hljs-keyword">union</span></span><br><br><span class="hljs-keyword">select</span> <span class="hljs-number">3</span> value)a<br><br><span class="hljs-symbol">O:</span><span class="hljs-keyword">select</span> least(<span class="hljs-number">1</span>,-<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">3</span>) value from dual<br><br><span class="hljs-symbol">M:</span><span class="hljs-keyword">select</span> least(<span class="hljs-number">1</span>,-<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">3</span>) value from dual<br><br><span class="hljs-symbol">V:</span><span class="hljs-keyword">select</span> least(<span class="hljs-number">1</span>,-<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">3</span>)<br></code></pre></td></tr></table></figure>
+<ol start="17">
+<li>如何处理null值(F2中的null以10代替)</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-keyword">Create</span> <span class="hljs-keyword">table</span> tbl (f1 <span class="hljs-built_in">varchar</span>(<span class="hljs-number">10</span>),f2 <span class="hljs-built_in">int</span>);<br><br><span class="hljs-keyword">Insert</span> <span class="hljs-keyword">into</span> tbl(f1,f2) <span class="hljs-keyword">values</span>(‘aa’,<span class="hljs-literal">null</span>);<br><br><span class="hljs-keyword">Insert</span> <span class="hljs-keyword">into</span> tbl(f1,f2) <span class="hljs-keyword">values</span>(‘bb’,<span class="hljs-number">7</span>);<br><br>S:<span class="hljs-keyword">select</span> F1,<span class="hljs-keyword">IsNull</span>(F2,<span class="hljs-number">10</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> Tbl<br><br>O:<span class="hljs-keyword">select</span> F1,nvl(F2,<span class="hljs-number">10</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> Tbl<br><br>M:<span class="hljs-keyword">select</span> F1,<span class="hljs-keyword">ifnull</span>(F2,<span class="hljs-number">10</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> Tbl<br><br>V:<span class="hljs-keyword">select</span> F1,<span class="hljs-keyword">IsNull</span>(F2,<span class="hljs-number">10</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> Tbl<br></code></pre></td></tr></table></figure>
+<ol start="18">
+<li>求字符ascii码</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-keyword">ascii</span>(<span class="hljs-string">'a'</span>) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-keyword">ascii</span>(<span class="hljs-string">'a'</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-keyword">ascii</span>(<span class="hljs-string">'a'</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-keyword">ascii</span>(<span class="hljs-string">'a'</span>)<br></code></pre></td></tr></table></figure>
+<ol start="19">
+<li>从ascii码求字符</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-built_in">char</span>(<span class="hljs-number">97</span>) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-keyword">chr</span>(<span class="hljs-number">97</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-built_in">char</span>(<span class="hljs-number">97</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-keyword">chr</span>(<span class="hljs-number">97</span>)<br></code></pre></td></tr></table></figure>
+<ol start="20">
+<li>连接字符串</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-string">'11'</span>+<span class="hljs-string">'22'</span>+<span class="hljs-string">'33'</span> <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-keyword">CONCAT</span>(<span class="hljs-string">'11'</span>,<span class="hljs-string">'22'</span>)　　<span class="hljs-number">33</span> <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-keyword">concat</span>(<span class="hljs-string">'11'</span>,<span class="hljs-string">'22'</span>,<span class="hljs-string">'33'</span>) <span class="hljs-keyword">value</span><br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-string">'11'</span>||<span class="hljs-string">'22'</span>||<span class="hljs-string">'33'</span><br></code></pre></td></tr></table></figure>
+<ol start="21">
+<li>子串位置 –返回3</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-keyword">CHARINDEX</span>(<span class="hljs-string">'s'</span>,<span class="hljs-string">'sdsq'</span>,<span class="hljs-number">2</span>) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-keyword">INSTR</span>(<span class="hljs-string">'sdsq'</span>,<span class="hljs-string">'s'</span>,<span class="hljs-number">2</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-keyword">LOCATE</span>(<span class="hljs-string">'s'</span>,<span class="hljs-string">'sdsq'</span>,<span class="hljs-number">2</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-keyword">INSTR</span>(<span class="hljs-string">'sdsq'</span>,<span class="hljs-string">'s'</span>,<span class="hljs-number">2</span>)<br></code></pre></td></tr></table></figure>
+<ol start="22">
+<li>求子串</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-keyword">substring</span>(<span class="hljs-string">'abcd'</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-keyword">substr</span>(<span class="hljs-string">'abcd'</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-keyword">substr</span>(<span class="hljs-string">'abcd'</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-keyword">substr</span>(<span class="hljs-string">'abcd'</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>)<br></code></pre></td></tr></table></figure>
+<ol start="23">
+<li>子串代替 返回aijklmnef</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">STUFF</span>(<span class="hljs-string">'abcdef'</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-string">'ijklmn'</span>) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">Replace</span>(<span class="hljs-string">'abcdef'</span>, <span class="hljs-string">'bcd'</span>, <span class="hljs-string">'ijklmn'</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">Replace</span>(<span class="hljs-string">'abcdef'</span>, <span class="hljs-string">'bcd'</span>, <span class="hljs-string">'ijklmn'</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">Replace</span>(<span class="hljs-string">'abcdef'</span>, <span class="hljs-string">'bcd'</span>, <span class="hljs-string">'ijklmn'</span>)<br></code></pre></td></tr></table></figure>
+<ol start="24">
+<li>字符串长度</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:len,datalength<br><br>O: <span class="hljs-keyword">select</span> <span class="hljs-keyword">length</span>(<span class="hljs-string">'aaa'</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M: <span class="hljs-keyword">select</span> <span class="hljs-keyword">length</span>(<span class="hljs-string">'aaa'</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V: <span class="hljs-keyword">select</span> <span class="hljs-keyword">length</span>(<span class="hljs-string">'aaa '</span>::<span class="hljs-built_in">CHAR</span>(<span class="hljs-number">10</span>))<br><br><span class="hljs-keyword">Select</span> <span class="hljs-keyword">length</span>(<span class="hljs-string">'aaa '</span>::<span class="hljs-built_in">varchar</span>(<span class="hljs-number">10</span>))<br><br><span class="hljs-keyword">select</span> <span class="hljs-keyword">length</span>(<span class="hljs-string">'aaa'</span>)<br></code></pre></td></tr></table></figure>
+<ol start="25">
+<li>大小写转换 lower,upper</li>
+<li>左补空格（LPAD的第一个参数为空格则同space函数）</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-keyword">space</span>(<span class="hljs-number">10</span>)+<span class="hljs-string">'abcd'</span> <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-keyword">LPAD</span>(<span class="hljs-string">'abcd'</span>,<span class="hljs-number">14</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-keyword">LPAD</span>(<span class="hljs-string">'abcd'</span>,<span class="hljs-number">14</span>, <span class="hljs-string">' '</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-keyword">LPAD</span>(<span class="hljs-string">'abcd'</span>,<span class="hljs-number">14</span>, <span class="hljs-string">' '</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br></code></pre></td></tr></table></figure>
+<ol start="27">
+<li>右补空格（RPAD的第一个参数为空格则同space函数）</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-string">'abcd'</span>+<span class="hljs-keyword">space</span>(<span class="hljs-number">10</span>) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> RPAD(<span class="hljs-string">'abcd'</span>,<span class="hljs-number">14</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> RPAD(<span class="hljs-string">'abcd'</span>,<span class="hljs-number">14</span>, <span class="hljs-string">' '</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> RPAD(<span class="hljs-string">'abcd'</span>,<span class="hljs-number">14</span>, <span class="hljs-string">' '</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br></code></pre></td></tr></table></figure>
+<ol start="28">
+<li>删除空格</li>
+</ol>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-built_in">ltrim</span>,<span class="hljs-built_in">rtrim</span><br><br>O:<span class="hljs-built_in">ltrim</span>,<span class="hljs-built_in">rtrim</span>,<span class="hljs-built_in">trim</span><br><br>M:<span class="hljs-built_in">ltrim</span>,<span class="hljs-built_in">rtrim</span>,<span class="hljs-built_in">trim</span><br><br>V:<span class="hljs-built_in">ltrim</span>,<span class="hljs-built_in">rtrim</span>,<span class="hljs-built_in">trim</span><br></code></pre></td></tr></table></figure>
+<p>日期函数</p>
+<ol start="29">
+<li>系统时间</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-keyword">getdate</span>() <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> <span class="hljs-keyword">sysdate</span> <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-keyword">now</span>() <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> <span class="hljs-keyword">sysdate</span>()<br><br><span class="hljs-keyword">select</span> <span class="hljs-keyword">getdate</span>()<br><br><span class="hljs-keyword">select</span> <span class="hljs-keyword">now</span>() 会显示时区<br></code></pre></td></tr></table></figure>
+<ol start="30">
+<li>前后几日</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:直接与整数相加减<br><br>O:直接与整数相加减<br><br>M: <span class="hljs-keyword">select</span> <span class="hljs-keyword">now</span>()+<span class="hljs-built_in">interval</span> <span class="hljs-number">1</span> <span class="hljs-keyword">day</span> <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:直接与整数相加减<br></code></pre></td></tr></table></figure>
+<ol start="31">
+<li>求日期</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-keyword">convert</span>(<span class="hljs-built_in">char</span>(<span class="hljs-number">10</span>),<span class="hljs-keyword">getdate</span>(),<span class="hljs-number">20</span>) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> trunc(<span class="hljs-keyword">sysdate</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br><span class="hljs-keyword">select</span> to_char(<span class="hljs-keyword">sysdate</span>,<span class="hljs-string">'yyyy-mm-dd'</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-keyword">DATE_FORMAT</span>(<span class="hljs-keyword">NOW</span>(),<span class="hljs-string">'%Y-%m-%d'</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual;<br><br>V:<span class="hljs-keyword">select</span> to_char(<span class="hljs-keyword">sysdate</span>(),<span class="hljs-string">'YYYY-MM-DD'</span>)<br></code></pre></td></tr></table></figure>
+<ol start="32">
+<li>求时间</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">S:<span class="hljs-keyword">select</span> <span class="hljs-keyword">convert</span>(<span class="hljs-built_in">char</span>(<span class="hljs-number">8</span>),<span class="hljs-keyword">getdate</span>(),<span class="hljs-number">108</span>) <span class="hljs-keyword">value</span><br><br>O:<span class="hljs-keyword">select</span> to_char(<span class="hljs-keyword">sysdate</span>,<span class="hljs-string">'hh24:mm:ss'</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>M:<span class="hljs-keyword">select</span> <span class="hljs-keyword">DATE_FORMAT</span>(<span class="hljs-keyword">NOW</span>(),<span class="hljs-string">'%T'</span>) <span class="hljs-keyword">value</span> <span class="hljs-keyword">from</span> dual<br><br>V:<span class="hljs-keyword">select</span> to_char(<span class="hljs-keyword">sysdate</span>,<span class="hljs-string">'hh24:mi:ss'</span>)<br></code></pre></td></tr></table></figure>
+<ol start="33">
+<li>取日期时间的其他部分</li>
+</ol>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-symbol">S:DA</span>TEPART 和 DATENAME 函数 （第一个参数决定）<br><br><span class="hljs-symbol">O:to</span>_<span class="hljs-built_in">char</span>函数 第二个参数决定<br><br>参数---------------------------------下表需要补充<br><br><span class="hljs-built_in">year</span> yy, yyyy<br><br>quarter qq, q (季度)<br><br><span class="hljs-built_in">month</span> mm, m (m O无效)<br><br>dayofyear dy, y (O表星期)<br><br><span class="hljs-built_in">day</span> dd, d (d O无效)<br><br>week wk, ww (wk O无效)<br><br><span class="hljs-built_in">weekday</span> dw (O不清楚)<br><br><span class="hljs-built_in">Hour</span> hh,<span class="hljs-symbol">hh12</span>,<span class="hljs-symbol">hh24</span> (<span class="hljs-symbol">hh12</span>,<span class="hljs-symbol">hh24</span> S无效)<br><br><span class="hljs-built_in">minute</span> mi, <span class="hljs-built_in">n</span> (<span class="hljs-built_in">n</span> O无效)<br><br><span class="hljs-built_in">second</span> ss, s (s O无效)<br><br>millisecond ms (O无效)<br></code></pre></td></tr></table></figure>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><code class="hljs undefined">M:date_format函数 第二个参数决定<br><br>格式<br><br>描述<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">a</span></span><br><br>缩写星期名<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">b</span></span><br><br>缩写月名<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">c</span></span><br><br>月，数值<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">D</span></span><br><br>带有英文前缀的月中的天<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">d</span></span><br><br>月的天，数值(00-31)<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">e</span></span><br><br>月的天，数值(0-31)<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">f</span></span><br><br>微秒<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">H</span></span><br><br>小时 (00-23)<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">h</span></span><br><br>小时 (01-12)<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">I</span></span><br><br>小时 (01-12)<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">i</span></span><br><br>分钟，数值(00-59)<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">j</span></span><br><br>年的天 (001-366)<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">k</span></span><br><br>小时 (0-23)<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">l</span></span><br><br>小时 (1-12)<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">M</span></span><br><br>月名<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">m</span></span><br><br>月，数值(00-12)<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">p</span></span><br><br>AM 或 PM<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">r</span></span><br><br>时间，12-小时（hh:mm:ss AM 或 PM）<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">S</span></span><br><br>秒(00-59)<br><span class="hljs-tag"><br>%<span class="hljs-selector-tag">s</span></span><br></code></pre></td></tr></table></figure>
+<p>原地址：<a href="http://www.verydemo.com/demo_c152_i10134.html" target="_blank" rel="noopener">http://www.verydemo.com/demo_c152_i10134.html</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/vertica/">vertica</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/09/12/Vertica的这些事（三）——Vertica中实现Oracle中的ws-concat功能/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Vertica的这些事（三）——Vertica中实现Oracle中的ws_concat功能</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/09/12/Vertica的这些事（一）——VSQL常用命令/">
+                        <span class="hidden-mobile">Vertica的这些事（一）——VSQL常用命令</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      $('#local-search-input').on('click', function() {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      });
+      $('#modalSearch').on('shown.bs.modal', function() {
+        $('#local-search-input').focus();
+      });
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

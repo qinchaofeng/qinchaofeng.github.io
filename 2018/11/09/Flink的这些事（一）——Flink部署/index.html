@@ -1,0 +1,488 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  
+    <meta name="description" content="大数据实践的那些事，专注MPP数据库研究、流处理计算、数据仓库架构和数据分析">
+  
+  <meta name="author" content="数据一哥">
+  <meta name="keywords" content="大数据">
+  
+  <title>Flink的这些事（一）——Flink部署 - 数据社</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css">
+  <link rel="stylesheet" href="/lib/hint/hint.min.css">
+
+  
+    
+    
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css">
+    
+  
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","version":"1.8.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+</head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>数据社</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Flink的这些事（一）——Flink部署">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2018-11-09 19:45" pubdate>
+        2018年11月9日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.3k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      18
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Flink的这些事（一）——Flink部署</h1>
+            
+            <div class="markdown-body">
+              <h3 id="一、flink介绍"><a href="#一、flink介绍" class="headerlink" title="一、flink介绍"></a>一、flink介绍</h3><p>Apache Flink 是一个开源的分布式流处理和批处理系统。Flink 的核心是在数据流上提供数据分发、通信、具备容错的分布式计算。同时，Flink 在流处理引擎上构建了批处理引擎，原生支持了迭代计算、内存管理和程序优化。</p>
+<h3 id="二、部署环境"><a href="#二、部署环境" class="headerlink" title="二、部署环境"></a>二、部署环境</h3><p>操作系统环境：</p>
+<p>flink支持Linux, Mac OS X, 和 Windows环境部署，本次部署选择Linux环境部署。</p>
+<p>JDK：<br>要求Java 7或者更高</p>
+<h3 id="三、下载软件"><a href="#三、下载软件" class="headerlink" title="三、下载软件"></a>三、下载软件</h3><ul>
+<li><a href="http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-i586.tar.gz" target="_blank" rel="noopener">jdk1.8.0_144</a></li>
+<li><a href="https://archive.apache.org/dist/flink/flink-1.4.2/flink-1.4.2-bin-hadoop24-scala_2.11.tgz" target="_blank" rel="noopener">flink-1.4.2-bin-hadoop26-scala_2.11.tgz</a></li>
+</ul>
+<h3 id="四、部署步骤"><a href="#四、部署步骤" class="headerlink" title="四、部署步骤"></a>四、部署步骤</h3><p>1、JDK安装步骤此处省略，安装后验证下JDK环境<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs undefined">$ java -version<br>openjdk version <span class="hljs-string">"1.8.0_144"</span><br>OpenJDK Runtime Environment (build 1.8.0_144-b01)<br>OpenJDK 64-Bit<span class="hljs-built_in"> Server </span>VM (build 25.144-b01, mixed mode)<br></code></pre></td></tr></table></figure></p>
+<p>2、安装部署flink<br>本文介绍flink部署分为两种模式：local，standalone。下面依次介绍这两种模式的部署方式。</p>
+<p>找到下载的flink压缩包，进行解压</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined">$ tar -zxvf flink<span class="hljs-number">-1.4</span><span class="hljs-number">.2</span>-bin-hadoop26-scala_2<span class="hljs-number">.11</span>.tgz<br></code></pre></td></tr></table></figure>
+<p>首先是local模式，最为简单。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> flink-1.4.2</span><br><span class="hljs-meta">$</span><span class="bash"> bin/start-local.sh</span><br>Starting job manager<br></code></pre></td></tr></table></figure>
+<p>我们可以通过查看日志确认是否启动成功</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs undefined">$ tailf flink-csap-taskmanager-<span class="hljs-number">0</span>-XXXX<span class="hljs-selector-class">.log</span><br><span class="hljs-number">2018</span>-<span class="hljs-number">05</span>-<span class="hljs-number">03</span> <span class="hljs-number">10</span>:<span class="hljs-number">07</span>:<span class="hljs-number">53</span>,<span class="hljs-number">718</span> INFO  org<span class="hljs-selector-class">.apache</span><span class="hljs-selector-class">.flink</span><span class="hljs-selector-class">.runtime</span><span class="hljs-selector-class">.filecache</span><span class="hljs-selector-class">.FileCache</span>                  - User file cache uses directory /tmp/flink-dist-cache-<span class="hljs-number">4</span>c371de9-<span class="hljs-number">0</span>f85-<span class="hljs-number">4889</span>-b4d9-<span class="hljs-number">4</span>a522641549c<br><span class="hljs-number">2018</span>-<span class="hljs-number">05</span>-<span class="hljs-number">03</span> <span class="hljs-number">10</span>:<span class="hljs-number">07</span>:<span class="hljs-number">53</span>,<span class="hljs-number">725</span> INFO  org<span class="hljs-selector-class">.apache</span><span class="hljs-selector-class">.flink</span><span class="hljs-selector-class">.runtime</span><span class="hljs-selector-class">.taskmanager</span><span class="hljs-selector-class">.TaskManager</span>              - Starting TaskManager actor at akka:<span class="hljs-comment">//flink/user/taskmanager#-524742300.</span><br><span class="hljs-number">2018</span>-<span class="hljs-number">05</span>-<span class="hljs-number">03</span> <span class="hljs-number">10</span>:<span class="hljs-number">07</span>:<span class="hljs-number">53</span>,<span class="hljs-number">725</span> INFO  org<span class="hljs-selector-class">.apache</span><span class="hljs-selector-class">.flink</span><span class="hljs-selector-class">.runtime</span><span class="hljs-selector-class">.taskmanager</span><span class="hljs-selector-class">.TaskManager</span>              - TaskManager data connection information: <span class="hljs-number">2</span>c358d6f38949f9aae31c5bddb0cc1dc @ LY1F-R021707-VM14<span class="hljs-selector-class">.local</span> (dataPort=<span class="hljs-number">55234</span>)<br><span class="hljs-number">2018</span>-<span class="hljs-number">05</span>-<span class="hljs-number">03</span> <span class="hljs-number">10</span>:<span class="hljs-number">07</span>:<span class="hljs-number">53</span>,<span class="hljs-number">726</span> INFO  org<span class="hljs-selector-class">.apache</span><span class="hljs-selector-class">.flink</span><span class="hljs-selector-class">.runtime</span><span class="hljs-selector-class">.taskmanager</span><span class="hljs-selector-class">.TaskManager</span>              - TaskManager has <span class="hljs-number">1</span> task slot(s).<br><span class="hljs-number">2018</span>-<span class="hljs-number">05</span>-<span class="hljs-number">03</span> <span class="hljs-number">10</span>:<span class="hljs-number">07</span>:<span class="hljs-number">53</span>,<span class="hljs-number">727</span> INFO  org<span class="hljs-selector-class">.apache</span><span class="hljs-selector-class">.flink</span><span class="hljs-selector-class">.runtime</span><span class="hljs-selector-class">.taskmanager</span><span class="hljs-selector-class">.TaskManager</span>              - Memory usage stats: [HEAP: <span class="hljs-number">111</span>/<span class="hljs-number">1024</span>/<span class="hljs-number">1024</span> MB, NON HEAP: <span class="hljs-number">35</span>/<span class="hljs-number">36</span>/-<span class="hljs-number">1</span> MB (used/committed/max)]<br><span class="hljs-number">2018</span>-<span class="hljs-number">05</span>-<span class="hljs-number">03</span> <span class="hljs-number">10</span>:<span class="hljs-number">07</span>:<span class="hljs-number">53</span>,<span class="hljs-number">730</span> INFO  org<span class="hljs-selector-class">.apache</span><span class="hljs-selector-class">.flink</span><span class="hljs-selector-class">.runtime</span><span class="hljs-selector-class">.taskmanager</span><span class="hljs-selector-class">.TaskManager</span>              - Trying to register at JobManager akka<span class="hljs-selector-class">.tcp</span>:<span class="hljs-comment">//flink@localhost:6123/user/jobmanager (attempt 1, timeout: 500 milliseconds)</span><br><span class="hljs-number">2018</span>-<span class="hljs-number">05</span>-<span class="hljs-number">03</span> <span class="hljs-number">10</span>:<span class="hljs-number">07</span>:<span class="hljs-number">53</span>,<span class="hljs-number">848</span> INFO  org<span class="hljs-selector-class">.apache</span><span class="hljs-selector-class">.flink</span><span class="hljs-selector-class">.runtime</span><span class="hljs-selector-class">.taskmanager</span><span class="hljs-selector-class">.TaskManager</span>              - Successful registration at JobManager (akka<span class="hljs-selector-class">.tcp</span>:<span class="hljs-comment">//flink@localhost:6123/user/jobmanager), starting network stack and library cache.</span><br><span class="hljs-number">2018</span>-<span class="hljs-number">05</span>-<span class="hljs-number">03</span> <span class="hljs-number">10</span>:<span class="hljs-number">07</span>:<span class="hljs-number">53</span>,<span class="hljs-number">851</span> INFO  org<span class="hljs-selector-class">.apache</span><span class="hljs-selector-class">.flink</span><span class="hljs-selector-class">.runtime</span><span class="hljs-selector-class">.taskmanager</span><span class="hljs-selector-class">.TaskManager</span>              - Determined BLOB server <span class="hljs-selector-tag">address</span> to be localhost/<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">52382</span>. Starting BLOB cache.<br><span class="hljs-number">2018</span>-<span class="hljs-number">05</span>-<span class="hljs-number">03</span> <span class="hljs-number">10</span>:<span class="hljs-number">07</span>:<span class="hljs-number">53</span>,<span class="hljs-number">858</span> INFO  org<span class="hljs-selector-class">.apache</span><span class="hljs-selector-class">.flink</span><span class="hljs-selector-class">.runtime</span><span class="hljs-selector-class">.blob</span><span class="hljs-selector-class">.PermanentBlobCache</span>              - Created BLOB cache storage directory /tmp/blobStore-c07b9e80-<span class="hljs-number">41</span>f0-<span class="hljs-number">490</span>f-<span class="hljs-number">8126</span>-<span class="hljs-number">7008144</span>c4b0b<br><span class="hljs-number">2018</span>-<span class="hljs-number">05</span>-<span class="hljs-number">03</span> <span class="hljs-number">10</span>:<span class="hljs-number">07</span>:<span class="hljs-number">53</span>,<span class="hljs-number">861</span> INFO  org<span class="hljs-selector-class">.apache</span><span class="hljs-selector-class">.flink</span><span class="hljs-selector-class">.runtime</span><span class="hljs-selector-class">.blob</span><span class="hljs-selector-class">.TransientBlobCache</span>              - Created BLOB cache storage directory /tmp/blobStore-e0d1b687-<span class="hljs-number">1</span>c47-<span class="hljs-number">41</span>c4-b5bc-<span class="hljs-number">10</span>ceaa39e778<br></code></pre></td></tr></table></figure>
+<p>JobManager进程将会在8081端口上启动一个WEB页面，我们可以通过浏览器到hostname:8081中查看相关的信息。<br>可以打开页面查看到相关信息，说明local模式部署是没问题的。</p>
+<p>下面来看一下standlone部署方式。</p>
+<p>安装JDK，解压压缩包，都是一样的。不一样的是我们要修改解压后的flink配置文件。然后在集群主机间做免密，<a href="http://note.youdao.com/noteshare?id=6cca517765f4bf858f5a818802b8c620&amp;sub=99A504B997564447A6EB786AA6102C57" target="_blank" rel="noopener">免密操作方法</a>。</p>
+<p>修改<strong>conf/flink-conf.yaml</strong>，我们将<strong>jobmanager.rpc.address</strong>的值设置成你master节点的IP地址。此外，我们通过<strong>jobmanager.heap.mb和taskmanager.heap.mb</strong>配置参数来设置每个节点的JVM能够分配的最大内存。从配置参数名字可以看出，这个参数的单位是MB，如果某些节点拥有比你之前设置的值更多的内存时，我们可以在那个节通过<strong>FLINK_TM_HEAP</strong>参数类覆盖值钱的设置。</p>
+<p>我们需要把所有将要作为worker节点的IP地址存放在conf/slaves文件中，在conf/slaves文件中，每个IP地址必须放在一行，如下：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs undefined">192<span class="hljs-selector-class">.168</span><span class="hljs-selector-class">.0</span><span class="hljs-selector-class">.100</span><br>192<span class="hljs-selector-class">.168</span><span class="hljs-selector-class">.0</span><span class="hljs-selector-class">.101</span><br>.<br>.<br>.<br>192<span class="hljs-selector-class">.168</span><span class="hljs-selector-class">.0</span><span class="hljs-selector-class">.150</span><br></code></pre></td></tr></table></figure>
+<p>然后将修改好的flink包整理复制到集群各个节点。每个节点flink路径保持一致。然后启动集群</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-meta">$</span><span class="bash"> bin/start-cluster.sh</span><br></code></pre></td></tr></table></figure>
+<p>查看日志是否成功。</p>
+<p>以上是部署方法，部署成功后，我们来跑一个demo程序，验证一下Flink的流处理功能，对其有个初步的了解。</p>
+<p>flink为了更好的让大家理解，已经给大家提供了一些demo代码，demo的jar包可以在<strong>/examples/streaming</strong>首先看一下demo代码：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs undefined">object SocketWindowWordCount &#123;<br><br>    def main(args: <span class="hljs-built_in">Array</span>[<span class="hljs-built_in">String</span>]) : Unit = &#123;<br><br>        <span class="hljs-comment">// the port to connect to</span><br>        val port: Int = <span class="hljs-keyword">try</span> &#123;<br>            ParameterTool.fromArgs(args).getInt(<span class="hljs-string">"port"</span>)<br>        &#125; <span class="hljs-keyword">catch</span> &#123;<br>            <span class="hljs-keyword">case</span> e: <span class="hljs-function"><span class="hljs-params">Exception</span> =&gt;</span> &#123;<br>                System.err.println(<span class="hljs-string">"No port specified. Please run 'SocketWindowWordCount --port &lt;port&gt;'"</span>)<br>                <span class="hljs-keyword">return</span><br>            &#125;<br>        &#125;<br><br>        <span class="hljs-comment">// get the execution environment</span><br>        val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment<br><br>        <span class="hljs-comment">// get input data by connecting to the socket</span><br>        val text = env.socketTextStream(<span class="hljs-string">"localhost"</span>, port, <span class="hljs-string">'\n'</span>)<br><br>        <span class="hljs-comment">// parse the data, group it, window it, and aggregate the counts</span><br>        val windowCounts = text<br>            .flatMap &#123; <span class="hljs-function"><span class="hljs-params">w</span> =&gt;</span> w.split(<span class="hljs-string">"\\s"</span>) &#125;<br>            .map &#123; <span class="hljs-function"><span class="hljs-params">w</span> =&gt;</span> WordWithCount(w, <span class="hljs-number">1</span>) &#125;<br>            .keyBy(<span class="hljs-string">"word"</span>)<br>            .timeWindow(Time.seconds(<span class="hljs-number">5</span>), Time.seconds(<span class="hljs-number">1</span>))<br>            .sum(<span class="hljs-string">"count"</span>)<br><br>        <span class="hljs-comment">// print the results with a single thread, rather than in parallel</span><br>        windowCounts.print().setParallelism(<span class="hljs-number">1</span>)<br><br>        env.execute(<span class="hljs-string">"Socket Window WordCount"</span>)<br>    &#125;<br><br>    <span class="hljs-comment">// Data type for words with count</span><br>    <span class="hljs-keyword">case</span> <span class="hljs-keyword">class</span> WordWithCount(word: <span class="hljs-built_in">String</span>, count: Long)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这个demo是监控端口，然后对端口输入单子进行wordcount的程序。</p>
+<p>运行demo，首先打开一个窗口进行端口数据输入：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-meta">$</span><span class="bash"> nc -l 9001</span><br>hello<br>hello<br>word<br>world<br></code></pre></td></tr></table></figure>
+<p>然后运行demo监控端口单词输入统计：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined">$ ./bin/flink <span class="hljs-built_in">run</span> examples/streaming/SocketWindowWordCount.jar <span class="hljs-comment">--port 9001</span><br></code></pre></td></tr></table></figure>
+<p>运行后可以看到结果统计：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs undefined">$ more flink-csap-taskmanager-<span class="hljs-number">0</span>-XXX.<span class="hljs-keyword">out</span>.<span class="hljs-number">1</span><br>hello : 1<br>hello : 1<br>word : 1<br>world : 1<br></code></pre></td></tr></table></figure>
+<p>以上就是flink的hello world，大家初步对flink有个了解。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Flink/">Flink</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/11/10/Flink的这些事（二）——Flink开发环境搭建/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Flink的这些事（二）——Flink开发环境搭建</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/10/16/浅谈用户行为分析（一）/">
+                        <span class="hidden-mobile">浅谈用户行为分析（一）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      $('#local-search-input').on('click', function() {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      });
+      $('#modalSearch').on('shown.bs.modal', function() {
+        $('#local-search-input').focus();
+      });
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

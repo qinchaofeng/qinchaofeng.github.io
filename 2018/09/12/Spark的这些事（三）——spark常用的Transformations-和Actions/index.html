@@ -1,0 +1,532 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  
+    <meta name="description" content="大数据实践的那些事，专注MPP数据库研究、流处理计算、数据仓库架构和数据分析">
+  
+  <meta name="author" content="数据一哥">
+  <meta name="keywords" content="大数据">
+  
+  <title>Spark的这些事（三）——spark常用的Transformations-和Actions - 数据社</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css">
+  <link rel="stylesheet" href="/lib/hint/hint.min.css">
+
+  
+    
+    
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css">
+    
+  
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","version":"1.8.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+</head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>数据社</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Spark的这些事（三）——spark常用的Transformations-和Actions">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2018-09-12 18:17" pubdate>
+        2018年9月12日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.5k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      24
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Spark的这些事（三）——spark常用的Transformations-和Actions</h1>
+            
+            <div class="markdown-body">
+              <h2 id="Transformations"><a href="#Transformations" class="headerlink" title="Transformations"></a><a href="http://spark.apache.org/docs/latest/programming-guide.html#transformations" target="_blank" rel="noopener">Transformations</a></h2><p><strong>map，filter</strong><br>spark最长用的两个Transformations：<strong>map，filter</strong>，下面就来介绍一下这两个。</p>
+<p>先看下面这张图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4579636-92d69157fe274d53?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" srcset="/img/loading.gif" alt="这里写图片描述"></p>
+<p>从上图中可以清洗的看到 map和filter都是做的什么工作，那我们就代码演示一下。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs undefined">val <span class="hljs-selector-tag">input</span> = sc.parallelize(List(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>))<br><br>val result1 = <span class="hljs-selector-tag">input</span>.map(x=&gt;x*x)<br>val result2 = <span class="hljs-selector-tag">input</span>.<span class="hljs-attribute">filter</span>(x=&gt;x!=<span class="hljs-number">1</span>)<br><br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(result1.collect()</span></span>.mkString(<span class="hljs-string">","</span>))<br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-string">"\n"</span>)</span></span><br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(result2.collect()</span></span>.mkString(<span class="hljs-string">","</span>))<br><span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-string">"\n"</span>)</span></span><br></code></pre></td></tr></table></figure>
+<p>执行结果如下：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">18</span>:<span class="hljs-number">48</span>:<span class="hljs-number">31</span> INFO <span class="hljs-string">DAGScheduler:</span> ResultStage <span class="hljs-number">0</span> (collect at Map.<span class="hljs-string">scala:</span><span class="hljs-number">17</span>) finished <span class="hljs-keyword">in</span> <span class="hljs-number">0.093</span> s<br><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">18</span>:<span class="hljs-number">48</span>:<span class="hljs-number">31</span> INFO <span class="hljs-string">DAGScheduler:</span> Job <span class="hljs-number">0</span> <span class="hljs-string">finished:</span> collect at Map.<span class="hljs-string">scala:</span><span class="hljs-number">17</span>, took <span class="hljs-number">0.268871</span> s<br><span class="hljs-number">1</span>,<span class="hljs-number">4</span>,<span class="hljs-number">9</span>,<span class="hljs-number">16</span><br>........<br><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">18</span>:<span class="hljs-number">48</span>:<span class="hljs-number">31</span> INFO <span class="hljs-string">DAGScheduler:</span> ResultStage <span class="hljs-number">1</span> (collect at Map.<span class="hljs-string">scala:</span><span class="hljs-number">19</span>) finished <span class="hljs-keyword">in</span> <span class="hljs-number">0.000</span> s<br><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">18</span>:<span class="hljs-number">48</span>:<span class="hljs-number">31</span> INFO <span class="hljs-string">DAGScheduler:</span> Job <span class="hljs-number">1</span> <span class="hljs-string">finished:</span> collect at Map.<span class="hljs-string">scala:</span><span class="hljs-number">19</span>, took <span class="hljs-number">0.018291</span> s<br><span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span><br></code></pre></td></tr></table></figure>
+<p>再回头看下上面那张图，是不是明白什么意思了！</p>
+<p><strong>flatMap</strong><br>另外一个常用的就是flatMap，输入一串字符，分割出每个字符</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4579636-23f6c34d7f36ada3?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" srcset="/img/loading.gif" alt="map和flatmap的区别"></p>
+<p>来用代码实践一下：<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs undefined">val <span class="hljs-keyword">lines</span> = sc.parallelize(List(<span class="hljs-string">"hello world"</span>,<span class="hljs-string">"hi"</span>))<br>   val <span class="hljs-keyword">words</span> = <span class="hljs-keyword">lines</span>.flatMap (<span class="hljs-keyword">lines</span>=&gt;<span class="hljs-keyword">lines</span>.<span class="hljs-built_in">split</span>(<span class="hljs-string">" "</span>))<br>   print(<span class="hljs-keyword">words</span>.<span class="hljs-keyword">first</span>())<br>   print(<span class="hljs-string">"\n"</span>)<br></code></pre></td></tr></table></figure></p>
+<p>执行结果：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">19</span>:<span class="hljs-number">23</span>:<span class="hljs-number">24</span> INFO <span class="hljs-string">DAGScheduler:</span> Job <span class="hljs-number">2</span> <span class="hljs-string">finished:</span> first at Map.<span class="hljs-string">scala:</span><span class="hljs-number">24</span>, took <span class="hljs-number">0.016987</span> s<br>hello<br><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">19</span>:<span class="hljs-number">23</span>:<span class="hljs-number">24</span> INFO <span class="hljs-string">SparkContext:</span> Invoking stop() from shutdown hook<br></code></pre></td></tr></table></figure>
+<p>分隔符如果改一下的话：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined">val <span class="hljs-keyword">words</span> = <span class="hljs-keyword">lines</span>.flatMap (<span class="hljs-keyword">lines</span>=&gt;<span class="hljs-keyword">lines</span>.<span class="hljs-built_in">split</span>(<span class="hljs-string">","</span>))<br></code></pre></td></tr></table></figure>
+<p>结果会怎样呢？</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined">16/08/17 19:33:14 <span class="hljs-builtin-name">INFO</span> TaskSchedulerImpl: Removed TaskSet 2.0, whose tasks have all completed, <span class="hljs-keyword">from</span><span class="hljs-built_in"> pool </span><br>hello world<br>16/08/17 19:33:14 <span class="hljs-builtin-name">INFO</span> SparkContext: Invoking stop() <span class="hljs-keyword">from</span> shutdown hook<br></code></pre></td></tr></table></figure>
+<p>和想象的一样吧~</p>
+<p><strong>distinct，distinct，intersection，subtract</strong><br>还有几个比较常用的：distinct，distinct，intersection，subtract</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4579636-1eea352bfe4e23e7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" srcset="/img/loading.gif" alt="这里写图片描述"></p>
+<p>来看看代码实践：</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs undefined">val rdd1 = <span class="hljs-keyword">sc</span>.parallelize(<span class="hljs-keyword">List</span>(<span class="hljs-string">"coffee"</span>,<span class="hljs-string">"coffee"</span>,<span class="hljs-string">"panda"</span>,<span class="hljs-string">"monkey"</span>,<span class="hljs-string">"tea"</span>))<br>    val rdd2 = <span class="hljs-keyword">sc</span>.parallelize(<span class="hljs-keyword">List</span>(<span class="hljs-string">"coffee"</span>,<span class="hljs-string">"monkey"</span>,<span class="hljs-string">"kitty"</span>))<br>    <br>    rdd1.<span class="hljs-keyword">distinct</span>().take(100).<span class="hljs-keyword">foreach</span>(println)<br></code></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs undefined">16/08/17 19:52:29 <span class="hljs-builtin-name">INFO</span> DAGScheduler: ResultStage 4 (take at Map.scala:30) finished <span class="hljs-keyword">in</span> 0.047 s<br>16/08/17 19:52:29 <span class="hljs-builtin-name">INFO</span> TaskSchedulerImpl: Removed TaskSet 4.0, whose tasks have all completed, <span class="hljs-keyword">from</span><span class="hljs-built_in"> pool </span><br>16/08/17 19:52:29 <span class="hljs-builtin-name">INFO</span> DAGScheduler: Job 3 finished: take at Map.scala:30, took 0.152405 s<br>monkey<br>coffee<br>panda<br>tea<br>16/08/17 19:52:29 <span class="hljs-builtin-name">INFO</span> SparkContext: Starting job: take at Map.scala:32<br></code></pre></td></tr></table></figure>
+<p>代码：<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-selector-tag">rdd1</span><span class="hljs-selector-class">.union</span>(<span class="hljs-selector-tag">rdd2</span>)<span class="hljs-selector-class">.take</span>(100)<span class="hljs-selector-class">.foreach</span>(<span class="hljs-selector-tag">println</span>)<br></code></pre></td></tr></table></figure></p>
+<p>结果：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-number">6</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">19</span>:<span class="hljs-number">52</span>:<span class="hljs-number">29</span> INFO <span class="hljs-string">DAGScheduler:</span> Job <span class="hljs-number">5</span> <span class="hljs-string">finished:</span> take at Map.<span class="hljs-string">scala:</span><span class="hljs-number">32</span>, took <span class="hljs-number">0.011825</span> s<br>coffee<br>coffee<br>panda<br>monkey<br>tea<br>coffee<br>monkey<br>kitty<br><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">19</span>:<span class="hljs-number">52</span>:<span class="hljs-number">30</span> INFO <span class="hljs-string">SparkContext:</span> Starting <span class="hljs-string">job:</span> take at Map.<span class="hljs-string">scala:</span><span class="hljs-number">34</span><br><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">19</span>:<span class="hljs-number">52</span>:<span class="hljs-number">30</span> INFO <span class="hljs-string">DAGScheduler:</span> Registering RDD <span class="hljs-number">11</span> (intersection at Map.<span class="hljs-string">scala:</span><span class="hljs-number">34</span>)<br><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">19</span>:<span class="hljs-number">52</span>:<span class="hljs-number">30</span> INFO <span class="hljs-string">DAGScheduler:</span> Registering RDD <span class="hljs-number">12</span> (intersection at Map.<span class="hljs-string">scala:</span><span class="hljs-number">34</span>)<br></code></pre></td></tr></table></figure>
+<p>代码：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-selector-tag">rdd1</span><span class="hljs-selector-class">.intersection</span>(<span class="hljs-selector-tag">rdd2</span>)<span class="hljs-selector-class">.take</span>(100)<span class="hljs-selector-class">.foreach</span>(<span class="hljs-selector-tag">println</span>)<br></code></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined">16/08/17 19:52:30 <span class="hljs-builtin-name">INFO</span> TaskSetManager: Finished task 0.0 <span class="hljs-keyword">in</span> stage 9.0 (TID 9) <span class="hljs-keyword">in</span> 31 ms on localhost (1/1)<br>16/08/17 19:52:30 <span class="hljs-builtin-name">INFO</span> TaskSchedulerImpl: Removed TaskSet 9.0, whose tasks have all completed, <span class="hljs-keyword">from</span><span class="hljs-built_in"> pool </span><br>16/08/17 19:52:30 <span class="hljs-builtin-name">INFO</span> DAGScheduler: ResultStage 9 (take at Map.scala:34) finished <span class="hljs-keyword">in</span> 0.031 s<br>16/08/17 19:52:30 <span class="hljs-builtin-name">INFO</span> DAGScheduler: Job 6 finished: take at Map.scala:34, took 0.060785 s<br>monkey<br>coffee<br>16/08/17 19:52:30 <span class="hljs-builtin-name">INFO</span> SparkContext: Starting job: take at Map.scala:36<br></code></pre></td></tr></table></figure>
+<p>代码：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-selector-tag">rdd1</span><span class="hljs-selector-class">.subtract</span>(<span class="hljs-selector-tag">rdd2</span>)<span class="hljs-selector-class">.take</span>(100)<span class="hljs-selector-class">.foreach</span>(<span class="hljs-selector-tag">println</span>)<br></code></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">19</span>:<span class="hljs-number">52</span>:<span class="hljs-number">30</span> INFO <span class="hljs-string">DAGScheduler:</span> Job <span class="hljs-number">6</span> <span class="hljs-string">finished:</span> take at Map.<span class="hljs-string">scala:</span><span class="hljs-number">34</span>, took <span class="hljs-number">0.060785</span> s<br>monkey<br>coffee<br><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">17</span> <span class="hljs-number">19</span>:<span class="hljs-number">52</span>:<span class="hljs-number">30</span> INFO <span class="hljs-string">SparkContext:</span> Starting <span class="hljs-string">job:</span> take at Map.<span class="hljs-string">scala:</span><span class="hljs-number">36</span><br></code></pre></td></tr></table></figure>
+<p>再看看上面的图，很容易理解吧</p>
+<h2 id="Actions"><a href="#Actions" class="headerlink" title="Actions"></a><a href="http://spark.apache.org/docs/latest/programming-guide.html#actions" target="_blank" rel="noopener">Actions</a></h2><p>常用的Transformations就介绍到这里，下面介绍下常用的Action:<br><strong>reduce,countByValue,takeOrdered,takeSample,aggregate</strong></p>
+<p>首先看一下：reduce</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs undefined">val rdd5 = sc.parallelize(List(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>))<br>print(<span class="hljs-string">"reduce action:"</span>+rdd5.reduce((x,y)=&gt;x+y)+<span class="hljs-string">"<span class="hljs-subst">\n</span>"</span>)<br></code></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">18</span> <span class="hljs-number">11</span>:<span class="hljs-number">51</span>:<span class="hljs-number">16</span> INFO <span class="hljs-string">DAGScheduler:</span> Job <span class="hljs-number">15</span> <span class="hljs-string">finished:</span> reduce at Function.<span class="hljs-string">scala:</span><span class="hljs-number">55</span>, took <span class="hljs-number">0.012698</span> s<br>reduce <span class="hljs-string">action:</span><span class="hljs-number">10</span><br><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">18</span> <span class="hljs-number">11</span>:<span class="hljs-number">51</span>:<span class="hljs-number">16</span> INFO <span class="hljs-string">SparkContext:</span> Starting <span class="hljs-string">job:</span> aggregate at Function.<span class="hljs-string">scala:</span><span class="hljs-number">57</span><br></code></pre></td></tr></table></figure>
+<p><strong>countByValue</strong></p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined">print(<span class="hljs-name">rdd1</span>.countByValue() + <span class="hljs-string">"\n"</span>)<br></code></pre></td></tr></table></figure>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-number">16</span>/<span class="hljs-number">08</span>/<span class="hljs-number">18</span> <span class="hljs-number">11</span>:<span class="hljs-number">51</span>:<span class="hljs-number">16</span> INFO DAGScheduler: Job <span class="hljs-number">11</span> finished: countByValue <span class="hljs-built_in">at</span> Function.scala:<span class="hljs-number">48</span>, took <span class="hljs-number">0.031726</span> s<br>M<span class="hljs-function"><span class="hljs-title">ap</span>(monkey -&gt;</span> <span class="hljs-number">1</span>, <span class="hljs-function"><span class="hljs-title">coffee</span> -&gt;</span> <span class="hljs-number">2</span>, <span class="hljs-function"><span class="hljs-title">panda</span> -&gt;</span> <span class="hljs-number">1</span>, <span class="hljs-function"><span class="hljs-title">tea</span> -&gt;</span> <span class="hljs-number">1</span>)<br><span class="hljs-number">16</span>/<span class="hljs-number">08</span>/<span class="hljs-number">18</span> <span class="hljs-number">11</span>:<span class="hljs-number">51</span>:<span class="hljs-number">16</span> INFO SparkContext: Starting job: takeOrdered <span class="hljs-built_in">at</span> Function.scala:<span class="hljs-number">50</span><br></code></pre></td></tr></table></figure>
+<p><strong>takeOrdered</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-selector-tag">rdd1</span><span class="hljs-selector-class">.takeOrdered</span>(10)<span class="hljs-selector-class">.take</span>(100)<span class="hljs-selector-class">.foreach</span>(<span class="hljs-selector-tag">println</span>)<br></code></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">18</span> <span class="hljs-number">11</span>:<span class="hljs-number">51</span>:<span class="hljs-number">16</span> INFO <span class="hljs-string">DAGScheduler:</span> Job <span class="hljs-number">12</span> <span class="hljs-string">finished:</span> takeOrdered at Function.<span class="hljs-string">scala:</span><span class="hljs-number">50</span>, took <span class="hljs-number">0.026160</span> s<br>coffee<br>coffee<br>monkey<br>panda<br>tea<br><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">18</span> <span class="hljs-number">11</span>:<span class="hljs-number">51</span>:<span class="hljs-number">16</span> INFO <span class="hljs-string">SparkContext:</span> Starting <span class="hljs-string">job:</span> takeSample at Function.<span class="hljs-string">scala:</span><span class="hljs-number">52</span><br></code></pre></td></tr></table></figure>
+<p><strong>aggregate</strong><br>这个要重点介绍一下：</p>
+<blockquote>
+<p>Spark文档中aggregate函数定义如下<br>def aggregate<a href="zeroValue: U" target="_blank" rel="noopener">U</a>(seqOp: (U, T) ⇒ U, combOp: (U, U) ⇒ U)(implicit arg0: ClassTag[U]): U<br>Aggregate the elements of each partition, and then the results for all the partitions, using given combine functions and a neutral “zero value”. This function can return a different result type, U, than the type of this RDD, T. Thus, we need one operation for merging a T into an U and one operation for merging two U’s, as in scala.TraversableOnce. Both of these functions are allowed to modify and return their first argument instead of creating a new U to avoid memory allocation.  </p>
+<p>seqOp操作会聚合各分区中的元素，然后combOp操作把所有分区的聚合结果再次聚合，两个操作的初始值都是zeroValue.   seqOp的操作是遍历分区中的所有元素(T)，第一个T跟zeroValue做操作，结果再作为与第二个T做操作的zeroValue，直到遍历完整个分区。combOp操作是把各分区聚合的结果，再聚合。aggregate函数返回一个跟RDD不同类型的值。因此，需要一个操作seqOp来把分区中的元素T合并成一个U，另外一个操作combOp把所有U聚合。</p>
+</blockquote>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined">val rdd5 = sc.parallelize(List(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>))<br>val rdd6 = rdd5.aggregate(<span class="hljs-function"><span class="hljs-params">(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>)</span>)  (<span class="hljs-params">(x, y)</span> =&gt;</span><span class="hljs-function"><span class="hljs-params">(x._1 + y, x._2+<span class="hljs-number">1</span>)</span>,  <span class="hljs-params">(x, y)</span> =&gt;</span>(x._1 + y._1, x._2 + y._2))<br>    <span class="hljs-built_in">print</span> (<span class="hljs-string">"aggregate action : "</span> + rdd6 + <span class="hljs-string">"\n"</span>  )<br></code></pre></td></tr></table></figure>
+<p>我们看一下结果：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">18</span> <span class="hljs-number">11</span>:<span class="hljs-number">51</span>:<span class="hljs-number">16</span> INFO <span class="hljs-string">DAGScheduler:</span> Job <span class="hljs-number">16</span> <span class="hljs-string">finished:</span> aggregate at Function.<span class="hljs-string">scala:</span><span class="hljs-number">57</span>, took <span class="hljs-number">0.011686</span> s<br>aggregate <span class="hljs-string">action :</span> (<span class="hljs-number">10</span>,<span class="hljs-number">4</span>)<br><span class="hljs-number">16</span><span class="hljs-regexp">/08/</span><span class="hljs-number">18</span> <span class="hljs-number">11</span>:<span class="hljs-number">51</span>:<span class="hljs-number">16</span> INFO <span class="hljs-string">SparkContext:</span> Invoking stop() from shutdown hook<br></code></pre></td></tr></table></figure>
+<p>我们可以根据以上执行的例子来理解aggregate 用法：</p>
+<blockquote>
+<ul>
+<li>第一步：将rdd5中的元素与初始值遍历进行聚合操作<ul>
+<li>第二步：将初始值加1进行遍历聚合</li>
+<li>第三步：将结果进行聚合</li>
+<li>根据本次的RDD 背部实现如下：</li>
+<li>第一步：其实是0+1</li>
+<li>1+2</li>
+<li>3+3</li>
+<li>6+4</li>
+<li>然后执行：0+1</li>
+<li>1+1</li>
+<li>2+1</li>
+<li>3+1</li>
+<li>此时返回(10,4)</li>
+<li>本次执行是一个节点，如果在集群中的话，多个节点，会先把数据打到不同的分区上，比如(1,2) (3,4)</li>
+<li>得到的结果就会是(3,2) (7,2)</li>
+<li>然后进行第二步combine就得到 (10,4)</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>这样你应该能理解aggregate这个函数了吧</p>
+<p>以上就是对常用的Transformations 和Actions介绍，对于初学者来说，动手代码实践各个函数，才是明白其功能最好的方法。</p>
+<p>PS ：<a href="https://github.com/windyqinchaofeng/Sparkcoding/blob/master/src/com/csap/spark/Function.scala" target="_blank" rel="noopener">源码</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/spark/">spark</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/09/12/Spark的这些事（四）——Spark-on-yarn-动态资源配置/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Spark的这些事（四）——Spark-on-yarn-动态资源配置</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/09/12/Spark的这些事（二）——几个概念/">
+                        <span class="hidden-mobile">Spark的这些事（二）——几个概念</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      $('#local-search-input').on('click', function() {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      });
+      $('#modalSearch').on('shown.bs.modal', function() {
+        $('#local-search-input').focus();
+      });
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>
