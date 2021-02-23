@@ -106,18 +106,6 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
               <a class="nav-link" href="/tags/">
                 <i class="iconfont icon-tags-fill"></i>
                 标签
@@ -211,6 +199,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -239,6 +235,8 @@
             <div class="markdown-body">
               <p>标签（空格分隔）： 数据分析</p>
 <hr>
+<meta name="referrer" content="no-referrer">
+
 <h4 id="CART-创建决策树做分类"><a href="#CART-创建决策树做分类" class="headerlink" title="CART 创建决策树做分类"></a>CART 创建决策树做分类</h4><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-comment"># encoding=utf-8</span><br>from sklearn.model_selection <span class="hljs-built_in">import</span> train_test_split<br>from sklearn.metrics <span class="hljs-built_in">import</span> accuracy_score<br>from sklearn.tree <span class="hljs-built_in">import</span> DecisionTreeClassifier<br>from sklearn.datasets <span class="hljs-built_in">import</span> load_iris<br><span class="hljs-built_in">import</span> graphviz<br>from sklearn <span class="hljs-built_in">import</span> tree<br><span class="hljs-built_in">import</span> os<br>os.environ[<span class="hljs-string">"PATH"</span>] += os.pathsep + 'C:\\Users\\qincf\\AppData\\Local\\Continuum\\anaconda3\Library\\bin\\graphviz'<br><br><span class="hljs-comment"># 准备数据集</span><br><span class="hljs-attr">iris=load_iris()</span><br><span class="hljs-comment"># 获取特征集和分类标识</span><br><span class="hljs-attr">features</span> = iris.data<br><span class="hljs-attr">labels</span> = iris.target<br><span class="hljs-comment"># 随机抽取 33% 的数据作为测试集，其余为训练集</span><br>train_features, test_features, train_labels, <span class="hljs-attr">test_labels</span> = train_test_split(features, labels, <span class="hljs-attr">test_size=0.33,</span> <span class="hljs-attr">random_state=0)</span><br><span class="hljs-comment"># 创建 CART 分类树</span><br><span class="hljs-attr">clf</span> = DecisionTreeClassifier(<span class="hljs-attr">criterion='gini')</span><br><span class="hljs-comment"># 拟合构造 CART 分类树</span><br><span class="hljs-attr">clf</span> = clf.fit(train_features, train_labels)<br><span class="hljs-comment"># 用 CART 分类树做预测</span><br><span class="hljs-attr">test_predict</span> = clf.predict(test_features)<br>print(test_predict)<br><span class="hljs-comment"># 预测结果与测试集结果作比对</span><br><span class="hljs-attr">score</span> = accuracy_score(test_labels, test_predict)<br>print(<span class="hljs-string">"CART 分类树准确率 %.4lf"</span> % score)<br><br><span class="hljs-comment">##打印CART</span><br><span class="hljs-attr">dot_data</span> = tree.export_graphviz(clf,<span class="hljs-attr">out_file=None)</span><br><span class="hljs-attr">graph</span> = graphviz.Source(dot_data)<br>graph<br>print(graph.view())<br></code></pre></td></tr></table></figure>
 <h4 id="分类树如下："><a href="#分类树如下：" class="headerlink" title="分类树如下："></a>分类树如下：</h4><p><img src="https://upload-images.jianshu.io/upload_images/4579636-8a8304dce82fd083.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" srcset="/img/loading.gif" alt="image.png"></p>
 <h4 id="CART-回归树做预测"><a href="#CART-回归树做预测" class="headerlink" title="CART 回归树做预测"></a>CART 回归树做预测</h4><figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs undefined"># encoding=utf-<span class="hljs-number">8</span><br>from sklearn.model_selection <span class="hljs-keyword">import</span> train_test_split<br>from sklearn.metrics <span class="hljs-keyword">import</span> mean_squared_error,mean_absolute_error<br><br>from sklearn.<span class="hljs-keyword">tree</span> <span class="hljs-keyword">import</span> DecisionTreeRegressor<br>from sklearn.datasets <span class="hljs-keyword">import</span> load_boston<br><span class="hljs-keyword">import</span> graphviz<br>from sklearn <span class="hljs-keyword">import</span> <span class="hljs-keyword">tree</span><br><span class="hljs-keyword">import</span> os<br>os.environ[<span class="hljs-string">"PATH"</span>] += os.pathsep + <span class="hljs-string">'C:\\Users\\qincf\\AppData\\Local\\Continuum\\anaconda3\Library\\bin\\graphviz'</span><br></code></pre></td></tr></table></figure>
@@ -293,6 +291,34 @@
             </div>
 
             
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                  
+                
+                
+  <div id="SOHUCS" sid='http://yoursite.com/2019/11/17/数据分析03-决策树/'></div>
+  <script type="text/javascript">
+    Fluid.utils.waitElementVisible('SOHUCS', function() {
+      var appid = 'cyvk4qX07';
+      var conf = 'prod_a729fc61253b265844e0db45fa73e0d3';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+      } else {
+        Fluid.utils.createScript("https://changyan.sohu.com/upload/changyan.js", function() {
+          window.changyan.api.config({
+            appid: appid,
+            conf: conf
+          })
+        });
+      }
+    })
+  </script>
+
+
+              </article>
+            
           </article>
         </div>
       </div>
@@ -310,6 +336,12 @@
 </div>
 
 <!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-x-md">
+    <div class="container custom post-custom mx-auto">
+      <img src="https://img-blog.csdnimg.cn/20210223204944126.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dpbmR5UUNG,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
 
 
     
@@ -352,6 +384,30 @@
      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
   </div>
   
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
 
   
 
@@ -406,6 +462,8 @@
   <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
 
 
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 

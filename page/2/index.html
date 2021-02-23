@@ -90,18 +90,6 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
               <a class="nav-link" href="/tags/">
                 <i class="iconfont icon-tags-fill"></i>
                 标签
@@ -200,9 +188,11 @@
           
             
           
-          上文我们介绍了GPDB的常用管理操作，今天我们来说下它的增删改查。这是对于一个数据库最基本的功能了，然而GPDB有它自己的特性，我们一起来看下。
+          
+
+上文我们介绍了GPDB的常用管理操作，今天我们来说下它的增删改查。这是对于一个数据库最基本的功能了，然而GPDB有它自己的特性，我们一起来看下。
 插入数据按列插入数据：
-gptest=# create table products (name varchar(20),price numeric(10,2),product_no bigint)  distributed by  (product_n
+gptest=# create table products (name varchar(20),price numeric(10,2),product_no bigint)  distributed by  (product
         </a>
       </p>
 
@@ -243,11 +233,13 @@ gptest=# create table products (name varchar(20),price numeric(10,2),product_no 
           
             
           
-          我们前面已经说了，GPDB是一个列式数据库，数据库都有什么特性呢？都能做什么呢？熟悉MySQL，Oracle的同学可能就比较清楚关系型数据库的管理，下面我们就来说下GPDB的一些管理和常用操作。
+          
+
+我们前面已经说了，GPDB是一个列式数据库，数据库都有什么特性呢？都能做什么呢？熟悉MySQL，Oracle的同学可能就比较清楚关系型数据库的管理，下面我们就来说下GPDB的一些管理和常用操作。
 数据库常用操作分为:创建数据库、创建schema、创建资源池、创建角色、创建用户、创建表。下面我们一一来说下GPDB这些常用操作，和关系型数据库MYSQL有什么不同呢？
 
 创建数据库
-gp_sydb=# 
+gp_sydb=
         </a>
       </p>
 
@@ -288,14 +280,16 @@ gp_sydb=#
           
             
           
-          在配置好GreenPlum过程中，需要注意一下几点：
+          
+
+在配置好GreenPlum过程中，需要注意一下几点：
 
 找好安装包
 安装依赖，Gun版本需要注意
 详细安装步骤参考Greenplum安装介绍
 
   自己是电脑虚拟机安装的中间出现很多报错，度娘加经验解决。最后启动还是报错，发现是资源不足，所以关闭了mirror，减少了segment。然后启动还是报错：
-&gt;     &gt; 20190122:20:23:14:003437 gpstart:m
+&gt;     &gt; 20190122:20:23:14:003437 gpstart
         </a>
       </p>
 
@@ -336,7 +330,9 @@ gp_sydb=#
           
             
           
-          1. 数据存储行式数据库是按照行存储的，行存储就是各行放入连续的物理位置，就行我们平时写字一样，一行一行的写，读取的时候也是一行一行的读取。像SQL server,Oracle，mysql等传统的关系型数据库都属于行式数据库范畴。列式数据库是按照列存储的，列存储是把多行数据的每一列按照列存储在磁盘，就像一把数据写入excel表格中，每次按照列读取数据，像Vertica,GreenPlum,HBas
+          
+
+1. 数据存储行式数据库是按照行存储的，行存储就是各行放入连续的物理位置，就行我们平时写字一样，一行一行的写，读取的时候也是一行一行的读取。像SQL server,Oracle，mysql等传统的关系型数据库都属于行式数据库范畴。列式数据库是按照列存储的，列存储是把多行数据的每一列按照列存储在磁盘，就像一把数据写入excel表格中，每次按照列读取数据，像Vertica,GreenPlum,HB
         </a>
       </p>
 
@@ -501,11 +497,13 @@ Vertica通过scheduler来按定义的频度调度执行copy table from kafkasour
           
             
           
-          #IEDA开发环境
+          
+
+#IEDA开发环境
 ###1、安装java环境参考上一篇文章Flink的这些事（一）——Flink部署
 ###2、安装maven参考博客Maven安装与配置
 ###3、配置IDEA参考博客如何使用IntelliJ IDEA 配置Maven
-###4、pom文件设置12345678910111213141516171819202122232425262728293031323334353637383
+###4、pom文件设置123456789101112131415161718192021222324252627282930313233343536373
         </a>
       </p>
 
@@ -546,10 +544,12 @@ Vertica通过scheduler来按定义的频度调度执行copy table from kafkasour
           
             
           
-          一、flink介绍Apache Flink 是一个开源的分布式流处理和批处理系统。Flink 的核心是在数据流上提供数据分发、通信、具备容错的分布式计算。同时，Flink 在流处理引擎上构建了批处理引擎，原生支持了迭代计算、内存管理和程序优化。
+          
+
+一、flink介绍Apache Flink 是一个开源的分布式流处理和批处理系统。Flink 的核心是在数据流上提供数据分发、通信、具备容错的分布式计算。同时，Flink 在流处理引擎上构建了批处理引擎，原生支持了迭代计算、内存管理和程序优化。
 二、部署环境操作系统环境：
 flink支持Linux, Mac OS X, 和 Windows环境部署，本次部署选择Linux环境部署。
-JDK：要求Ja
+JDK：要求
         </a>
       </p>
 
@@ -590,10 +590,12 @@ JDK：要求Ja
           
             
           
-          浅谈用户行为分析（一）标签（空格分隔）： 数据仓库 用户行为分析
+          
+
+浅谈用户行为分析（一）标签（空格分隔）： 数据仓库 用户行为分析
 
 关于用户行为分析，很多互联网公司都有相关的需求，虽然业务不同，但是关于用户行为分析的方法和技术实现都是基本相同的。作者在两家公司都了用户行为分析的相关事项，分享一下自己的一些经验。
-一. 简介用户行为分析可以概括如下：哪个用户在什么时候做了什么操作在哪里做了什么操作，为什么要做这些操作，通过什么方式，用了多长时间等问题，总结出来就
+一. 简介用户行为分析可以概括如下：哪个用户在什么时候做了什么操作在哪里做了什么操作，为什么要做这些操作，通过什么方式，用了多长时间等问题，总结出
         </a>
       </p>
 
@@ -667,6 +669,30 @@ JDK：要求Ja
      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
   </div>
   
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
 
   
 
@@ -715,6 +741,8 @@ JDK：要求Ja
   <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
 
 
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 

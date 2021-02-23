@@ -106,18 +106,6 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
               <a class="nav-link" href="/tags/">
                 <i class="iconfont icon-tags-fill"></i>
                 标签
@@ -211,6 +199,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -237,7 +233,9 @@
             <h1 style="display: none">Vertica的这些事（十三）——Vertica备份元数据信息</h1>
             
             <div class="markdown-body">
-              <blockquote>
+              <meta name="referrer" content="no-referrer">
+
+<blockquote>
 <p>—备份资源池</p>
 </blockquote>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs undefined"><span class="hljs-keyword">SELECT</span>    <span class="hljs-string">'CREATE RESOURCE POOL '</span> || <span class="hljs-keyword">name</span><br>        || <span class="hljs-keyword">CASE</span> <span class="hljs-keyword">WHEN</span> memorysize                <span class="hljs-keyword">IS</span> <span class="hljs-literal">NULL</span> <span class="hljs-keyword">THEN</span> <span class="hljs-string">' '</span> <span class="hljs-keyword">ELSE</span> <span class="hljs-string">' MEMORYSIZE '</span>                 || <span class="hljs-string">''''</span> || memorysize               || <span class="hljs-string">''''</span> <span class="hljs-keyword">END</span><br>        || <span class="hljs-keyword">CASE</span> <span class="hljs-keyword">WHEN</span> maxmemorysize = <span class="hljs-string">''</span>                <span class="hljs-keyword">THEN</span> <span class="hljs-string">' '</span> <span class="hljs-keyword">ELSE</span> <span class="hljs-string">' MAXMEMORYSIZE '</span>              || <span class="hljs-string">''''</span> || maxmemorysize            || <span class="hljs-string">''''</span> <span class="hljs-keyword">END</span><br>        || <span class="hljs-keyword">CASE</span> <span class="hljs-keyword">WHEN</span> executionparallelism     = <span class="hljs-string">'AUTO'</span> <span class="hljs-keyword">THEN</span> <span class="hljs-string">' '</span> <span class="hljs-keyword">ELSE</span> <span class="hljs-string">' EXECUTIONPARALLELISM '</span>       || <span class="hljs-string">''''</span> || executionparallelism     || <span class="hljs-string">''''</span> <span class="hljs-keyword">END</span><br>        || <span class="hljs-keyword">CASE</span> <span class="hljs-keyword">WHEN</span> NULLIFZERO(<span class="hljs-keyword">priority</span>)      <span class="hljs-keyword">IS</span> <span class="hljs-literal">NULL</span> <span class="hljs-keyword">THEN</span> <span class="hljs-string">' '</span> <span class="hljs-keyword">ELSE</span> <span class="hljs-string">' PRIORITY '</span>                   || <span class="hljs-string">''''</span> || <span class="hljs-keyword">priority</span>                 || <span class="hljs-string">''''</span> <span class="hljs-keyword">END</span><br>        || <span class="hljs-keyword">CASE</span> <span class="hljs-keyword">WHEN</span> runtimepriority           <span class="hljs-keyword">IS</span> <span class="hljs-literal">NULL</span> <span class="hljs-keyword">THEN</span> <span class="hljs-string">' '</span> <span class="hljs-keyword">ELSE</span> <span class="hljs-string">' RUNTIMEPRIORITY '</span>            ||         runtimepriority                  <span class="hljs-keyword">END</span><br>        || <span class="hljs-keyword">CASE</span> <span class="hljs-keyword">WHEN</span> runtimeprioritythreshold  <span class="hljs-keyword">IS</span> <span class="hljs-literal">NULL</span> <span class="hljs-keyword">THEN</span> <span class="hljs-string">' '</span> <span class="hljs-keyword">ELSE</span> <span class="hljs-string">' RUNTIMEPRIORITYTHRESHOLD '</span>   ||         runtimeprioritythreshold         <span class="hljs-keyword">END</span><br>        || <span class="hljs-keyword">CASE</span> <span class="hljs-keyword">WHEN</span> queuetimeout              <span class="hljs-keyword">IS</span> <span class="hljs-literal">NULL</span> <span class="hljs-keyword">THEN</span> <span class="hljs-string">' '</span> <span class="hljs-keyword">ELSE</span> <span class="hljs-string">' QUEUETIMEOUT '</span>               ||         queuetimeout                     <span class="hljs-keyword">END</span><br>        || <span class="hljs-keyword">CASE</span> <span class="hljs-keyword">WHEN</span> maxconcurrency            <span class="hljs-keyword">IS</span> <span class="hljs-literal">NULL</span> <span class="hljs-keyword">THEN</span> <span class="hljs-string">' '</span> <span class="hljs-keyword">ELSE</span> <span class="hljs-string">' MAXCONCURRENCY '</span>             ||         maxconcurrency                   <span class="hljs-keyword">END</span><br>        || <span class="hljs-keyword">CASE</span> <span class="hljs-keyword">WHEN</span> runtimecap                <span class="hljs-keyword">IS</span> <span class="hljs-literal">NULL</span> <span class="hljs-keyword">THEN</span> <span class="hljs-string">' '</span> <span class="hljs-keyword">ELSE</span> <span class="hljs-string">' RUNTIMECAP '</span>                 || <span class="hljs-string">''''</span> || runtimecap               || <span class="hljs-string">''''</span> <span class="hljs-keyword">END</span><br>        || <span class="hljs-string">' ; '</span><br><span class="hljs-keyword">FROM</span> v_catalog.resource_pools<br><span class="hljs-keyword">WHERE</span> <span class="hljs-keyword">NOT</span> is_internal<br><span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> <span class="hljs-keyword">name</span>;<br></code></pre></td></tr></table></figure>
@@ -313,6 +311,34 @@
             </div>
 
             
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                  
+                
+                
+  <div id="SOHUCS" sid='http://yoursite.com/2018/09/12/Vertica的这些事（十三）——Vertica备份元数据信息/'></div>
+  <script type="text/javascript">
+    Fluid.utils.waitElementVisible('SOHUCS', function() {
+      var appid = 'cyvk4qX07';
+      var conf = 'prod_a729fc61253b265844e0db45fa73e0d3';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+      } else {
+        Fluid.utils.createScript("https://changyan.sohu.com/upload/changyan.js", function() {
+          window.changyan.api.config({
+            appid: appid,
+            conf: conf
+          })
+        });
+      }
+    })
+  </script>
+
+
+              </article>
+            
           </article>
         </div>
       </div>
@@ -330,6 +356,12 @@
 </div>
 
 <!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-x-md">
+    <div class="container custom post-custom mx-auto">
+      <img src="https://img-blog.csdnimg.cn/20210223204944126.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dpbmR5UUNG,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
 
 
     
@@ -372,6 +404,30 @@
      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
   </div>
   
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
 
   
 
@@ -426,6 +482,8 @@
   <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
 
 
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 

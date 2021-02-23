@@ -106,18 +106,6 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
               <a class="nav-link" href="/tags/">
                 <i class="iconfont icon-tags-fill"></i>
                 标签
@@ -211,6 +199,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -237,7 +233,9 @@
             <h1 style="display: none">元数据知多少</h1>
             
             <div class="markdown-body">
-              <p>小B是一名数据分析师，他问小A XXX的所有指标给我一下，小A“鄙视的”给了他一个文档。</p>
+              <meta name="referrer" content="no-referrer">
+
+<p>小B是一名数据分析师，他问小A XXX的所有指标给我一下，小A“鄙视的”给了他一个文档。</p>
 <h4 id="元数据知道多少"><a href="#元数据知道多少" class="headerlink" title="元数据知道多少"></a>元数据知道多少</h4><p>小B作为一名数据分析师，为什么自己没能去找到数据呢？</p>
 <p>这就要说下数据仓库的元数据管理。我们都知道传统的数据库中每张表都有注释，包括表注释，字段注释，你拿到一个不熟悉的表肯定要先看注释，然后才知道每个字段的意思。就像你学习英语的时候查那本牛津字典一样，你能很快查到每个单词的意思，不就你还能看单词“猜出”一个单词的意思。同样数据仓库也有这样一套“注释”，我们称之为元数据。</p>
 <blockquote>
@@ -327,6 +325,34 @@
             </div>
 
             
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                  
+                
+                
+  <div id="SOHUCS" sid='http://yoursite.com/2020/04/25/元数据知多少/'></div>
+  <script type="text/javascript">
+    Fluid.utils.waitElementVisible('SOHUCS', function() {
+      var appid = 'cyvk4qX07';
+      var conf = 'prod_a729fc61253b265844e0db45fa73e0d3';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+      } else {
+        Fluid.utils.createScript("https://changyan.sohu.com/upload/changyan.js", function() {
+          window.changyan.api.config({
+            appid: appid,
+            conf: conf
+          })
+        });
+      }
+    })
+  </script>
+
+
+              </article>
+            
           </article>
         </div>
       </div>
@@ -344,6 +370,12 @@
 </div>
 
 <!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-x-md">
+    <div class="container custom post-custom mx-auto">
+      <img src="https://img-blog.csdnimg.cn/20210223204944126.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dpbmR5UUNG,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
 
 
     
@@ -386,6 +418,30 @@
      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
   </div>
   
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
 
   
 
@@ -440,6 +496,8 @@
   <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
 
 
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 

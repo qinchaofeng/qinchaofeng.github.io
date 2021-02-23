@@ -106,18 +106,6 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
               <a class="nav-link" href="/tags/">
                 <i class="iconfont icon-tags-fill"></i>
                 标签
@@ -211,6 +199,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -238,6 +234,8 @@
             
             <div class="markdown-body">
               <hr>
+<meta name="referrer" content="no-referrer">
+
 <h1 id="一、什么是数据中台"><a href="#一、什么是数据中台" class="headerlink" title="一、什么是数据中台"></a>一、什么是数据中台</h1><p>数据中台的概念最是阿里提出来的是为了实现数据的分层和水平解耦，提供数据服务能力。看了那么多中台的概念，对中台也有些自己的理解。笔者认为中台主要是为了提供全域的数据服务。主要包括以下4部分：数据资产、数据治理、数据模型、数据服务。<br><img src="https://img-blog.csdnimg.cn/20190226204152675.jpg" srcset="/img/loading.gif" alt="此处输入图片的描述"><br>打通数据建模对全域数据进行沉淀形成数据资产，从而提供统一的数据服务功能。</p>
 <h1 id="二、如何建立数据中台"><a href="#二、如何建立数据中台" class="headerlink" title="二、如何建立数据中台"></a>二、如何建立数据中台</h1><p>建设数据中台主要就是从数据模型、数据资产、数据治理、数据服务四部分出发。</p>
 <h2 id="1、数据模型"><a href="#1、数据模型" class="headerlink" title="1、数据模型"></a>1、数据模型</h2><p>数据模型，就是我们熟悉的数据仓库中的模型，按照数据仓库规范分层开发模型，实现数据的标准化，多采用维度建模。还有一些挖掘模型，如果用的多了，也可以沉淀到数据中台中。我们可以看出数据中台中的模型具有通用性。</p>
@@ -295,6 +293,34 @@
             </div>
 
             
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                  
+                
+                
+  <div id="SOHUCS" sid='http://yoursite.com/2019/03/05/浅谈数据中台/'></div>
+  <script type="text/javascript">
+    Fluid.utils.waitElementVisible('SOHUCS', function() {
+      var appid = 'cyvk4qX07';
+      var conf = 'prod_a729fc61253b265844e0db45fa73e0d3';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+      } else {
+        Fluid.utils.createScript("https://changyan.sohu.com/upload/changyan.js", function() {
+          window.changyan.api.config({
+            appid: appid,
+            conf: conf
+          })
+        });
+      }
+    })
+  </script>
+
+
+              </article>
+            
           </article>
         </div>
       </div>
@@ -312,6 +338,12 @@
 </div>
 
 <!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-x-md">
+    <div class="container custom post-custom mx-auto">
+      <img src="https://img-blog.csdnimg.cn/20210223204944126.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dpbmR5UUNG,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
 
 
     
@@ -354,6 +386,30 @@
      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
   </div>
   
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
 
   
 
@@ -408,6 +464,8 @@
   <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
 
 
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 

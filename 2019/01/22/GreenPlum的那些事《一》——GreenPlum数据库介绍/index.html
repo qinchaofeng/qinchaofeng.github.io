@@ -106,18 +106,6 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
               <a class="nav-link" href="/tags/">
                 <i class="iconfont icon-tags-fill"></i>
                 标签
@@ -211,6 +199,14 @@
 
   
   
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
 </div>
 
             
@@ -237,7 +233,9 @@
             <h1 style="display: none">GreenPlum的那些事《一》——GreenPlum数据库介绍</h1>
             
             <div class="markdown-body">
-              <h2 id="1-数据存储"><a href="#1-数据存储" class="headerlink" title="1. 数据存储"></a><strong>1. 数据存储</strong></h2><p><strong>行式数据库</strong>是按照行存储的，行存储就是各行放入连续的物理位置，就行我们平时写字一样，一行一行的写，读取的时候也是一行一行的读取。像SQL server,Oracle，mysql等传统的关系型数据库都属于行式数据库范畴。<br><strong>列式数据库</strong>是按照列存储的，列存储是把多行数据的每一列按照列存储在磁盘，就像一把数据写入excel表格中，每次按照列读取数据，像Vertica,GreenPlum,HBase(HBase其实不是真正的列式数据库，是按照列簇存储的)。<br><img src="https://img-blog.csdnimg.cn/20190109192442998.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dpbmR5UUNG,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" alt="列存储和行存储对比"></p>
+              <meta name="referrer" content="no-referrer">
+
+<h2 id="1-数据存储"><a href="#1-数据存储" class="headerlink" title="1. 数据存储"></a><strong>1. 数据存储</strong></h2><p><strong>行式数据库</strong>是按照行存储的，行存储就是各行放入连续的物理位置，就行我们平时写字一样，一行一行的写，读取的时候也是一行一行的读取。像SQL server,Oracle，mysql等传统的关系型数据库都属于行式数据库范畴。<br><strong>列式数据库</strong>是按照列存储的，列存储是把多行数据的每一列按照列存储在磁盘，就像一把数据写入excel表格中，每次按照列读取数据，像Vertica,GreenPlum,HBase(HBase其实不是真正的列式数据库，是按照列簇存储的)。<br><img src="https://img-blog.csdnimg.cn/20190109192442998.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dpbmR5UUNG,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" alt="列存储和行存储对比"></p>
 <h2 id="2-GreenPlum架构"><a href="#2-GreenPlum架构" class="headerlink" title="2. GreenPlum架构"></a><strong>2. GreenPlum架构</strong></h2><p><strong>massively parallel processing 简称MPP，即无共享、大规模并行处理。</strong><br><img src="https://img-blog.csdnimg.cn/2019010919313313.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dpbmR5UUNG,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" alt="MPP架构"></p>
 <blockquote>
 <p>MPP架构有如下特点：</p>
@@ -294,6 +292,34 @@
             </div>
 
             
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                  
+                
+                
+  <div id="SOHUCS" sid='http://yoursite.com/2019/01/22/GreenPlum的那些事《一》——GreenPlum数据库介绍/'></div>
+  <script type="text/javascript">
+    Fluid.utils.waitElementVisible('SOHUCS', function() {
+      var appid = 'cyvk4qX07';
+      var conf = 'prod_a729fc61253b265844e0db45fa73e0d3';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+      } else {
+        Fluid.utils.createScript("https://changyan.sohu.com/upload/changyan.js", function() {
+          window.changyan.api.config({
+            appid: appid,
+            conf: conf
+          })
+        });
+      }
+    })
+  </script>
+
+
+              </article>
+            
           </article>
         </div>
       </div>
@@ -311,6 +337,12 @@
 </div>
 
 <!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-x-md">
+    <div class="container custom post-custom mx-auto">
+      <img src="https://img-blog.csdnimg.cn/20210223204944126.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1dpbmR5UUNG,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
 
 
     
@@ -353,6 +385,30 @@
      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
   </div>
   
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
 
   
 
@@ -407,6 +463,8 @@
   <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
 
 
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
