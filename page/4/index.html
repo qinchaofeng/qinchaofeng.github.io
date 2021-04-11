@@ -179,6 +179,50 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2018/09/12/Vertica的这些事（十一）——-Vertica备份元数据信息/">Vertica的这些事（十一）——-Vertica备份元数据信息</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2018/09/12/Vertica的这些事（十一）——-Vertica备份元数据信息/">
+          
+          
+            
+          
+          
+—备份资源池
+
+1234567891011121314SELECT    'CREATE RESOURCE POOL ' || name        || CASE WHEN memorysize                IS NULL THEN ' ' ELSE ' MEMORYSIZE '                 || '''' || memorysize          
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-09-12 12:50" pubdate>
+              2018-09-12
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/vertica/">vertica</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2018/09/12/vertica的这些事（十）——-Vertica停止数据库的操作步骤/">vertica的这些事（十）——-Vertica停止数据库的操作步骤</a>
       </h1>
 
@@ -574,55 +618,11 @@ vertica group by优化语句，先对语句进行explain 操作查看预执行�
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2018/09/12/Vertica的这些事（一）——VSQL常用命令/">Vertica的这些事（一）——VSQL常用命令</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2018/09/12/Vertica的这些事（一）——VSQL常用命令/">
-          
-          
-            
-          
-          Linux环境下，一般都是使用vsql客户端连接vertica来执行命令的，下面就介绍一下vsql常用的命令有哪些。
-导出数据
-1/opt/vertica/bin/vsql -U $usr -p 5433 -h 172.17.12.208 -w $pwd -At -o /home/zyzx/20160809.dat -c "select * from tb_test;"
-默认是以‘|’分割的，指定
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2018-09-12 12:44" pubdate>
-              2018-09-12
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/vertica/">vertica</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/3/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="page-number current">4</span>
+      <a class="extend prev" rel="prev" href="/page/3/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/#board">5</a><a class="extend next" rel="next" href="/page/5/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
